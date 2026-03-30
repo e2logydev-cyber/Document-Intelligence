@@ -877,7 +877,8 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
           <tr>
             <th style="width:160px;">Step</th>
             <th>What Happens — Full Stack Narrative</th>
-            <th style="width:130px;">Stack Used</th>
+            <th style="width:200px;">Stack Used</th>
+            <th style="width:1px;"></th>
           </tr>
         </thead>
         <tbody>
@@ -902,6 +903,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
               </div>
             </td>
             <td><div class="tt-badge-col"><span class="badge-s">Blazor · Foundry</span></div></td>
+            <td></td>
           </tr>
 
           <!-- Step 2 -->
@@ -923,7 +925,8 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
                 <span class="tt-chip tc-teal">Thread Memory Updated</span>
               </div>
             </td>
-            <td><div class="tt-badge-col"><span class="badge-r">Blob · SQL Server · Foundry MCP</span></div></td>
+            <td><div class="tt-badge-col"><span class="badge-r">Blob · SQL Server · Foundry</span></div></td>
+            <td></td>
           </tr>
 
           <!-- Step 3 -->
@@ -945,7 +948,8 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
                 <span class="tt-chip tc-teal">Extracted Fields → Thread Memory</span>
               </div>
             </td>
-            <td><div class="tt-badge-col"><span class="badge-r">Doc Intelligence · Foundry MCP</span></div></td>
+            <td><div class="tt-badge-col"><span class="badge-r">Doc Intelligence · Foundry </span></div></td>
+            <td></td>
           </tr>
 
           <!-- Step 4 -->
@@ -968,6 +972,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
               </div>
             </td>
             <td><div class="tt-badge-col"><span class="badge-r">Foundry IQ · AI Search</span></div></td>
+            <td></td>
           </tr>
 
           <!-- Step 5 -->
@@ -989,7 +994,8 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
                 <span class="tt-chip tc-teal">Ready for Generation</span>
               </div>
             </td>
-            <td><div class="tt-badge-col"><span class="badge-r">Foundry IQ — Zero Code</span></div></td>
+            <td><div class="tt-badge-col"><span class="badge-r">Foundry IQ</span></div></td>
+            <td></td>
           </tr>
 
           <!-- Step 6 -->
@@ -1011,7 +1017,8 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
                 <span class="tt-chip tc-teal">5 Sections → Thread Memory</span>
               </div>
             </td>
-            <td><div class="tt-badge-col"><span class="badge-r">GPT-4o · Foundry · Structured Output</span></div></td>
+            <td><div class="tt-badge-col"><span class="badge-r">GPT-4o · Foundry</span></div></td>
+            <td></td>
           </tr>
 
           <!-- Step 7 -->
@@ -1024,7 +1031,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
             </td>
             <td>
               <div class="tt-narrative">
-                The agent calls the <strong>SQL Server MCP tool</strong> to write five ProposalSection rows into the database, each linked to the Proposal record by ID. It then updates the Proposal record's status to <em>Draft Ready</em>. The <strong>Blazor app</strong> is listening via a <strong>SignalR hub</strong> — the moment the SQL write completes, the Bid Manager's workbench page refreshes in real time and displays all five sections. Because the full draft also lives in Foundry's persistent thread memory, the Bid Manager can open the AI Workspace panel in Blazor, type a question — "why did you select this team?" — and the agent answers instantly from thread context, without any new search query. Blazor also triggers in-app notifications for all assigned reviewers.
+                The agent calls the <strong>SQL Server MCP tool</strong> to write Proposal Section rows into the database, each linked to the Proposal record by ID. It then updates the Proposal record's status to <em>Draft Ready</em>. The <strong>Blazor app</strong> is listening via a <strong>SignalR hub</strong> — the moment the SQL write completes, the Bid Manager's workbench page refreshes in real time and displays all five sections. Because the full draft also lives in Foundry's persistent thread memory, the Bid Manager can open the AI Workspace panel in Blazor, type a question — "why did you select this team?" — and the agent answers instantly from thread context, without any new search query. Blazor also triggers in-app notifications for all assigned reviewers.
               </div>
               <div class="tt-stack-chips">
                 <span class="tt-chip tc-amber">MCP: SQL Server — 5 Section Rows</span>
@@ -1034,6 +1041,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
               </div>
             </td>
             <td><div class="tt-badge-col"><span class="badge-r">SQL Server · Blazor · SignalR</span></div></td>
+            <td></td>
           </tr>
 
           <!-- Step 8 -->
@@ -1056,6 +1064,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
               </div>
             </td>
             <td><div class="tt-badge-col"><span class="badge-r">Blazor · Foundry · SQL Server</span></div></td>
+            <td></td>
           </tr>
 
           <!-- Step 9 -->
@@ -1068,19 +1077,33 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
             </td>
             <td>
               <div class="tt-narrative">
-                On full approval, the Foundry agent calls the <strong>SharePoint MCP tool</strong>, which exports the five proposal sections into a formatted Word document (.docx), then uploads both to the archive library in <strong>SharePoint Online</strong>. The <strong>SQL Server MCP tool</strong> updates the Proposal record status to <em>Submitted</em> and logs the submission timestamp. The <strong>Blazor app</strong> shows a delivery confirmation to the Bid Manager via an in-app alert. Meanwhile, the <strong>Foundry Control Plane</strong> has recorded every single action the agent took across all nine steps — every MCP call, every retrieval query, every model input and output — in a full, replayable trace. Built-in evaluators score the proposal for groundedness, coherence, and safety, providing a quality baseline for continuous improvement.
+                <!-- On full approval, the Foundry agent calls the <strong>SharePoint MCP tool</strong>, which exports the five proposal sections into a formatted Word document (.docx), then uploads both to the archive library in <strong>SharePoint Online</strong>. The <strong>SQL Server MCP tool</strong> updates the Proposal record status to <em>Submitted</em> and logs the submission timestamp. The <strong>Blazor app</strong> shows a delivery confirmation to the Bid Manager via an in-app alert. Meanwhile, the <strong>Foundry Control Plane</strong> has recorded every single action the agent took across all nine steps — every MCP call, every retrieval query, every model input and output — in a full, replayable trace. Built-in evaluators score the proposal for groundedness, coherence, and safety, providing a quality baseline for continuous improvement. -->
+On approval, the Foundry agent retrieves the final proposal sections from thread memory.
+It fetches the approved <strong>Word template from SharePoint </strong>using Microsoft Graph.
+The agent maps all sections into the template using structured content controls to preserve formatting.
+A fully formatted DOCX is generated within the agent workflow.
+The document is stored in <strong> Azure Blob Storage </strong>for instant access.
+The Blazor app receives a SignalR update and shows a <strong> “Download Final Proposal” </strong>button.
+The same document is optionally uploaded to SharePoint for archiving and external sharing.
+SQL Server is updated with Submitted status, timestamp, and document links.
+The Foundry Control Plane captures the complete execution trace.
+Built-in evaluators score the proposal for quality, coherence, and compliance.
+
+
               </div>
               <div class="tt-stack-chips">
-                <span class="tt-chip tc-teal">MCP: SharePoint — DOCX Archive</span>
+                <span class="tt-chip tc-teal">MCP: SharePoint </span>
                 <span class="tt-chip tc-amber">MCP: SQL Server — Status: Submitted</span>
+                <span class="tt-chip tc-teal">Blob URL: Direct Access in Blazor</span>
+                <span class="tt-chip tc-teal">Microsoft Graph API: Optional SharePoint Upload</span>
                 <span class="tt-chip tc-blue">Blazor — Delivery Confirmation</span>
                 <span class="tt-chip tc-green">Foundry Control Plane — Full Trace</span>
                 <span class="tt-chip tc-green">Built-in Evaluators — Quality Score</span>
               </div>
             </td>
-            <td><div class="tt-badge-col"><span class="badge-r">SharePoint · SQL · Blazor · Control Plane</span></div></td>
+            <td><div class="tt-badge-col"><span class="badge-r">SharePoint · SQL · Blazor · Control Plane · Azure Blob</span></div></td>
+            <td></td>
           </tr>
-
         </tbody>
       </table>
     </div>
@@ -1195,7 +1218,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
         <div class="fd-col">
           <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#E8960A;margin-bottom:.4rem;text-align:center;">Data / output layer</div>
           <div class="fd-side-card"><div class="fd-side-label amber">Record store</div><div class="fd-side-title">SQL Server Database</div><div class="fd-side-desc">Single source of truth — Proposal, ProposalSection, Uploaded File Document records</div></div>
-          <div class="fd-side-card"><div class="fd-side-label amber">Document export</div><div class="fd-side-title">SharePoint</div><div class="fd-side-desc">Approved proposal DOCX archived here — MCP tool writes via agent</div></div>
+          <div class="fd-side-card"><div class="fd-side-label amber">Document export</div><div class="fd-side-title">Blob / SharePoint</div><div class="fd-side-desc">Approved proposal DOCX here — MCP tool writes via agent</div></div>
           <div class="fd-side-card"><div class="fd-side-label amber">Knowledge base</div><div class="fd-side-title">Azure AI Search</div><div class="fd-side-desc">4 indexes — queried via Foundry IQ, not direct SDK calls</div></div>
         </div>
 
@@ -1264,8 +1287,8 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
       <div class="step">
         <div class="step-num amber">3</div>
         <div class="step-card s-amber">
-          <div class="step-tag">Document parsing · MCP tool replaces Do Until polling loop</div>
-          <div class="step-title">Foundry calls the Document Intelligence MCP tool — no polling loop required</div>
+          <div class="step-tag">Document parsing </div>
+          <div class="step-title">Foundry calls the Document Intelligence MCP tool</div>
           <div class="plain-box pb-amber">
             <!-- <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#B87208" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#B87208" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div> -->
             <div class="plain-box-text">Foundry's MCP tool abstraction handles asynchronous tool calls internally. The agent calls the Document Intelligence MCP tool, Foundry manages the wait-and-poll cycle, and the agent receives the structured extraction result as a clean tool response. To the agent, it's a synchronous call.</div>
@@ -1289,7 +1312,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
       <div class="step">
         <div class="step-num purple">4</div>
         <div class="step-card s-purple">
-          <div class="step-tag">Knowledge retrieval · Foundry IQ replaces 4 parallel SDK calls</div>
+          <div class="step-tag">Knowledge retrieval</div>
           <div class="step-title">Foundry IQ fans out across all four knowledge indexes with iterative reflection</div>
           <div class="plain-box pb-purple">
             <!-- <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B46C1" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#6B46C1" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div> -->
@@ -1317,7 +1340,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
         <div class="step-num purple">5</div>
         <div class="step-card s-purple">
           <div class="step-tag">Context assembly · Foundry IQ handles ranking and deduplication</div>
-          <div class="step-title">Ranked, deduplicated context assembled automatically — no manual result merging</div>
+          <div class="step-title">Ranked, deduplicated context assembled automatically</div>
           <div class="plain-box pb-purple">
             <!-- <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B46C1" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#6B46C1" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div> -->
             <div class="plain-box-text">By the time the agent's model is invoked, it receives a single clean context window — already ranked, deduplicated, and filtered — sourced from all four indexes. The agent doesn't need to know which index each piece came from; Foundry IQ handles provenance and citation automatically.</div>
@@ -1347,7 +1370,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
           <div class="foundry-component">
             <div class="fc-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="#E8960A" opacity=".2"/><circle cx="6" cy="6" r="2.5" fill="#E8960A"/></svg>Foundry component — Model catalogue + structured output</div>
             <div class="fc-title">Model catalogue selection + structured output mode</div>
-            <div class="fc-desc">The agent's model is defined in the Foundry agent configuration as a pointer to the model catalogue — not a hardcoded endpoint URL. Switching models is a single config change. Structured output mode is declared in the agent definition: the expected JSON schema (executiveSummary, technicalApproach, teamProfiles, pricingNarrative, projectTimeline — each with citations[]) is validated by Foundry before the response is returned to the agent. The agent writes the five section objects directly to its thread memory, from where the Dataverse MCP tool reads them in Step 7.</div>
+            <div class="fc-desc">The agent's model is defined in the Foundry agent configuration as a pointer to the model catalogue — not a hardcoded endpoint URL. Switching models is a single config change. Structured output mode is declared in the agent definition: the expected JSON schema (executiveSummary, technicalApproach, teamProfiles, pricingNarrative, projectTimeline — each with citations[]) is validated by Foundry before the response is returned to the agent. The agent writes the five section objects directly to its thread memory, from where the SQL Server MCP tool reads them in Step 7.</div>
             <div class="fc-tags">
               <span class="fc-tag">GPT-4o (default)</span>
               <span class="fc-tag">Anthropic Claude (switchable)</span>
@@ -1374,10 +1397,10 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
           <div class="step-tag">Persistence + display · MCP: SQL Server + Foundry thread state</div>
           <div class="step-title">Agent writes sections to SQL Server via MCP — thread state enables instant AI Q&amp;A in Blazor</div>
           <div class="plain-box pb-blue">
-            <div class="plain-box-text">The agent calls the SQL Server MCP tool to write the five ProposalSection records. Blazor's SignalR hub picks up the changes and renders the sections in the workbench in real time. The sections also live in the Foundry agent's persistent thread memory — the moment the draft is ready, the bid manager or any reviewer can open the AI Workspace in Blazor and ask questions about the specific proposal, and the agent answers immediately from thread context.</div>
+            <div class="plain-box-text">The agent calls the SQL Server MCP tool to write the five Proposal Section records. Blazor's SignalR hub picks up the changes and renders the sections in the workbench in real time. The sections also live in the Foundry agent's persistent thread memory — the moment the draft is ready, the bid manager or any reviewer can open the AI Workspace in Blazor and ask questions about the specific proposal, and the agent answers immediately from thread context.</div>
           </div>
           <div class="step-items">
-            <span class="step-item si-blue">MCP: SQL Server — INSERT × 5 ProposalSection rows</span>
+            <span class="step-item si-blue">MCP: SQL Server — INSERT Proposal Section rows</span>
             <span class="step-item si-blue">MCP: SQL Server — UPDATE Proposal status</span>
             <span class="step-item si-teal">Agent thread memory — full draft + citations retained</span>
             <span class="step-item si-blue">Blazor SignalR — real-time section rendering</span>
@@ -1424,26 +1447,55 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
           <div class="step-title">Agent packages and delivers the proposal — every action traced in Control Plane</div>
           <div class="plain-box pb-green">
             <!-- <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#16A34A" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#16A34A" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div> -->
-            <div class="plain-box-text">On approval, the agent calls three MCP tools in sequence: the SharePoint MCP server (exports the proposal as DOCX, uploads to the archive library), the SQL Server MCP server (updates record status to Submitted), and Blazor notifies the bid manager via an in-app alert. Every single action the agent took across all nine steps — every MCP tool call, every model invocation, every retrieval query — is recorded in the Foundry Control Plane. You can replay, audit, and evaluate any proposal that has ever been processed.</div>
+            <div class="plain-box-text">
+              <!-- On approval, the agent calls three MCP tools in sequence: the SharePoint MCP server (exports the proposal as DOCX, uploads to the archive library), the SQL Server MCP server (updates record status to Submitted), and Blazor notifies the bid manager via an in-app alert. Every single action the agent took across all nine steps — every MCP tool call, every model invocation, every retrieval query — is recorded in the Foundry Control Plane. You can replay, audit, and evaluate any proposal that has ever been processed. -->
+            
+            On approval, the agent generates the final proposal using the SharePoint template and structured content mapping.
+It then calls MCP tools in sequence to store, update, and deliver the document.
+The final DOCX is saved in Azure Blob for instant access in Blazor.
+The same file is uploaded to SharePoint for archiving and external sharing.
+SQL Server is updated with Submitted status and document links.
+Blazor notifies the Bid Manager via an in-app alert with download access.
+All actions — tool calls, model outputs, and updates — are recorded in the Control Plane.
+The entire process is fully traceable, replayable, and auditable.
+            
+            </div>
           </div>
           <div class="foundry-component">
             <div class="fc-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="#16A34A" opacity=".2"/><circle cx="6" cy="6" r="2.5" fill="#16A34A"/></svg>Foundry component — Control Plane full trace</div>
             <div class="fc-title">Foundry Control Plane — complete agent observability</div>
-            <div class="fc-desc">Every step the agent took for this proposal is captured: the Document Intelligence tool call result, the Foundry IQ retrieval queries and their ranked results, the model input context and output, the Dataverse write confirmations, and the Email delivery receipts. You can open any completed proposal in the Foundry portal and replay its entire processing history. Built-in evaluators score every proposal for groundedness (are the citations real?), coherence (does the proposal read well?), and safety (does it meet content policy?). Failed or low-quality proposals are flagged automatically.</div>
+            <div class="fc-desc">
+              <!-- Every step the agent took for this proposal is captured: the Document Intelligence tool call result, the Foundry IQ retrieval queries and their ranked results, the model input context and output, the SQL Server write confirmations, and the Email delivery receipts. You can open any completed proposal in the Foundry portal and replay its entire processing history. Built-in evaluators score every proposal for groundedness (are the citations real?), coherence (does the proposal read well?), and safety (does it meet content policy?). Failed or low-quality proposals are flagged automatically. -->
+            Every step of the proposal lifecycle is captured end-to-end.
+This includes document extraction results, retrieval queries, and model inputs/outputs.
+Database updates and delivery actions are also logged automatically.
+Users can open any proposal and replay its full execution history.
+Built-in evaluators score proposals for groundedness, coherence, and safety.
+Low-quality or failed outputs are flagged for review.
+Continuous evaluation ensures consistent quality across all proposals.
+            
+            </div>
             <div class="fc-tags">
-              <span class="fc-tag">MCP: SharePoint — DOCX export</span>
+              <span class="fc-tag">MCP: Azure Blob — DOCX</span>
+              <span class="fc-tag">MCP: SharePoint — DOCX</span>
               <span class="fc-tag">MCP: SQL Server — CRM status update</span>
               <span class="fc-tag">Blazor — bid manager in-app delivery notification</span>
               <span class="fc-tag">Control Plane — full 9-step trace</span>
-              <span class="fc-tag">Built-in evaluators: groundedness · coherence · safety</span>
-              <span class="fc-tag">Continuous eval — catches quality regressions</span>
+              <!-- <span class="fc-tag">Built-in evaluators: groundedness · coherence · safety</span> -->
+              <!-- <span class="fc-tag">Continuous eval — catches quality regressions</span> -->
             </div>
           </div>
           <div class="result-banner" style="border-color:rgba(22,163,74,0.30);">
             <div class="rb-icon" style="background:#16A34A;"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6l2.5 2.5L9 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <div>
               <div class="rb-label" style="color:#16A34A;">Foundry implementation complete</div>
-              <div class="rb-text">All nine steps run as a single Foundry agent session. The entire processing history is in the Control Plane. The agent thread holds the full proposal in memory — ready for Q&amp;A from any channel at any time. The proposal is delivered, the CRM is updated, and the pipeline dashboard has refreshed.</div>
+              <div class="rb-text">
+                <!-- All nine steps run as a single Foundry agent session. The entire processing history is in the Control Plane. The agent thread holds the full proposal in memory — ready for Q&amp;A from any channel at any time. The proposal is delivered, the CRM is updated, and the pipeline dashboard has refreshed. -->
+              All nine steps run within a single persistent agent session.
+The full proposal and context remain available in thread memory.
+The document is delivered, CRM is updated, and UI reflects changes instantly.
+The system remains ready for Q&A, audits, and future reuse.
+              </div>
             </div>
           </div>
           <div class="step-foot">→ Full end-to-end trace in Control Plane — audit, replay, and evaluate any proposal ever processed</div>
@@ -1474,7 +1526,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
           <tr><td>4</td><td>Step 1-3: Upload + Storage + Parsing</td><td>Implement Step 1 end-to-end: Blazor upload form → HTTP POST to Foundry Agent durable session endpoint. Implement Step 2: MCP tool calls for Azure Blob upload + SQL Server record creation. Implement Step 3: Document Intelligence MCP tool call with async polling handled by Foundry. Test full upload-to-parse pipeline with sample Uploaded Files. Validate that thread memory captures all extraction results.</td><td>1-3</td></tr>
           <tr><td>5</td><td>Step 4-5: Knowledge Retrieval + Context Assembly</td><td>Implement Step 4: Agent invokes Foundry IQ with extracted requirements. Test multi-index fan-out and iterative reflection. Implement Step 5: Foundry IQ returns ranked, deduplicated context (top 5 projects, top 8 team members, relevant ref docs, applicable pricing). Validate context quality. Test agent's ability to reference context in prompts. Measure retrieval latency and quality metrics.</td><td>4-5</td></tr>
           <tr><td>6</td><td>Step 6: AI Generation + Structured Output</td><td>Configure agent's model (GPT-4o via Foundry model catalogue) with structured output schema (executiveSummary, technicalApproach, teamProfiles, pricingNarrative, projectTimeline — each with citations[]). Implement Step 6: agent receives ranked context + Uploaded File extract, generates all 5 sections in structured JSON. Validate schema enforcement and citation structure. Test model output quality. Verify that sections are written to agent thread memory for Step 7.</td><td>6</td></tr>
-          <tr><td>7</td><td>Step 7: Persistence + Real-Time Display</td><td>Implement Step 7: MCP tool calls to insert ProposalSection records in SQL Server, update Proposal status. Wire SignalR hub to Blazor so sections render in real time as they are written. Implement Blazor Proposal Viewer page with section display, citations, and edit capability. Test full pipeline from upload → parse → retrieve → generate → persist → display. Validate real-time rendering and database consistency.</td><td>7</td></tr>
+          <tr><td>7</td><td>Step 7: Persistence + Real-Time Display</td><td>Implement Step 7: MCP tool calls to insert Proposal Section records in SQL Server, update Proposal status. Wire SignalR hub to Blazor so sections render in real time as they are written. Implement Blazor Proposal Viewer page with section display, citations, and edit capability. Test full pipeline from upload → parse → retrieve → generate → persist → display. Validate real-time rendering and database consistency.</td><td>7</td></tr>
           <tr><td>8</td><td>Step 8: Review + Approval Workflow</td><td>Implement Blazor role-based access control (JWT token). Create reviewer dashboard with section-scoped visibility (Tech Lead sees Technical Approach, Delivery Manager sees Timeline, Finance Lead sees Pricing, Executive sees Summary). Implement approval UI: annotate, request changes, approve sections. Wire approvals to SQL Server and Proposal record status. Implement in-app notifications for reviewers. Test full review and approval flow with multiple roles.</td><td>8</td></tr>
           <tr><td>9</td><td>Step 9: Delivery + Control Plane Observability</td><td>Implement Step 9: agent calls MCP tools to export proposal as DOCX (SharePoint), update CRM status (SQL Server), send delivery notification (Email/Blazor). Test all three exports and status updates. Access Foundry Control Plane: review full 9-step trace for a completed proposal. Run built-in evaluators (groundedness, coherence, safety). Create Control Plane dashboard in Blazor to display proposal history and evaluator scores. Test audit and replay capabilities.</td><td>9</td></tr>
           <tr><td>10</td><td>Agent Topic Configuration + Multi-Channel Deployment</td><td>Foundry Agent: configure all 8 topics (proposal Q&amp;A, team lookup, project search, pricing inquiry, template reference, compliance check, approval status, delivery tracking). Enable durable session persistence across topics. Test agent across multiple channels: Blazor in-app chat, Teams bot, Email (ZohoMail). Validate role-scoped responses. Test agent's ability to reference proposal thread state across channels.</td><td>1-9 (integration)</td></tr>
@@ -1524,7 +1576,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
         <tbody>
 
           <!-- 1 Azure Subscription -->
-          <tr>
+          <!-- <tr>
             <td class="td-num">1</td>
             <td>
               <div class="name-cell">
@@ -1541,10 +1593,10 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
             <td><span class="td-tag tag-svc">Pay-as-you-go</span></td>
             <td><a href="https://azure.microsoft.com/en-us/pricing/" class="udemy-link">View More</a></td>
             <td><div class="td-price">Free<span style="font-size:.7rem;color:#5a6a8a;font-weight:400;"> + usage</span></div></td>
-          </tr>
+          </tr> -->
 
           <!-- 2 Microsoft Identity + JWT Authentication -->
-          <tr>
+          <!-- <tr>
             <td class="td-num">2</td>
             <td>
               <div class="name-cell">
@@ -1561,11 +1613,11 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
             <td><span class="td-tag tag-user">Built-in / No charge</span></td>
             <td><a href="https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity" class="udemy-link">View More</a></td>
             <td><div class="td-price">Free</div></td>
-          </tr>
+          </tr> -->
 
           <!-- 3 Azure App Service -->
           <tr>
-            <td class="td-num">3</td>
+            <td class="td-num">1</td>
             <td>
               <div class="name-cell">
                 <span class="sub-icon si-pa">
@@ -1585,7 +1637,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
 
           <!-- 4 Azure SQL Server -->
           <tr>
-            <td class="td-num">4</td>
+            <td class="td-num">2</td>
             <td>
               <div class="name-cell">
                 <span class="sub-icon si-ais">
@@ -1605,7 +1657,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
 
           <!-- 5 Azure Blob Storage -->
           <tr>
-            <td class="td-num">5</td>
+            <td class="td-num">3</td>
             <td>
               <div class="name-cell">
                 <span class="sub-icon si-sp">
@@ -1625,7 +1677,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
 
           <!-- 6 Microsoft Foundry Agent Service -->
           <tr>
-            <td class="td-num">6</td>
+            <td class="td-num">4</td>
             <td>
               <div class="name-cell">
                 <span class="sub-icon si-oai">
@@ -1645,7 +1697,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
 
           <!-- 7 Azure OpenAI -->
           <tr>
-            <td class="td-num">7</td>
+            <td class="td-num">5</td>
             <td>
               <div class="name-cell">
                 <span class="sub-icon si-oai">
@@ -1668,7 +1720,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
 
           <!-- 8 Azure Document Intelligence -->
           <tr>
-            <td class="td-num">8</td>
+            <td class="td-num">6</td>
             <td>
               <div class="name-cell">
                 <span class="sub-icon si-di">
@@ -1691,7 +1743,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
 
           <!-- 9 Azure AI Search -->
           <tr>
-            <td class="td-num">9</td>
+            <td class="td-num">7</td>
             <td>
               <div class="name-cell">
                 <span class="sub-icon si-ais">
@@ -1711,7 +1763,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
 
           <!-- 10 Azure Key Vault -->
           <tr>
-            <td class="td-num">10</td>
+            <td class="td-num">8</td>
             <td>
               <div class="name-cell">
                 <span class="sub-icon si-sp">
@@ -1731,7 +1783,7 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
 
           <!-- 11 SharePoint -->
           <tr>
-            <td class="td-num">11</td>
+            <td class="td-num">9</td>
             <td>
               <div class="name-cell">
                 <span class="sub-icon si-sp">
