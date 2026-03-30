@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Required Subscriptions & Skills · Proposal Intelligence Platform POC</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#00B2ED;--dark:#0D133E;--muted:#5a6a8a;
+  --fh:'Mulish',sans-serif;--bg:#ffffff;--bg-alt:#f5fafd;
+  --border:rgba(0,178,237,0.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#fff;color:#0D133E;font-family:var(--fh);font-size:16px;line-height:1.7;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;width:100%;z-index:200;padding:.85rem 4%;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.96);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,178,237,0.15);box-shadow:0 1px 20px rgba(13,19,62,0.07);}
+.nav-badge{background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.25);color:#00B2ED;font-size:11px;font-weight:700;padding:3px 11px;border-radius:20px;letter-spacing:.04em;}
+.nav-pill{display:flex;gap:.6rem;}
+.nav-pill a{font-size:12.5px;font-weight:600;color:#5a6a8a;text-decoration:none;padding:4px 12px;border-radius:20px;border:1px solid transparent;transition:all .2s;}
+.nav-pill a:hover,.nav-pill a.active{color:#00B2ED;border-color:rgba(0,178,237,0.28);background:rgba(0,178,237,0.07);}
+
+/* HERO */
+.page-hero{padding:7rem 4% 3rem;background:#fff;position:relative;overflow:hidden;border-bottom:1px solid rgba(0,178,237,0.10);}
+.ph-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,178,237,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,178,237,0.06) 1px,transparent 1px);background-size:60px 60px;}
+.ph-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:260px;background:radial-gradient(ellipse,rgba(0,178,237,0.09) 0%,transparent 68%);}
+.ph-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;}
+.ph-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.28);border-radius:30px;padding:.34rem 1rem;font-size:12px;color:#00B2ED;font-weight:600;margin-bottom:1.1rem;letter-spacing:.04em;}
+.ph-badge span{width:6px;height:6px;border-radius:50%;background:#00B2ED;display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.ph-title{font-family:var(--fh);font-size:clamp(1.8rem,4vw,2.9rem);font-weight:900;color:#0D133E;line-height:1.1;letter-spacing:-.03em;margin-bottom:.65rem;}
+.ph-title em{font-style:normal;color:#00B2ED;}
+.ph-sub{font-size:14px;color:#5a6a8a;max-width:680px;line-height:1.8;font-weight:300;margin-bottom:1.5rem;}
+.ph-tabs{display:flex;gap:.6rem;flex-wrap:wrap;}
+.ph-tab{padding:.45rem 1.1rem;border-radius:8px;font-size:12.5px;font-weight:600;text-decoration:none;border:1.5px solid rgba(0,178,237,0.25);color:#00B2ED;background:rgba(0,178,237,0.06);transition:all .2s;cursor:pointer;}
+.ph-tab:hover,.ph-tab.active{background:#00B2ED;color:#fff;border-color:#00B2ED;}
+
+/* SECTIONS */
+.section{padding:3rem 4% 4rem;}
+.section.alt{background:#f5fafd;}
+.sec-inner{max-width:1100px;margin:0 auto;}
+.sec-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:#00B2ED;font-weight:700;margin-bottom:.4rem;}
+.sec-title{font-family:var(--fh);font-size:clamp(1.4rem,3vw,2.1rem);font-weight:900;color:#0D133E;letter-spacing:-.02em;margin-bottom:.5rem;}
+.sec-title em{font-style:normal;color:#00B2ED;}
+.sec-sub{font-size:13.5px;color:#5a6a8a;max-width:640px;line-height:1.8;margin-bottom:2rem;}
+
+/* ── SUBSCRIPTION TABLE ── */
+.sub-table-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--border);box-shadow:0 4px 24px rgba(0,178,237,0.07);}
+table{width:100%;border-collapse:collapse;background:#fff;}
+thead tr{background:#0D133E;}
+thead th{padding:1rem 1.2rem;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.70);font-weight:700;}
+thead th:last-child{text-align:right;}
+tbody tr{border-bottom:1px solid rgba(0,178,237,0.10);transition:background .15s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:rgba(0,178,237,0.04);}
+tbody td{padding:.9rem 1.2rem;font-size:13.5px;color:#0D133E;vertical-align:middle;}
+tbody td:last-child{text-align:right;}
+.td-num{font-size:12px;font-weight:700;color:#5a6a8a;width:36px;}
+.td-name{font-weight:700;color:#0D133E;}
+.td-price{font-family:var(--fh);font-weight:800;color:#0D133E;font-size:1rem;}
+.td-note{font-size:12px;color:#5a6a8a;font-style:italic;margin-top:2px;}
+.td-tag{display:inline-block;font-size:10.5px;padding:2px 9px;border-radius:20px;font-weight:600;margin-top:4px;}
+.tag-user{background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.22);color:#007DAF;}
+.tag-svc{background:rgba(107,70,193,0.10);border:1px solid rgba(107,70,193,0.22);color:#6B46C1;}
+.tag-payg{background:rgba(232,150,10,0.10);border:1px solid rgba(232,150,10,0.22);color:#B87208;}
+
+/* Total row */
+.total-row{background:linear-gradient(90deg,rgba(0,178,237,0.07),rgba(13,19,62,0.04))!important;}
+.total-row td{font-family:var(--fh);font-weight:900;font-size:1.05rem;color:#0D133E;padding:1.1rem 1.2rem;}
+.total-row .td-price-total{color:#00B2ED;font-size:1.25rem;}
+
+/* Sub icons */
+.sub-icon{width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;margin-right:8px;vertical-align:middle;flex-shrink:0;}
+.si-pp{background:rgba(0,100,255,0.10);}
+.si-pa{background:rgba(0,178,237,0.12);}
+.si-bi{background:rgba(255,185,0,0.12);}
+.si-cs{background:rgba(107,70,193,0.12);}
+.si-ais{background:rgba(0,178,237,0.10);}
+.si-oai{background:rgba(16,163,127,0.12);}
+.si-di{background:rgba(232,80,30,0.12);}
+.si-sp{background:rgba(13,19,62,0.10);}
+.name-cell{display:flex;align-items:center;}
+
+/* Cost summary cards */
+.cost-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-top:2rem;}
+.cost-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.4rem;position:relative;overflow:hidden;}
+.cost-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;}
+.cost-card.cc-blue::before{background:#00B2ED;}
+.cost-card.cc-purple::before{background:#6B46C1;}
+.cost-card.cc-amber::before{background:#E8960A;}
+.cost-card.cc-green::before{background:#16A34A;}
+.cost-card.cc-dark::before{background:#0D133E;}
+.cc-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:#5a6a8a;font-weight:700;margin-bottom:.3rem;}
+.cc-val{font-family:var(--fh);font-size:1.5rem;font-weight:900;color:#0D133E;}
+.cc-sub{font-size:11.5px;color:#5a6a8a;margin-top:2px;}
+.cc-note{font-size:11px;color:#00B2ED;font-weight:600;margin-top:.4rem;}
+
+/* ── CERTIFICATION PHASES ── */
+.phases{display:flex;flex-direction:column;gap:2rem;margin-top:.5rem;}
+.phase{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:box-shadow .2s;}
+.phase:hover{box-shadow:0 8px 32px rgba(0,178,237,0.10);}
+.phase-header{padding:1.1rem 1.6rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid rgba(0,178,237,0.10);}
+.phase-num{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:.9rem;font-weight:800;flex-shrink:0;}
+.ph1 .phase-num{background:rgba(0,178,237,0.15);color:#00B2ED;}
+.ph2 .phase-num{background:rgba(107,70,193,0.15);color:#6B46C1;}
+.phase-header-text{}
+.phase-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:1px;}
+.ph1 .phase-label{color:#00B2ED;}
+.ph2 .phase-label{color:#6B46C1;}
+.phase-title{font-family:var(--fh);font-size:1rem;font-weight:800;color:#0D133E;}
+.phase-body{padding:1.4rem 1.6rem;}
+.phase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;}
+
+/* Cert card */
+.cert-card{border-radius:10px;padding:1.2rem;border:1px solid rgba(0,178,237,0.15);background:#f5fafd;}
+.cert-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 10px;border-radius:20px;margin-bottom:.7rem;}
+.cb-az900{background:rgba(0,178,237,0.12);border:1px solid rgba(0,178,237,0.25);color:#00B2ED;}
+.cb-az204{background:rgba(107,70,193,0.12);border:1px solid rgba(107,70,193,0.25);color:#6B46C1;}
+.cert-name{font-family:var(--fh);font-size:.95rem;font-weight:800;color:#0D133E;margin-bottom:.4rem;}
+.cert-desc{font-size:12.5px;color:#5a6a8a;line-height:1.7;margin-bottom:.9rem;}
+
+/* Cert detail rows */
+.cert-details{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1rem;}
+.cert-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;}
+.cr-lbl{color:#5a6a8a;font-weight:500;}
+.cr-val{font-weight:700;color:#0D133E;}
+.cr-val.blue{color:#00B2ED;}
+.cr-val.purple{color:#6B46C1;}
+
+/* Topics chips */
+.topic-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem;}
+.topic-chip{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;background:rgba(0,178,237,0.08);border:1px solid rgba(0,178,237,0.20);color:#007DAF;}
+.ph2 .topic-chip{background:rgba(107,70,193,0.08);border-color:rgba(107,70,193,0.20);color:#6B46C1;}
+
+/* Udemy links */
+.udemy-links{display:flex;flex-direction:column;gap:.4rem;}
+.udemy-link{display:flex;align-items:center;gap:.5rem;font-size:12px;color:#00B2ED;text-decoration:none;padding:.45rem .7rem;border-radius:8px;border:1px solid rgba(0,178,237,0.20);background:rgba(0,178,237,0.05);transition:all .2s;font-weight:600;}
+.udemy-link:hover{background:rgba(0,178,237,0.12);border-color:rgba(0,178,237,0.40);}
+.udemy-link svg{flex-shrink:0;}
+.udemy-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#5a6a8a;margin-bottom:.4rem;}
+
+/* Prep timeline bar */
+.prep-bar-wrap{margin-bottom:1rem;}
+.prep-bar-lbl{font-size:11px;color:#5a6a8a;margin-bottom:.3rem;font-weight:600;}
+.prep-bar{height:6px;background:rgba(0,178,237,0.12);border-radius:3px;overflow:hidden;}
+.prep-fill{height:6px;border-radius:3px;}
+.pf-1{background:linear-gradient(90deg,#00B2ED,#0099cc);width:30%;}
+.pf-2{background:linear-gradient(90deg,#6B46C1,#553593);width:25%;}
+
+/* Skill overview cards */
+.skill-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:2rem;}
+.skill-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.4rem;position:relative;overflow:hidden;}
+.skill-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
+.sc-blue::before{background:#00B2ED;}
+.sc-purple::before{background:#6B46C1;}
+.sc-teal::before{background:#0D9E8A;}
+.sc-amber::before{background:#E8960A;}
+.skill-card-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.3rem;}
+.sc-blue .skill-card-label{color:#00B2ED;}
+.sc-purple .skill-card-label{color:#6B46C1;}
+.sc-teal .skill-card-label{color:#0D9E8A;}
+.sc-amber .skill-card-label{color:#E8960A;}
+.skill-card-title{font-family:var(--fh);font-size:.9rem;font-weight:800;color:#0D133E;margin-bottom:.3rem;}
+.skill-card-desc{font-size:12px;color:#5a6a8a;line-height:1.65;}
+
+/* CTA bottom */
+.cta-strip{padding:3rem 4%;background:linear-gradient(135deg,#0D133E 0%,#00B2ED 100%);text-align:center;}
+.cta-strip h2{font-family:var(--fh);font-size:clamp(1.4rem,3vw,2rem);font-weight:900;color:#fff;margin-bottom:.65rem;letter-spacing:-.02em;}
+.cta-strip p{font-size:14px;color:rgba(255,255,255,0.80);margin-bottom:1.4rem;}
+.cta-btn{display:inline-block;background:#fff;color:#0D133E;padding:.72rem 1.7rem;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:transform .2s,box-shadow .2s;}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(13,19,62,0.18);}
+
+/* Footer */
+footer{padding:1.5rem 4%;border-top:1px solid rgba(0,178,237,0.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;background:#fff;}
+.foot-copy{font-size:11.5px;color:#5a6a8a;}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.section{animation:fadeUp .5s ease both;}
+
+@media(max-width:700px){
+  .phase-grid{grid-template-columns:1fr;}
+  .cost-cards{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="rfp-data-flow.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+    <svg width="100" height="18" viewBox="0 0 223 40" fill="none"><g clip-path="url(#clip0_nav)"><path d="M48.1752 26.7534V31.0041H29.1777V29.7925C41.3177 16.5906 42.7908 14.3321 42.7908 11.1448C42.7908 8.71877 41.1167 7.08126 38.6143 7.08126C35.9983 7.08126 34.2765 8.76031 34.2765 11.1983V11.8156H29.7676V11.1746C29.7676 6.21053 33.2988 2.84277 38.5781 2.84277C43.7444 2.84277 47.3416 6.26328 47.3416 11.1211C47.3416 14.7612 45.8882 17.7153 37.8216 26.7534H48.1752Z" fill="#00B2ED"/><path d="M52.6162 0.37207H57.3039V31.0036H52.6162V0.37207Z" fill="#0D133E"/><path d="M73.3409 31.4976C66.4259 31.4976 61.2515 26.4892 61.2515 19.7639C61.2515 12.9973 66.4259 8.03027 73.3409 8.03027C80.2439 8.03027 85.4302 13.027 85.4302 19.7644C85.4302 26.4895 80.2439 31.498 73.3409 31.498V31.4976ZM80.6991 19.7639C80.6991 15.4808 77.6207 12.4225 73.3409 12.4225C69.0611 12.4225 65.9832 15.4808 65.9832 19.7639C65.9832 24.0469 69.0613 27.1054 73.3409 27.1054C77.6205 27.1054 80.6991 24.0472 80.6991 19.7639Z" fill="#0D133E"/><path d="M110.842 8.58131V28.2631C110.842 35.4876 106.511 39.897 99.4493 39.897C93.6009 39.897 89.4499 36.8888 88.2847 31.9156H92.9658C93.841 34.3999 96.5281 35.7703 99.4131 35.7703C103.36 35.7703 106.246 33.1909 106.246 28.8995V27.8547C104.267 29.5553 101.645 30.5631 98.6878 30.5631C92.3332 30.5631 87.4039 25.6623 87.4039 19.3176C87.4039 12.9851 92.3332 8.03027 98.6878 8.03027C102.037 8.03027 104.969 9.34661 107.017 11.504L107.764 8.5821L110.842 8.58131ZM99.2207 26.244C103.282 26.244 106.228 23.3105 106.228 19.3168C106.228 15.3054 103.295 12.372 99.2207 12.372C95.1582 12.372 92.1823 15.3356 92.1823 19.3172C92.1823 23.2808 95.1459 26.2444 99.22 26.2444L99.2207 26.244Z" fill="#0D133E"/><path d="M137.489 8.52441L127.1 31.4816C124.545 37.1504 122.295 39.156 117.687 39.156H115.389V34.9808H117.328C120.319 34.9808 121.239 34.1103 122.895 30.5024L123.403 29.4398L113.557 8.52441H118.612L125.798 24.247L132.541 8.52441H137.489Z" fill="#0D133E"/><path d="M17.0325 27.3299C14.8671 27.3299 13.0661 26.5576 11.8287 25.1854H6.58582C8.44178 29.1137 12.3338 31.6972 17.0325 31.6972C22.0836 31.6972 26.2145 28.7961 28.0156 24.0171H23.1212C21.923 26.0793 19.7343 27.3299 17.0325 27.3299Z" fill="#00B2ED"/><path d="M17.0325 7.94727C12.5687 7.94727 8.84894 10.2603 6.89117 13.8397H12.3534C13.5515 12.7576 15.1568 12.15 17.0325 12.15C20.4781 12.15 23.0702 14.1807 23.9042 17.6228H2.27389L0.0645752 21.4061H28.4698C28.5245 20.8964 28.5637 20.3867 28.5637 19.8771H28.5677C28.5677 13.2869 23.959 7.94727 17.0325 7.94727Z" fill="#00B2ED"/></g><defs><clipPath id="clip0_nav"><rect width="223" height="40" fill="white"/></clipPath></defs></svg>
+  </a>
+  <span class="nav-badge">Proposal Intelligence Platform · POC</span>
+  <div class="nav-pill">
+    <a href="rfp-data-flow.html"> POC Roadmap</a>
+    <a href="#subscriptions" class="active">Subscriptions</a>
+    <a href="#skills">Azure Skills</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="ph-grid"></div>
+  <div class="ph-glow"></div>
+  <div class="ph-inner">
+    <div class="ph-badge"><span></span>POC Setup Guide · March 2026</div>
+    <div class="ph-title">Required Subscriptions<br/>&amp; <em>Skills to Build</em> the Platform</div>
+    <p class="ph-sub">Everything your team needs to subscribe to and learn before building the Proposal Intelligence Platform POC — costed, linked, and phase-sequenced.</p>
+    <div class="ph-tabs">
+      <a href="#subscriptions" class="ph-tab active">💳 Subscriptions &amp; Pricing</a>
+      <a href="#skills" class="ph-tab">🎓 Azure Certifications</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     SECTION 1 — SUBSCRIPTIONS
+════════════════════════════════ -->
+<section class="section" id="subscriptions">
+  <div class="sec-inner">
+    <div class="sec-lbl">Required Licences &amp; Services</div>
+    <div class="sec-title">Individual Power Platform &amp; <em>Azure Subscriptions</em></div>
+    <p class="sec-sub">All services required per user per month (or per service) to run the Proposal Intelligence Platform POC. Costs are billed individually — see the compare sheet for Azure pay-as-you-go breakdowns.</p>
+
+    <div class="sub-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px;">#</th>
+            <th>Service</th>
+            <th>Category</th>
+            <th>Billing</th>
+            <td></td>
+            <th>Price</th>
+           
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- 1 Power Apps -->
+          <tr>
+            <td class="td-num">1</td>
+            <td>
+              <div class="name-cell">
+                <span class="sub-icon si-pp">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.5" fill="#0064FF"/><rect x="10" y="2" width="6" height="6" rx="1.5" fill="#0064FF" opacity=".6"/><rect x="2" y="10" width="6" height="6" rx="1.5" fill="#0064FF" opacity=".6"/><rect x="10" y="10" width="6" height="6" rx="1.5" fill="#0064FF" opacity=".3"/></svg>
+                </span>
+                <div>
+                  <div class="td-name">Power Apps Premium</div>
+                  <div class="td-note">Canvas apps, Model-Driven apps, custom connectors, Dataverse</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="td-tag tag-user">Power Platform</span></td>
+            <td><span class="td-tag tag-user">user / month</span></td>
+            <td><a href="https://www.microsoft.com/en-us/power-platform/products/power-apps#pricing" class="udemy-link">View More</a></td>
+            <td><div class="td-price"> $20.00</div></td>
+            
+          </tr>
+
+          <!-- 2 Power Automate -->
+          <tr>
+            <td class="td-num">2</td>
+            <td>
+              <div class="name-cell">
+                <span class="sub-icon si-pa">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9l4-5v3h8l-4 5v-3H3z" fill="#00B2ED"/></svg>
+                </span>
+                <div>
+                  <div class="td-name">Power Automate Premium</div>
+                  <div class="td-note">Cloud flows, RFP intake pipeline, approval routing, all 9 flows</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="td-tag tag-user">Power Platform</span></td>
+            <td><span class="td-tag tag-user">user / month</span></td>
+            <td><a href="https://www.microsoft.com/en-us/power-platform/products/power-automate#Pricing" class="udemy-link">View More</a></td>
+            <td><div class="td-price">$15.00</div></td>
+          </tr>
+
+          <!-- 3 Power BI 
+          <tr>
+            <td class="td-num">3</td>
+            <td>
+              <div class="name-cell">
+                <span class="sub-icon si-bi">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="9" width="3" height="6" rx="1" fill="#FFB900"/><rect x="7.5" y="6" width="3" height="9" rx="1" fill="#FFB900" opacity=".75"/><rect x="12" y="3" width="3" height="12" rx="1" fill="#FFB900" opacity=".5"/></svg>
+                </span>
+                <div>
+                  <div class="td-name">Power BI Pro</div>
+                  <div class="td-note">7 dashboards — pipeline, win/loss, utilisation, pricing accuracy, AI performance</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="td-tag tag-user">Power Platform</span></td>
+            <td><span class="td-tag tag-user">user / month</span></td>
+             <td><a href="https://www.microsoft.com/en-us/power-platform/products/power-bi#Pricing" class="udemy-link">View More</a></td>
+            <td><div class="td-price">$14.00</div></td>
+          </tr>
+          -->
+          <!-- 4 Copilot Studio 
+          <tr>
+            <td class="td-num">4</td>
+            <td>
+              <div class="name-cell">
+                <span class="sub-icon si-cs">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="#6B46C1" stroke-width="1.5"/><path d="M6 9c0-1.7 1.3-3 3-3s3 1.3 3 3-1.3 3-3 3" stroke="#6B46C1" stroke-width="1.3" stroke-linecap="round"/><circle cx="9" cy="9" r="1.5" fill="#6B46C1"/></svg>
+                </span>
+                <div>
+                  <div class="td-name">Microsoft Copilot Studio</div>
+                  <div class="td-note">Proposal Intelligence Assistant — 8 topics, 4-index RAG, Teams + Apps + Blazor</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="td-tag tag-user">Power Platform</span></td>
+            <td><span class="td-tag tag-user">user / month</span></td>
+              <td><a href="https://www.microsoft.com/en-us/microsoft-365-copilot/microsoft-copilot-studio#pricing" class="udemy-link">View More</a></td>
+            <td><div class="td-price">$30.00</div></td>
+          </tr>
+        -->
+          <!-- 5 Azure AI Search -->
+          <tr>
+            <td class="td-num">3</td>
+            <td>
+              <div class="name-cell">
+                <span class="sub-icon si-ais">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="7.5" cy="7.5" r="4" stroke="#00B2ED" stroke-width="1.5"/><path d="M11 11l3.5 3.5" stroke="#00B2ED" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </span>
+                <div>
+                  <div class="td-name">Azure AI Search</div>
+                  <div class="td-note">4 semantic indexes — past projects, team profiles, ref docs, pricing templates</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="td-tag tag-svc">Azure Service</span></td>
+            <td><span class="td-tag tag-svc">per service / month</span></td>
+            <td></td>
+            <td><div class="td-price">$73.73</div></td>
+          </tr>
+
+          <!-- 6 Azure OpenAI -->
+          <tr>
+            <td class="td-num">4</td>
+            <td>
+              <div class="name-cell">
+                <span class="sub-icon si-oai">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,2 16,6.5 16,11.5 9,16 2,11.5 2,6.5" stroke="#10A37F" stroke-width="1.4" fill="none"/><circle cx="9" cy="9" r="2" fill="#10A37F"/></svg>
+                </span>
+                <div>
+                  <div class="td-name">Azure OpenAI (GPT-4o)</div>
+                  <div class="td-note">Section generation, win probability scoring, Copilot Studio RAG</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="td-tag tag-payg">Azure AI</span></td>
+            <td><span class="td-tag tag-payg">Pay-as-you-go</span></td>
+            <td></td>
+            <td>
+              <div class="td-price">$20.00<span style="font-size:.7rem;color:#5a6a8a;font-weight:400;">*</span></div>
+              <div class="td-note">* See compare sheet for token details</div>
+            </td>
+          </tr>
+
+          <!-- 7 Azure Document Intelligence -->
+          <tr>
+            <td class="td-num">5</td>
+            <td>
+              <div class="name-cell">
+                <span class="sub-icon si-di">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="2" width="10" height="14" rx="2" stroke="#E8501E" stroke-width="1.4"/><path d="M6 6h6M6 9h6M6 12h4" stroke="#E8501E" stroke-width="1.1" stroke-linecap="round"/></svg>
+                </span>
+                <div>
+                  <div class="td-name">Azure Document Intelligence</div>
+                  <div class="td-note">RFP parsing — extracts requirements, scope, budget, deadlines from PDFs</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="td-tag tag-payg">Azure AI</span></td>
+            <td><span class="td-tag tag-payg">Pay-per-page</span></td>
+            <td></td>
+            <td>
+              <div class="td-price">$30.00<span style="font-size:.7rem;color:#5a6a8a;font-weight:400;">*</span></div>
+              <div class="td-note">* See compare sheet for page rate</div>
+            </td>
+          </tr>
+
+          <!-- 8 SharePoint + Teams -->
+          <tr>
+            <td class="td-num">6</td>
+            <td>
+              <div class="name-cell">
+                <span class="sub-icon si-sp">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" fill="#0D133E" opacity=".12"/><path d="M6 8h6M6 11h4" stroke="#0D133E" stroke-width="1.3" stroke-linecap="round"/></svg>
+                </span>
+                <div>
+                  <div class="td-name">SharePoint + Microsoft Teams</div>
+                  <div class="td-note">Reference document store, pricing templates, Adaptive Cards approval channel</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="td-tag tag-user">Microsoft 365</span></td>
+            <td><span class="td-tag tag-user">user / month</span></td>
+            <td><a href="https://www.microsoft.com/en-in/microsoft-365/sharepoint/compare-sharepoint-plans" class="udemy-link">View More</a></td>
+            <td><div class="td-price">$9.00</div></td>
+          </tr>
+
+          <!-- TOTAL -->
+          <tr class="total-row">
+            <td colspan="2" style="font-weight:900;font-size:1rem;">
+              <span style="color:#5a6a8a;font-size:.85rem;font-weight:600;margin-right:.5rem;">TOTAL ESTIMATED COST</span>
+              <span style="font-size:11px;color:#5a6a8a;font-weight:400;">(1 user + Azure services, excl. PAYG overages)</span>
+            </td>
+            <td colspan="2" style="font-size:12.5px;color:#5a6a8a;font-weight:500;">Per user + per service</td>
+            <td></td>
+            <td class="td-price-total" style="font-family:'Mulish',sans-serif;font-weight:900;font-size:1.3rem;color:#00B2ED;text-align:right;">$167.73</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Cost summary cards -->
+    <div class="cost-cards">
+      <div class="cost-card cc-blue">
+        <div class="cc-lbl">Power Platform (per user)</div>
+        <div class="cc-val">$35.00</div>
+        <div class="cc-sub">Apps + Automate + BI + Copilot Studio</div>
+        <div class="cc-note">Per user / month</div>
+      </div>
+      <div class="cost-card cc-purple">
+        <div class="cc-lbl">Azure AI Services</div>
+        <div class="cc-val">$123.73</div>
+        <div class="cc-sub">AI Search + OpenAI + Doc Intelligence</div>
+        <div class="cc-note">Per service / month (est.)</div>
+      </div>
+      <div class="cost-card cc-amber">
+        <div class="cc-lbl">Microsoft 365</div>
+        <div class="cc-val">$9.00</div>
+        <div class="cc-sub">SharePoint + Teams</div>
+        <div class="cc-note">Per user / month</div>
+      </div>
+      <div class="cost-card cc-green">
+        <div class="cc-lbl">OpenAI &amp; Doc AI</div>
+        <div class="cc-val">PAYG</div>
+        <div class="cc-sub">Token &amp; page usage based</div>
+        <div class="cc-note">See compare sheet for details</div>
+      </div>
+      <div class="cost-card cc-dark">
+        <div class="cc-lbl">Total estimate</div>
+        <div class="cc-val" style="color:#00B2ED;">$167.73</div>
+        <div class="cc-sub">1 user + all Azure services</div>
+        <div class="cc-note">Excl. variable PAYG usage</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     SECTION 2 — SKILLS / CERTS
+════════════════════════════════ -->
+<section class="section alt" id="skills">
+  <div class="sec-inner">
+    <div class="sec-lbl">Developer Upskilling Roadmap</div>
+    <div class="sec-title">Azure Certifications &amp; <em>Courses</em></div>
+    <p class="sec-sub">Two-phase certification path to equip your development team with the Azure knowledge needed to build, deploy, and maintain the Proposal Intelligence Platform.</p>
+
+    <!-- Skill overview -->
+    <div class="skill-overview">
+      <div class="skill-card sc-blue">
+        <div class="skill-card-label">Phase 1 Outcome</div>
+        <div class="skill-card-title">Azure Fluency</div>
+        <div class="skill-card-desc">Understand Azure fundamentals, pricing, security, and cloud concepts — the baseline every developer needs before coding against Azure APIs.</div>
+      </div>
+      <div class="skill-card sc-purple">
+        <div class="skill-card-label">Phase 2 Outcome</div>
+        <div class="skill-card-title">Azure Development</div>
+        <div class="skill-card-desc">Build and deploy real workloads — ASP.NET Core, Azure Functions, Storage, Security, and Messaging services used directly in this POC.</div>
+      </div>
+      <div class="skill-card sc-teal">
+        <div class="skill-card-label">Total Duration</div>
+        <div class="skill-card-title">3–4 Weeks</div>
+        <div class="skill-card-desc">Both phases completed in parallel with early POC weeks — Phase 1 in Week 1, Phase 2 during Weeks 2–3 while Blazor and Power Platform are being built.</div>
+      </div>
+      <div class="skill-card sc-amber">
+        <div class="skill-card-label">Estimated Cost</div>
+        <div class="skill-card-title">₹9k–₹12k</div>
+        <div class="skill-card-desc">Total exam fees (India) for both certifications, plus Udemy course materials under ₹1,400. High ROI for the team's long-term Azure practice.</div>
+      </div>
+    </div>
+
+    <!-- PHASES -->
+    <div class="phases">
+
+      <!-- PHASE 1 -->
+      <div class="phase ph1">
+        <div class="phase-header">
+          <div class="phase-num">1</div>
+          <div class="phase-header-text">
+            <div class="phase-label">Foundation — Start Week 1</div>
+            <div class="phase-title">Microsoft Azure Fundamentals</div>
+          </div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-grid">
+
+            <div class="cert-card">
+              <div class="cert-badge cb-az900">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2L3 5v4c0 3 2.5 5.5 5 6 2.5-.5 5-3 5-6V5L8 2z" fill="#00B2ED"/></svg>
+                AZ-900
+              </div>
+              <div class="cert-name">Microsoft Azure Fundamentals</div>
+              <div class="cert-desc">Covers cloud basics, Azure services overview, pricing models, SLAs, and security fundamentals. The essential first step before any Azure development work.</div>
+
+              <div class="cert-details">
+                <div class="cert-row">
+                  <span class="cr-lbl">Exam Fee (India)</span>
+                  <span class="cr-val blue">₹3,500 – ₹4,000</span>
+                </div>
+                <div class="cert-row">
+                  <span class="cr-lbl">Course Fee (Udemy)</span>
+                  <span class="cr-val">₹500 – ₹700</span>
+                </div>
+                <div class="cert-row">
+                  <span class="cr-lbl">Preparation Time</span>
+                  <span class="cr-val">1–2 weeks</span>
+                </div>
+              </div>
+
+              <div class="prep-bar-wrap">
+                <div class="prep-bar-lbl">Prep timeline (out of 5-week roadmap)</div>
+                <div class="prep-bar"><div class="prep-fill pf-1"></div></div>
+              </div>
+
+              <div class="topic-chips">
+                <span class="topic-chip">Cloud concepts</span>
+                <span class="topic-chip">Azure services overview</span>
+                <span class="topic-chip">Pricing &amp; SLAs</span>
+                <span class="topic-chip">Security fundamentals</span>
+                <span class="topic-chip">Azure management tools</span>
+              </div>
+
+              <div class="udemy-label">Recommended Udemy courses</div>
+              <div class="udemy-links">
+                <a href="https://www.udemy.com/course/az900-azure/" target="_blank" class="udemy-link">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 12V4l6-3 6 3v8l-6 3-6-3z" stroke="#00B2ED" stroke-width="1.3" fill="none"/><path d="M8 1v14M2 4l6 3 6-3" stroke="#00B2ED" stroke-width="1.1"/></svg>
+                  AZ-900 Azure · Main Course
+                </a>
+                <a href="https://www.udemy.com/course/az900-azure-tests/" target="_blank" class="udemy-link">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#00B2ED" stroke-width="1.3"/><path d="M5 8l2 2 4-4" stroke="#00B2ED" stroke-width="1.3" stroke-linecap="round"/></svg>
+                  AZ-900 Practice Tests 2026
+                </a>
+              </div>
+            </div>
+
+            <div style="background:#f0f8fe;border:1px solid rgba(0,178,237,0.20);border-radius:10px;padding:1.2rem;display:flex;flex-direction:column;gap:.8rem;">
+              <div style="font-family:'Mulish',sans-serif;font-size:.88rem;font-weight:700;color:#0D133E;">Why AZ-900 matters for this POC</div>
+              <p style="font-size:12.5px;color:#5a6a8a;line-height:1.75;">Before wiring Azure Blob Storage, Document Intelligence, AI Search, and OpenAI into the platform, every developer needs to understand how Azure resources are provisioned, billed, and governed. AZ-900 gives the team a shared language and prevents costly misconfiguration.</p>
+              <div style="display:flex;flex-direction:column;gap:.5rem;">
+                <div style="display:flex;align-items:flex-start;gap:.6rem;font-size:12.5px;color:#0D133E;">
+                  <span style="color:#00B2ED;font-weight:700;margin-top:2px;">›</span>
+                  <span>Understand Azure <strong>resource groups</strong> and <strong>subscriptions</strong> used in Week 1 infra setup</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:.6rem;font-size:12.5px;color:#0D133E;">
+                  <span style="color:#00B2ED;font-weight:700;margin-top:2px;">›</span>
+                  <span>Azure <strong>Key Vault</strong> — storing OpenAI keys, connection strings, secrets</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:.6rem;font-size:12.5px;color:#0D133E;">
+                  <span style="color:#00B2ED;font-weight:700;margin-top:2px;">›</span>
+                  <span>Azure <strong>AD &amp; identity</strong> — basis for Blazor Server AAD auth (Week 1)</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:.6rem;font-size:12.5px;color:#0D133E;">
+                  <span style="color:#00B2ED;font-weight:700;margin-top:2px;">›</span>
+                  <span>Azure <strong>pricing &amp; FinOps</strong> — estimating monthly POC costs accurately</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 2 -->
+      <div class="phase ph2">
+        <div class="phase-header">
+          <div class="phase-num">2</div>
+          <div class="phase-header-text">
+            <div class="phase-label">Development — Start Week 2</div>
+            <div class="phase-title">Microsoft Azure Developer Associate</div>
+          </div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-grid">
+
+            <div class="cert-card">
+              <div class="cert-badge cb-az204">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" fill="#6B46C1" opacity=".8"/><path d="M5 8h6M8 5v6" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+                AZ-204
+              </div>
+              <div class="cert-name">Microsoft Azure Developer Associate</div>
+              <div class="cert-desc">Hands-on Azure development covering ASP.NET Core deployment, Azure Functions, Storage, Security (Key Vault, Managed Identity), and Messaging — all used directly in the POC backend.</div>
+
+              <div class="cert-details">
+                <div class="cert-row">
+                  <span class="cr-lbl">Exam Fee (India)</span>
+                  <span class="cr-val purple">₹4,500 – ₹5,000</span>
+                </div>
+                <div class="cert-row">
+                  <span class="cr-lbl">Course Fee (Udemy)</span>
+                  <span class="cr-val">₹500 – ₹700</span>
+                </div>
+                <div class="cert-row">
+                  <span class="cr-lbl">Preparation Time</span>
+                  <span class="cr-val">1–2 weeks</span>
+                </div>
+              </div>
+
+              <div class="prep-bar-wrap">
+                <div class="prep-bar-lbl">Prep timeline (out of 5-week roadmap)</div>
+                <div class="prep-bar"><div class="prep-fill pf-2"></div></div>
+              </div>
+
+              <div class="topic-chips">
+                <span class="topic-chip">ASP.NET Core deployment</span>
+                <span class="topic-chip">Azure Functions</span>
+                <span class="topic-chip">Blob &amp; Queue Storage</span>
+                <span class="topic-chip">Key Vault &amp; Managed Identity</span>
+                <span class="topic-chip">Azure API Management</span>
+                <span class="topic-chip">Service Bus &amp; Event Grid</span>
+                <span class="topic-chip">App Service + AKS</span>
+              </div>
+
+              <div class="udemy-label">Recommended Udemy courses</div>
+              <div class="udemy-links">
+                <a href="http://udemy.com/course/70532-azure/" target="_blank" class="udemy-link" style="border-color:rgba(107,70,193,0.25);background:rgba(107,70,193,0.06);color:#6B46C1;">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 12V4l6-3 6 3v8l-6 3-6-3z" stroke="#6B46C1" stroke-width="1.3" fill="none"/><path d="M8 1v14M2 4l6 3 6-3" stroke="#6B46C1" stroke-width="1.1"/></svg>
+                  AZ-204 Azure Developer · Main Course
+                </a>
+                <a href="https://www.udemy.com/course/az-204-practice-tests-2026-azure-developer-associate/" target="_blank" class="udemy-link" style="border-color:rgba(107,70,193,0.25);background:rgba(107,70,193,0.06);color:#6B46C1;">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#6B46C1" stroke-width="1.3"/><path d="M5 8l2 2 4-4" stroke="#6B46C1" stroke-width="1.3" stroke-linecap="round"/></svg>
+                  AZ-204 Practice Tests 2026
+                </a>
+              </div>
+            </div>
+
+            <div style="background:#f5f0fe;border:1px solid rgba(107,70,193,0.20);border-radius:10px;padding:1.2rem;display:flex;flex-direction:column;gap:.8rem;">
+              <div style="font-family:'Mulish',sans-serif;font-size:.88rem;font-weight:700;color:#0D133E;">Why AZ-204 matters for this POC</div>
+              <p style="font-size:12.5px;color:#5a6a8a;line-height:1.75;">The entire Blazor Server backend, Power Automate HTTP integrations, and Azure AI pipeline all rely on skills taught in AZ-204. This certification ensures developers can correctly deploy, secure, and troubleshoot every Azure service in the platform.</p>
+              <div style="display:flex;flex-direction:column;gap:.5rem;">
+                <div style="display:flex;align-items:flex-start;gap:.6rem;font-size:12.5px;color:#0D133E;">
+                  <span style="color:#6B46C1;font-weight:700;margin-top:2px;">›</span>
+                  <span><strong>ASP.NET Core + Azure App Service</strong> — Blazor Server deployment (Week 2)</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:.6rem;font-size:12.5px;color:#0D133E;">
+                  <span style="color:#6B46C1;font-weight:700;margin-top:2px;">›</span>
+                  <span><strong>Blob Storage</strong> — RFP and proposal document storage (Step 2 of data flow)</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:.6rem;font-size:12.5px;color:#0D133E;">
+                  <span style="color:#6B46C1;font-weight:700;margin-top:2px;">›</span>
+                  <span><strong>Key Vault + Managed Identity</strong> — securing OpenAI &amp; Search API keys</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:.6rem;font-size:12.5px;color:#0D133E;">
+                  <span style="color:#6B46C1;font-weight:700;margin-top:2px;">›</span>
+                  <span><strong>Azure Functions / HTTP triggers</strong> — Power Automate custom connector backend</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:.6rem;font-size:12.5px;color:#0D133E;">
+                  <span style="color:#6B46C1;font-weight:700;margin-top:2px;">›</span>
+                  <span><strong>Azure AD &amp; OAuth 2.0</strong> — Blazor Server authentication &amp; Dataverse service principal</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /phases -->
+
+    <!-- Summary row -->
+    <div style="margin-top:2rem;background:#0D133E;border-radius:14px;padding:1.6rem 1.8rem;display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,0.55);font-weight:700;margin-bottom:.3rem;">Total Certification Investment</div>
+        <div style="font-family:'Mulish',sans-serif;font-size:1.6rem;font-weight:900;color:#00B2ED;">₹9,000 – ₹12,400</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px;">Exam fees (AZ-900 + AZ-204) + Udemy courses</div>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:.9rem 1.2rem;text-align:center;">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.55);font-weight:700;margin-bottom:.2rem;">Phase 1</div>
+          <div style="font-size:1rem;font-weight:800;color:#fff;">AZ-900</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Week 1 · 1–2 weeks prep</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:.9rem 1.2rem;text-align:center;">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.55);font-weight:700;margin-bottom:.2rem;">Phase 2</div>
+          <div style="font-size:1rem;font-weight:800;color:#fff;">AZ-204</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Week 2 · 1–2 weeks prep</div>
+        </div>
+        <div style="background:rgba(0,178,237,0.15);border:1px solid rgba(0,178,237,0.30);border-radius:10px;padding:.9rem 1.2rem;text-align:center;">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(0,178,237,0.7);font-weight:700;margin-bottom:.2rem;">Total</div>
+          <div style="font-size:1rem;font-weight:800;color:#00B2ED;">3–4 weeks</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Both certs + POC in parallel</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <h2>Ready to start the POC?</h2>
+  <p>Book a free 60-minute session with our Microsoft-certified architects to plan your subscriptions, skill roadmap, and Week 1 kickoff.</p>
+  <a href="#" class="cta-btn">Book a Free Consultation →</a>
+</div>
+
+<footer>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <svg width="90" height="16" viewBox="0 0 223 40" fill="none"><g clip-path="url(#clip0_foot)"><path d="M48.1752 26.7534V31.0041H29.1777V29.7925C41.3177 16.5906 42.7908 14.3321 42.7908 11.1448C42.7908 8.71877 41.1167 7.08126 38.6143 7.08126C35.9983 7.08126 34.2765 8.76031 34.2765 11.1983V11.8156H29.7676V11.1746C29.7676 6.21053 33.2988 2.84277 38.5781 2.84277C43.7444 2.84277 47.3416 6.26328 47.3416 11.1211C47.3416 14.7612 45.8882 17.7153 37.8216 26.7534H48.1752Z" fill="#00B2ED"/><path d="M52.6162 0.37207H57.3039V31.0036H52.6162V0.37207Z" fill="#0D133E"/><path d="M73.3409 31.4976C66.4259 31.4976 61.2515 26.4892 61.2515 19.7639C61.2515 12.9973 66.4259 8.03027 73.3409 8.03027C80.2439 8.03027 85.4302 13.027 85.4302 19.7644C85.4302 26.4895 80.2439 31.498 73.3409 31.498V31.4976ZM80.6991 19.7639C80.6991 15.4808 77.6207 12.4225 73.3409 12.4225C69.0611 12.4225 65.9832 15.4808 65.9832 19.7639C65.9832 24.0469 69.0613 27.1054 73.3409 27.1054C77.6205 27.1054 80.6991 24.0472 80.6991 19.7639Z" fill="#0D133E"/><path d="M110.842 8.58131V28.2631C110.842 35.4876 106.511 39.897 99.4493 39.897C93.6009 39.897 89.4499 36.8888 88.2847 31.9156H92.9658C93.841 34.3999 96.5281 35.7703 99.4131 35.7703C103.36 35.7703 106.246 33.1909 106.246 28.8995V27.8547C104.267 29.5553 101.645 30.5631 98.6878 30.5631C92.3332 30.5631 87.4039 25.6623 87.4039 19.3176C87.4039 12.9851 92.3332 8.03027 98.6878 8.03027C102.037 8.03027 104.969 9.34661 107.017 11.504L107.764 8.5821L110.842 8.58131ZM99.2207 26.244C103.282 26.244 106.228 23.3105 106.228 19.3168C106.228 15.3054 103.295 12.372 99.2207 12.372C95.1582 12.372 92.1823 15.3356 92.1823 19.3172C92.1823 23.2808 95.1459 26.2444 99.22 26.2444L99.2207 26.244Z" fill="#0D133E"/><path d="M137.489 8.52441L127.1 31.4816C124.545 37.1504 122.295 39.156 117.687 39.156H115.389V34.9808H117.328C120.319 34.9808 121.239 34.1103 122.895 30.5024L123.403 29.4398L113.557 8.52441H118.612L125.798 24.247L132.541 8.52441H137.489Z" fill="#0D133E"/><path d="M17.0325 27.3299C14.8671 27.3299 13.0661 26.5576 11.8287 25.1854H6.58582C8.44178 29.1137 12.3338 31.6972 17.0325 31.6972C22.0836 31.6972 26.2145 28.7961 28.0156 24.0171H23.1212C21.923 26.0793 19.7343 27.3299 17.0325 27.3299Z" fill="#00B2ED"/><path d="M17.0325 7.94727C12.5687 7.94727 8.84894 10.2603 6.89117 13.8397H12.3534C13.5515 12.7576 15.1568 12.15 17.0325 12.15C20.4781 12.15 23.0702 14.1807 23.9042 17.6228H2.27389L0.0645752 21.4061H28.4698C28.5245 20.8964 28.5637 20.3867 28.5637 19.8771H28.5677C28.5677 13.2869 23.959 7.94727 17.0325 7.94727Z" fill="#00B2ED"/></g><defs><clipPath id="clip0_foot"><rect width="223" height="40" fill="white"/></clipPath></defs></svg>
+  </div>
+  <div class="foot-copy">© 2026 E2logy Software Solutions · Proposal Intelligence Platform · Confidential</div>
+</footer>
+
+</body>
+</html>

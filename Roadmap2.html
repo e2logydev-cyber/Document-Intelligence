@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Proposal Intelligence Platform · Blazor + Foundry Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#00B2ED;--dark:#0D133E;--navy:#f5fafd;--slate:#e8f5fb;
+  --accent:#00B2ED;--white:#ffffff;--muted:#5a6a8a;
+  --border:rgba(0,178,237,0.18);--fh:'Mulish',sans-serif;
+  --bg:#ffffff;--bg-alt:#f5fafd;--bg-card:#ffffff;--text:#0D133E;--text-light:#5a6a8a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#ffffff;color:#0D133E;font-family:var(--fh);font-size:16px;line-height:1.7;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;width:100%;z-index:200;padding:0.9rem 4%;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.96);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,178,237,0.15);box-shadow:0 1px 20px rgba(13,19,62,0.07);}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-size:17px;font-weight:700;color:#0D133E;text-decoration:none;}
+.nav-links{display:flex;gap:1.6rem;list-style:none;}
+.nav-links a{color:#5a6a8a;text-decoration:none;font-size:13.5px;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:#00B2ED;}
+.nav-cta{background:#00B2ED;color:#fff;padding:0.5rem 1.3rem;border-radius:6px;font-size:13.5px;font-weight:500;text-decoration:none;transition:background .2s;}
+.nav-cta:hover{background:#0099cc;}
+
+/* HERO */
+.page-hero{padding:7rem 4% 3.5rem;background:#ffffff;position:relative;overflow:hidden;border-bottom:1px solid rgba(0,178,237,0.10);}
+.ph-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,178,237,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,178,237,0.06) 1px,transparent 1px);background-size:60px 60px;opacity:0.7;}
+.ph-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:300px;background:radial-gradient(ellipse,rgba(0,178,237,0.09) 0%,transparent 68%);}
+.ph-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;}
+.ph-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.28);border-radius:30px;padding:0.35rem 1rem;font-size:12px;color:#00B2ED;font-weight:600;margin-bottom:1.2rem;letter-spacing:.04em;}
+.ph-badge span{width:6px;height:6px;border-radius:50%;background:#00B2ED;display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.ph-title{font-family:var(--fh);font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:#0D133E;line-height:1.1;letter-spacing:-.03em;margin-bottom:.7rem;}
+.ph-title em{font-style:normal;color:#00B2ED;}
+.ph-sub{font-size:14.5px;color:#5a6a8a;max-width:740px;line-height:1.85;font-weight:300;}
+.ph-meta{display:flex;gap:2rem;margin-top:1.8rem;flex-wrap:wrap;}
+.ph-stat-val{font-family:var(--fh);font-size:1.15rem;font-weight:900;color:#00B2ED;}
+.ph-stat-lbl{font-size:12px;color:#5a6a8a;}
+
+/* ARCHITECTURE BANNER */
+.arch-banner{padding:2.5rem 4%;background:linear-gradient(135deg,#0D133E 0%,#1a2260 100%);border-bottom:1px solid rgba(0,178,237,0.15);}
+.ab-inner{max-width:1100px;margin:0 auto;}
+.ab-title{font-family:var(--fh);font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:1.5rem;opacity:.9;}
+.ab-stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;}
+.ab-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:1.2rem 1.4rem;position:relative;overflow:hidden;}
+.ab-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
+.ab-card.frontend::before{background:#00B2ED;}
+.ab-card.database::before{background:#E8960A;}
+.ab-card.agent::before{background:#16A34A;}
+.ab-card.ai::before{background:#6B46C1;}
+.ab-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.55);font-weight:700;margin-bottom:.4rem;}
+.ab-name{font-family:var(--fh);font-size:1rem;font-weight:800;color:#fff;margin-bottom:.3rem;}
+.ab-desc{font-size:12px;color:rgba(255,255,255,0.65);line-height:1.6;}
+.ab-tech{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem;}
+.ab-tech span{font-size:10px;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);font-weight:600;}
+
+/* SECTIONS */
+.section{padding:3.5rem 4% 4.5rem;}
+.section.alt{background:#f5fafd;}
+.sec-inner{max-width:1100px;margin:0 auto;}
+.sec-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:#00B2ED;font-weight:700;margin-bottom:.4rem;}
+.sec-heading{font-family:var(--fh);font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:900;color:#0D133E;letter-spacing:-.02em;margin-bottom:.5rem;}
+.sec-heading em{font-style:normal;color:#00B2ED;}
+.sec-sub{font-size:14px;color:#5a6a8a;max-width:740px;line-height:1.85;margin-bottom:2.2rem;}
+
+/* COMPARISON TABLE */
+.compare-table{width:100%;border-collapse:collapse;margin-top:1.5rem;font-size:13px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,178,237,0.07);}
+.compare-table th{background:#0D133E;padding:1rem 1.2rem;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.7);font-weight:700;}
+.compare-table td{padding:1rem 1.2rem;border-bottom:1px solid rgba(0,178,237,0.08);vertical-align:top;color:#0D133E;line-height:1.6;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table tr:hover td{background:rgba(0,178,237,0.03);}
+.ct-old{color:#888780;font-size:12px;}
+.ct-new{color:#0D9E8A;font-weight:600;font-size:12px;}
+.badge-r{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(22,163,74,0.10);border:1px solid rgba(22,163,74,0.22);color:#16A34A;font-weight:600;}
+
+/* FLOW STEPS */
+.flow-steps{display:flex;flex-direction:column;gap:0;position:relative;margin-top:2rem;}
+.flow-steps::before{content:'';position:absolute;left:46px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#00B2ED 0%,rgba(0,178,237,0.15) 100%);z-index:0;}
+.step{display:flex;gap:1.5rem;align-items:flex-start;position:relative;z-index:1;}
+.step+.step{margin-top:0;}
+.step-num{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:1.1rem;font-weight:800;flex-shrink:0;position:relative;z-index:2;transition:transform .2s;}
+.step:hover .step-num{transform:scale(1.08);}
+.step-num.blue{background:#00B2ED;color:#fff;box-shadow:0 4px 16px rgba(0,178,237,0.35);}
+.step-num.teal{background:#0D9E8A;color:#fff;box-shadow:0 4px 16px rgba(13,158,138,0.30);}
+.step-num.amber{background:#E8960A;color:#fff;box-shadow:0 4px 16px rgba(232,150,10,0.30);}
+.step-num.purple{background:#6B46C1;color:#fff;box-shadow:0 4px 16px rgba(107,70,193,0.30);}
+.step-num.green{background:#16A34A;color:#fff;box-shadow:0 4px 16px rgba(22,163,74,0.30);}
+.step-num.gray{background:#888780;color:#fff;box-shadow:0 4px 16px rgba(136,135,128,0.25);}
+
+.step-card{flex:1;background:#fff;border:1px solid rgba(0,178,237,0.18);border-radius:14px;padding:1.5rem 1.8rem;margin-bottom:22px;transition:border-color .2s,box-shadow .2s,transform .2s;position:relative;overflow:hidden;}
+.step-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;}
+.s-blue::before{background:linear-gradient(90deg,#00B2ED,#0099cc);}
+.s-teal::before{background:linear-gradient(90deg,#0D9E8A,#06766A);}
+.s-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+.s-purple::before{background:linear-gradient(90deg,#6B46C1,#553593);}
+.s-green::before{background:linear-gradient(90deg,#16A34A,#0E7A36);}
+.s-gray::before{background:linear-gradient(90deg,#888780,#5F5E5A);}
+.step-card:hover{border-color:rgba(0,178,237,0.40);box-shadow:0 8px 32px rgba(0,178,237,0.10);transform:translateY(-2px);}
+
+.step-tag{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.32rem;}
+.s-blue .step-tag{color:#00B2ED;} .s-teal .step-tag{color:#0D9E8A;} .s-amber .step-tag{color:#E8960A;} .s-purple .step-tag{color:#6B46C1;} .s-green .step-tag{color:#16A34A;} .s-gray .step-tag{color:#888780;}
+.step-title{font-family:var(--fh);font-size:1.02rem;font-weight:800;color:#0D133E;margin-bottom:.45rem;}
+.step-desc{font-size:13px;color:#5a6a8a;line-height:1.8;margin-bottom:.8rem;}
+
+/* PLAIN BOX */
+.plain-box{border-radius:10px;padding:1rem 1.2rem;margin:.4rem 0 .85rem;}
+.plain-box-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem;}
+.plain-box-text{font-size:13.5px;line-height:1.85;color:#0D133E;}
+.pb-blue{background:rgba(0,178,237,0.07);border:1px solid rgba(0,178,237,0.20);}
+.pb-blue .plain-box-label{color:#00B2ED;}
+.pb-teal{background:rgba(13,158,138,0.07);border:1px solid rgba(13,158,138,0.20);}
+.pb-teal .plain-box-label{color:#0D9E8A;}
+.pb-amber{background:rgba(232,150,10,0.07);border:1px solid rgba(232,150,10,0.20);}
+.pb-amber .plain-box-label{color:#B87208;}
+.pb-purple{background:rgba(107,70,193,0.07);border:1px solid rgba(107,70,193,0.20);}
+.pb-purple .plain-box-label{color:#6B46C1;}
+.pb-green{background:rgba(22,163,74,0.07);border:1px solid rgba(22,163,74,0.20);}
+.pb-green .plain-box-label{color:#16A34A;}
+
+/* ITEMS */
+.step-items{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem;}
+.step-item{font-size:11.5px;padding:3px 10px;border-radius:20px;font-weight:500;}
+.si-blue{background:rgba(0,178,237,0.09);border:1px solid rgba(0,178,237,0.22);color:#007DAF;}
+.si-teal{background:rgba(13,158,138,0.09);border:1px solid rgba(13,158,138,0.22);color:#0D9E8A;}
+.si-amber{background:rgba(232,150,10,0.09);border:1px solid rgba(232,150,10,0.22);color:#B87208;}
+.si-purple{background:rgba(107,70,193,0.09);border:1px solid rgba(107,70,193,0.22);color:#6B46C1;}
+.si-green{background:rgba(22,163,74,0.09);border:1px solid rgba(22,163,74,0.22);color:#16A34A;}
+
+/* TECH COMPONENT */
+.tech-component{background:rgba(13,158,138,0.07);border:1px solid rgba(13,158,138,0.22);border-radius:10px;padding:.9rem 1.1rem;margin:.6rem 0 .85rem;}
+.tc-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:#0D9E8A;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem;}
+.tc-title{font-family:var(--fh);font-size:.9rem;font-weight:800;color:#0D133E;margin-bottom:.3rem;}
+.tc-desc{font-size:13px;color:#5a6a8a;line-height:1.75;}
+.tc-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.55rem;}
+.tc-tag{font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(13,158,138,0.10);border:1px solid rgba(13,158,138,0.22);color:#0D9E8A;font-weight:600;}
+
+/* VS COMPARISON */
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.6rem 0 .85rem;}
+.vs-card{border-radius:8px;padding:.8rem .9rem;}
+.vs-old{background:rgba(136,135,128,0.07);border:1px solid rgba(136,135,128,0.18);}
+.vs-new{background:rgba(13,158,138,0.07);border:1px solid rgba(13,158,138,0.22);}
+.vs-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.35rem;}
+.vs-old .vs-label{color:#888780;}
+.vs-new .vs-label{color:#0D9E8A;}
+.vs-text{font-size:12.5px;color:#5a6a8a;line-height:1.65;}
+
+/* OUTPUT GRID */
+.output-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:.7rem;margin:.7rem 0 .85rem;}
+.output-chip{background:linear-gradient(135deg,#0D133E 0%,#1a2260 100%);border-radius:10px;padding:.85rem .9rem;text-align:center;}
+.output-chip-label{font-size:10px;color:rgba(255,255,255,0.60);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:.25rem;}
+.output-chip-val{font-size:12px;color:#fff;font-weight:700;line-height:1.3;}
+
+/* STEP FOOT */
+.step-foot{margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(0,178,237,0.12);font-size:11.5px;font-weight:600;font-style:italic;}
+.s-blue .step-foot{color:#00B2ED;} .s-teal .step-foot{color:#0D9E8A;} .s-amber .step-foot{color:#E8960A;} .s-purple .step-foot{color:#6B46C1;} .s-green .step-foot{color:#16A34A;}
+
+/* TIMELINE TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--border);box-shadow:0 4px 24px rgba(0,178,237,0.07);margin-top:1.5rem;}
+.tbl{width:100%;border-collapse:collapse;background:#fff;}
+.tbl thead tr{background:#0D133E;}
+.tbl thead th{padding:1rem 1.2rem;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.70);font-weight:700;}
+.tbl tbody tr{border-bottom:1px solid rgba(0,178,237,0.10);transition:background .15s;}
+.tbl tbody tr:last-child{border-bottom:none;}
+.tbl tbody tr:hover{background:rgba(0,178,237,0.04);}
+.tbl tbody td{padding:.9rem 1.2rem;font-size:13.5px;color:#0D133E;vertical-align:middle;}
+.tbl tbody td:first-child{font-weight:700;color:#00B2ED;width:80px;}
+
+/* COST CARDS */
+.cost-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-top:2rem;}
+.cost-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.4rem;position:relative;overflow:hidden;}
+.cost-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;}
+.cost-card.cc-blue::before{background:#00B2ED;}
+.cost-card.cc-purple::before{background:#6B46C1;}
+.cost-card.cc-amber::before{background:#E8960A;}
+.cost-card.cc-green::before{background:#16A34A;}
+.cost-card.cc-dark::before{background:#0D133E;}
+.cc-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:#5a6a8a;font-weight:700;margin-bottom:.3rem;}
+.cc-val{font-family:var(--fh);font-size:1.5rem;font-weight:900;color:#0D133E;}
+.cc-sub{font-size:11.5px;color:#5a6a8a;margin-top:2px;}
+
+/* CTA */
+.cta-strip{padding:3rem 4%;background:linear-gradient(135deg,#0D133E 0%,#00B2ED 100%);text-align:center;}
+.cta-strip h2{font-family:var(--fh);font-size:clamp(1.4rem,3vw,2rem);font-weight:900;color:#fff;margin-bottom:.65rem;letter-spacing:-.02em;}
+.cta-strip p{font-size:14px;color:rgba(255,255,255,0.80);margin-bottom:1.4rem;}
+.cta-btn{display:inline-block;background:#fff;color:#0D133E;padding:.72rem 1.8rem;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:transform .2s,box-shadow .2s;}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(13,19,62,0.18);}
+
+/* FOOTER */
+footer{padding:1.6rem 4%;border-top:1px solid rgba(0,178,237,0.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;background:#fff;}
+.foot-copy{font-size:11.5px;color:#5a6a8a;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.step{animation:fadeUp .48s ease both;}
+.step:nth-child(1){animation-delay:.04s;}.step:nth-child(2){animation-delay:.09s;}.step:nth-child(3){animation-delay:.14s;}.step:nth-child(4){animation-delay:.19s;}.step:nth-child(5){animation-delay:.24s;}.step:nth-child(6){animation-delay:.29s;}.step:nth-child(7){animation-delay:.34s;}.step:nth-child(8){animation-delay:.39s;}
+
+@media(max-width:900px){.vs-grid{grid-template-columns:1fr;}}
+@media(max-width:700px){.flow-steps::before{left:24px;}.step-num{width:36px;height:36px;font-size:.85rem;}.step-card{padding:1.1rem 1.2rem;}.ab-stack{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg width="120" height="22" viewBox="0 0 223 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clip-path="url(#clip0_nav)">
+        <path d="M48.1752 26.7534V31.0041H29.1777V29.7925C41.3177 16.5906 42.7908 14.3321 42.7908 11.1448C42.7908 8.71877 41.1167 7.08126 38.6143 7.08126C35.9983 7.08126 34.2765 8.76031 34.2765 11.1983V11.8156H29.7676V11.1746C29.7676 6.21053 33.2988 2.84277 38.5781 2.84277C43.7444 2.84277 47.3416 6.26328 47.3416 11.1211C47.3416 14.7612 45.8882 17.7153 37.8216 26.7534H48.1752Z" fill="#00B2ED"/>
+        <path d="M52.6162 0.37207H57.3039V31.0036H52.6162V0.37207Z" fill="#0D133E"/>
+        <path d="M73.3409 31.4976C66.4259 31.4976 61.2515 26.4892 61.2515 19.7639C61.2515 12.9973 66.4259 8.03027 73.3409 8.03027C80.2439 8.03027 85.4302 13.027 85.4302 19.7644C85.4302 26.4895 80.2439 31.498 73.3409 31.498V31.4976ZM80.6991 19.7639C80.6991 15.4808 77.6207 12.4225 73.3409 12.4225C69.0611 12.4225 65.9832 15.4808 65.9832 19.7639C65.9832 24.0469 69.0613 27.1054 73.3409 27.1054C77.6205 27.1054 80.6991 24.0472 80.6991 19.7639Z" fill="#0D133E"/>
+        <path d="M110.842 8.58131V28.2631C110.842 35.4876 106.511 39.897 99.4493 39.897C93.6009 39.897 89.4499 36.8888 88.2847 31.9156H92.9658C93.841 34.3999 96.5281 35.7703 99.4131 35.7703C103.36 35.7703 106.246 33.1909 106.246 28.8995V27.8547C104.267 29.5553 101.645 30.5631 98.6878 30.5631C92.3332 30.5631 87.4039 25.6623 87.4039 19.3176C87.4039 12.9851 92.3332 8.03027 98.6878 8.03027C102.037 8.03027 104.969 9.34661 107.017 11.504L107.764 8.5821L110.842 8.58131ZM99.2207 26.244C103.282 26.244 106.228 23.3105 106.228 19.3168C106.228 15.3054 103.295 12.372 99.2207 12.372C95.1582 12.372 92.1823 15.3356 92.1823 19.3172C92.1823 23.2808 95.1459 26.2444 99.22 26.2444L99.2207 26.244Z" fill="#0D133E"/>
+        <path d="M137.489 8.52441L127.1 31.4816C124.545 37.1504 122.295 39.156 117.687 39.156H115.389V34.9808H117.328C120.319 34.9808 121.239 34.1103 122.895 30.5024L123.403 29.4398L113.557 8.52441H118.612L125.798 24.247L132.541 8.52441H137.489Z" fill="#0D133E"/>
+        <path d="M17.0325 27.3299C14.8671 27.3299 13.0661 26.5576 11.8287 25.1854H6.58582C8.44178 29.1137 12.3338 31.6972 17.0325 31.6972C22.0836 31.6972 26.2145 28.7961 28.0156 24.0171H23.1212C21.923 26.0793 19.7343 27.3299 17.0325 27.3299Z" fill="#00B2ED"/>
+        <path d="M17.0325 7.94727C12.5687 7.94727 8.84894 10.2603 6.89117 13.8397H12.3534C13.5515 12.7576 15.1568 12.15 17.0325 12.15C20.4781 12.15 23.0702 14.1807 23.9042 17.6228H2.27389L0.0645752 21.4061H28.4698C28.5245 20.8964 28.5637 20.3867 28.5637 19.8771H28.5677C28.5677 13.2869 23.959 7.94727 17.0325 7.94727Z" fill="#00B2ED"/>
+      </g>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#comparison">Comparison</a></li>
+    <li><a href="#dataflow">Data Flow</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#costs">Costs</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Start POC</a>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="ph-grid"></div>
+  <div class="ph-glow"></div>
+  <div class="ph-inner">
+    <div class="ph-badge"><span></span>Architecture Refresh · Power Platform → .NET + Foundry</div>
+    <div class="ph-title">Proposal Intelligence Platform<br/>using <em>Blazor + Microsoft Foundry</em></div>
+    <p class="ph-sub">A complete architectural pivot from Power Platform to a unified .NET stack. Blazor Server frontend, MS SQL database, Microsoft Foundry Agent Service for orchestration, and Azure AI services for intelligence — delivering higher performance, lower latency, and full code control.</p>
+    <div class="ph-meta">
+      <div><div class="ph-stat-val">Blazor</div><div class="ph-stat-lbl">.NET 8 Server</div></div>
+      <div><div class="ph-stat-val">MS SQL</div><div class="ph-stat-lbl">Vector Search Ready</div></div>
+      <div><div class="ph-stat-val">Foundry</div><div class="ph-stat-lbl">Agent Service</div></div>
+      <div><div class="ph-stat-val">GPT-4o</div><div class="ph-stat-lbl">Azure OpenAI</div></div>
+      <div><div class="ph-stat-val">9 Steps</div><div class="ph-stat-lbl">End-to-End</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE BANNER -->
+<section class="arch-banner" id="architecture">
+  <div class="ab-inner">
+    <div class="ab-title">New Technology Stack</div>
+    <div class="ab-stack">
+      <div class="ab-card frontend">
+        <div class="ab-label">Frontend Layer</div>
+        <div class="ab-name">Blazor Server (.NET 8)</div>
+        <div class="ab-desc">Single-page application with SignalR real-time updates, MudBlazor UI components, and Azure AD authentication.</div>
+        <div class="ab-tech">
+          <span>SignalR</span>
+          <span>MudBlazor</span>
+          <span>Azure AD</span>
+        </div>
+      </div>
+      <div class="ab-card database">
+        <div class="ab-label">Data Layer</div>
+        <div class="ab-name">Microsoft SQL Server</div>
+        <div class="ab-desc">Primary datastore with native vector support for semantic search, EF Core integration, and full ACID compliance.</div>
+        <div class="ab-tech">
+          <span>Vector(1536)</span>
+          <span>EF Core</span>
+          <span>Cosine Similarity</span>
+        </div>
+      </div>
+      <div class="ab-card agent">
+        <div class="ab-label">Orchestration Layer</div>
+        <div class="ab-name">Microsoft Foundry Agent</div>
+        <div class="ab-desc">Durable agent service with persistent thread memory, MCP tool integration, and multi-model support.</div>
+        <div class="ab-tech">
+          <span>MCP Tools</span>
+          <span>Thread Memory</span>
+          <span>Control Plane</span>
+        </div>
+      </div>
+      <div class="ab-card ai">
+        <div class="ab-label">AI Services Layer</div>
+        <div class="ab-name">Azure AI + OpenAI</div>
+        <div class="ab-desc">GPT-4o for generation, Azure AI Search for retrieval, Document Intelligence for parsing.</div>
+        <div class="ab-tech">
+          <span>GPT-4o</span>
+          <span>AI Search</span>
+          <span>Doc Intelligence</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON SECTION -->
+<section class="section" id="comparison">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Architecture Comparison</div>
+    <div class="sec-heading">Power Platform vs. <em>.NET + Foundry Stack</em></div>
+    <p class="sec-sub">Direct comparison showing what changes when we replace Power Apps, Power Automate, and Dataverse with Blazor, MS SQL, and Foundry Agent Service.</p>
+    
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Original (Power Platform)</th>
+          <th>New (.NET + Foundry)</th>
+          <th>Impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Frontend</strong></td>
+          <td class="ct-old">Power Apps (Canvas + Model-driven) — low-code, limited customization</td>
+          <td class="ct-new">Blazor Server (.NET 8) — full C# control, SignalR real-time, MudBlazor components</td>
+          <td><span class="badge-r">Higher Performance</span></td>
+        </tr>
+        <tr>
+          <td><strong>Database</strong></td>
+          <td class="ct-old">Dataverse — proprietary, limited SQL access, per-API pricing</td>
+          <td class="ct-new">MS SQL Server — native vector support, full T-SQL, EF Core, no per-call costs</td>
+          <td><span class="badge-r">Lower Cost + Vector Search</span></td>
+        </tr>
+        <tr>
+          <td><strong>Workflow Engine</strong></td>
+          <td class="ct-old">Power Automate — visual designer, HTTP action limits, per-flow pricing</td>
+          <td class="ct-new">Foundry Agent Service — code-first orchestration, MCP tools, durable threads</td>
+          <td><span class="badge-r">More Capable</span></td>
+        </tr>
+        <tr>
+          <td><strong>Authentication</strong></td>
+          <td class="ct-old">Azure AD via Power Platform — managed, limited customization</td>
+          <td class="ct-new">Azure AD + Microsoft.Identity.Web — full control, custom policies, JWT handling</td>
+          <td><span class="badge-r">Full Control</span></td>
+        </tr>
+        <tr>
+          <td><strong>File Storage</strong></td>
+          <td class="ct-old">Dataverse attachments + SharePoint — dual storage, complex permissions</td>
+          <td class="ct-new">Azure Blob Storage — unified, MCP tool integration, SAS tokens</td>
+          <td><span class="badge-r">Simpler</span></td>
+        </tr>
+        <tr>
+          <td><strong>Search & Retrieval</strong></td>
+          <td class="ct-old">Azure AI Search via HTTP connector — manual vector construction</td>
+          <td class="ct-new">MS SQL Vector Search + Azure AI Search — hybrid retrieval, cosine similarity in SQL</td>
+          <td><span class="badge-r">Hybrid Approach</span></td>
+        </tr>
+        <tr>
+          <td><strong>AI Generation</strong></td>
+          <td class="ct-old">Azure OpenAI via custom connector — manual prompt management</td>
+          <td class="ct-new">Foundry Model Catalogue — structured output, switchable models, thread memory</td>
+          <td><span class="badge-r">More Flexible</span></td>
+        </tr>
+        <tr>
+          <td><strong>Observability</strong></td>
+          <td class="ct-old">Power Platform admin center — basic analytics, limited tracing</td>
+          <td class="ct-new">Foundry Control Plane + Application Insights — full traces, evaluators, token usage</td>
+          <td><span class="badge-r">Enterprise Grade</span></td>
+        </tr>
+        <tr>
+          <td><strong>Deployment</strong></td>
+          <td class="ct-old">Managed environment — limited CI/CD, solution packaging</td>
+          <td class="ct-new">Azure DevOps/GitHub Actions — full CI/CD, infrastructure as code, containerization</td>
+          <td><span class="badge-r">DevOps Native</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- DATA FLOW SECTION -->
+<section class="section alt" id="dataflow">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">End-to-End Pipeline</div>
+    <div class="sec-heading">9-Step Data Flow — <em>Blazor + Foundry Implementation</em></div>
+    <p class="sec-sub">The complete proposal automation pipeline from RFP upload to final delivery, built entirely on .NET and Microsoft Foundry.</p>
+
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="step">
+        <div class="step-num blue">1</div>
+        <div class="step-card s-blue">
+          <div class="step-tag">Ingestion · Blazor Server Frontend</div>
+          <div class="step-title">Bid manager uploads RFP via Blazor web interface</div>
+          <div class="plain-box pb-blue">
+            <div class="plain-box-text">The Blazor Server app provides a rich drag-and-drop upload interface with real-time progress indicators. Files are validated (PDF/DOCX only, max 50MB) and immediately streamed to Azure Blob Storage using the Azure.Storage.Blobs SDK with managed identity authentication.</div>
+          </div>
+          <div class="step-items">
+            <span class="step-item si-blue">Blazor Server + SignalR</span>
+            <span class="step-item si-blue">Azure AD Authentication</span>
+            <span class="step-item si-blue">Azure Blob SDK (Managed Identity)</span>
+            <span class="step-item si-blue">Real-time upload progress</span>
+          </div>
+          <div class="step-foot">→ File stored in Blob, metadata written to MS SQL, Foundry Agent session initialized</div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step">
+        <div class="step-num teal">2</div>
+        <div class="step-card s-teal">
+          <div class="step-tag">Orchestration · Foundry Agent Service</div>
+          <div class="step-title">Foundry Agent creates durable session and initializes thread</div>
+          <div class="plain-box pb-teal">
+            <div class="plain-box-text">The Blazor backend calls the Foundry Agent Service HTTP endpoint to create a persistent session. This establishes a thread that maintains state across all 9 steps. The agent receives the blob URL and proposal ID, storing both in its durable memory.</div>
+          </div>
+          <div class="tech-component">
+            <div class="tc-label">Foundry Component — Agent Session</div>
+            <div class="tc-title">Durable thread with persistent memory</div>
+            <div class="tc-desc">Unlike Power Automate's stateless flow runs, the Foundry Agent maintains context across the entire proposal lifecycle. The thread survives restarts, retries, and can be queried later for audit and Q&A.</div>
+            <div class="tc-tags">
+              <span class="tc-tag">Session.Create()</span>
+              <span class="tc-tag">Thread Memory</span>
+              <span class="tc-tag">blobUrl stored</span>
+              <span class="tc-tag">proposalId stored</span>
+            </div>
+          </div>
+          <div class="step-foot">→ Agent thread active, ready to execute tool calls</div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step">
+        <div class="step-num amber">3</div>
+        <div class="step-card s-amber">
+          <div class="step-tag">Document Parsing · Azure Document Intelligence via MCP</div>
+          <div class="step-title">Agent calls Document Intelligence MCP tool to parse RFP</div>
+          <div class="plain-box pb-amber">
+            <div class="plain-box-text">The Foundry Agent invokes the Document Intelligence MCP tool, passing the blob URL. Foundry handles the async polling internally — the agent receives a structured extraction result containing client name, scope, requirements, budget, deadline, and compliance mandates.</div>
+          </div>
+          <div class="vs-grid">
+            <div class="vs-card vs-new">
+              <div class="vs-label">Foundry MCP Approach</div>
+              <div class="vs-text">Agent calls: AnalyseDocument(blobUrl) → Foundry manages async polling → receives structured JSON extraction</div>
+            </div>
+          </div>
+          <div class="step-items">
+            <span class="step-item si-amber">MCP: Document Intelligence</span>
+            <span class="step-item si-amber">Async handled by Foundry</span>
+            <span class="step-item si-amber">Structured extraction → Agent memory</span>
+          </div>
+          <div class="step-foot">→ RFP structured data in agent thread, ready for search</div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step">
+        <div class="step-num purple">4</div>
+        <div class="step-card s-purple">
+          <div class="step-tag">Hybrid Search · MS SQL Vector + Azure AI Search</div>
+          <div class="step-title">Parallel retrieval from MS SQL vector store and AI Search indexes</div>
+          <div class="plain-box pb-purple">
+            <div class="plain-box-text">Using the extracted requirements as query vectors, the system runs parallel searches: (1) MS SQL vector similarity search for past projects and team profiles using native cosine similarity, and (2) Azure AI Search for reference documents and pricing templates. Both results are merged and ranked.</div>
+          </div>
+          <div class="tech-component">
+            <div class="tc-label">Hybrid Retrieval — MS SQL + AI Search</div>
+            <div class="tc-title">Native vector operations in SQL + Semantic search</div>
+            <div class="tc-desc">MS SQL's new vector(1536) type stores embeddings natively. The system uses EF Core with the SqlServer.VectorSearch extension to perform cosine similarity directly in the database — no HTTP calls, no external services for structured data retrieval.</div>
+            <div class="tc-tags">
+              <span class="tc-tag">vector(1536) columns</span>
+              <span class="tc-tag">CosineSimilarity()</span>
+              <span class="tc-tag">EF Core VectorSearch</span>
+              <span class="tc-tag">Hybrid ranking</span>
+            </div>
+          </div>
+          <div class="step-foot">→ Top results from 4 sources assembled for GPT context</div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step">
+        <div class="step-num purple">5</div>
+        <div class="step-card s-purple">
+          <div class="step-tag">Context Assembly · Foundry IQ</div>
+          <div class="step-title">Foundry IQ ranks and assembles optimal context package</div>
+          <div class="plain-box pb-purple">
+            <div class="plain-box-text">Foundry IQ applies iterative reflection across the hybrid search results — evaluating whether the retrieved context is sufficient and re-querying if necessary. The final context package includes top 5 past projects, top 8 team members, relevant clauses, and pricing models — all with provenance tracking.</div>
+          </div>
+          <div class="step-items">
+            <span class="step-item si-purple">Iterative reflection</span>
+            <span class="step-item si-purple">Cross-source reranking</span>
+            <span class="step-item si-purple">Confidence thresholds</span>
+            <span class="step-item si-purple">Auto-citation generation</span>
+          </div>
+          <div class="step-foot">→ Optimized context package ready for generation</div>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="step">
+        <div class="step-num amber">6</div>
+        <div class="step-card s-amber">
+          <div class="step-tag">AI Generation · Foundry Model Catalogue</div>
+          <div class="step-title">GPT-4o generates 5 proposal sections with structured output</div>
+          <div class="plain-box pb-amber">
+            <div class="plain-box-text">The agent invokes GPT-4o through the Foundry Model Catalogue with structured output mode enabled. The model receives the assembled context and returns exactly 5 sections in validated JSON schema — each with content and citations array linking back to source documents.</div>
+          </div>
+          <div class="output-grid">
+            <div class="output-chip"><div class="output-chip-label">Section 1</div><div class="output-chip-val">Executive Summary</div></div>
+            <div class="output-chip"><div class="output-chip-label">Section 2</div><div class="output-chip-val">Technical Approach</div></div>
+            <div class="output-chip"><div class="output-chip-label">Section 3</div><div class="output-chip-val">Team Profiles</div></div>
+            <div class="output-chip"><div class="output-chip-label">Section 4</div><div class="output-chip-val">Pricing Narrative</div></div>
+            <div class="output-chip"><div class="output-chip-label">Section 5</div><div class="output-chip-val">Project Timeline</div></div>
+          </div>
+          <div class="step-foot">→ Validated JSON stored in agent thread, ready for persistence</div>
+        </div>
+      </div>
+
+      <!-- STEP 7 -->
+      <div class="step">
+        <div class="step-num blue">7</div>
+        <div class="step-card s-blue">
+          <div class="step-tag">Persistence · MS SQL via EF Core</div>
+          <div class="step-title">Agent writes sections to MS SQL, Blazor SignalR pushes updates</div>
+          <div class="plain-box pb-blue">
+            <div class="plain-box-text">The Foundry Agent calls a custom MCP tool that executes EF Core operations — creating ProposalSection records in MS SQL with full transaction support. Blazor's SignalR hub detects the database changes via SQL Server query notifications and pushes real-time updates to all connected clients.</div>
+          </div>
+          <div class="step-items">
+            <span class="step-item si-blue">EF Core + MS SQL</span>
+            <span class="step-item si-blue">SignalR real-time sync</span>
+            <span class="step-item si-blue">SQL Server Query Notifications</span>
+            <span class="step-item si-teal">Agent thread retains full history</span>
+          </div>
+          <div class="step-foot">→ Draft visible in Blazor workbench within seconds of generation</div>
+        </div>
+      </div>
+
+      <!-- STEP 8 -->
+      <div class="step">
+        <div class="step-num teal">8</div>
+        <div class="step-card s-teal">
+          <div class="step-tag">Review Workflow · Blazor + Email Integration</div>
+          <div class="step-title">Role-based review in Blazor with email notifications</div>
+          <div class="plain-box pb-teal">
+            <div class="plain-box-text">Reviewers access tailored views in the Blazor app — Tech Leads see technical sections, Commercial Directors see pricing. The Foundry Agent sends email notifications via the Email MCP tool with deep links back to the specific proposal section in Blazor. Review comments are stored in MS SQL and trigger agent re-processing if changes are requested.</div>
+          </div>
+          <div class="step-items">
+            <span class="step-item si-teal">Blazor role-based views</span>
+            <span class="step-item si-teal">MCP: Email notifications</span>
+            <span class="step-item si-teal">Deep link routing</span>
+            <span class="step-item si-teal">Agent handles revision loops</span>
+          </div>
+          <div class="step-foot">→ Full review cycle without leaving the Blazor ecosystem</div>
+        </div>
+      </div>
+
+      <!-- STEP 9 -->
+      <div class="step">
+        <div class="step-num green">9</div>
+        <div class="step-card s-green">
+          <div class="step-tag">Delivery · Automated Export + Full Trace</div>
+          <div class="step-title">Final proposal generated, delivered, and fully traced</div>
+          <div class="plain-box pb-green">
+            <div class="plain-box-text">On approval, the agent orchestrates final delivery: (1) MCP call to generate PDF/DOCX using DocumentFormat.OpenXml, (2) Blob storage upload with SAS token, (3) MS SQL status update, (4) Email notification with download link. The entire execution trace is preserved in Foundry Control Plane for audit.</div>
+          </div>
+          <div class="tech-component">
+            <div class="tc-label">Foundry Control Plane — Full Observability</div>
+            <div class="tc-title">Every action traced, evaluated, and auditable</div>
+            <div class="tc-desc">Unlike Power Platform's limited logging, Foundry Control Plane captures every MCP tool call, model invocation, retrieval query, and output. Built-in evaluators score groundedness, coherence, and safety. Failed proposals can be replayed step-by-step.</div>
+            <div class="tc-tags">
+              <span class="tc-tag">Full execution trace</span>
+              <span class="tc-tag">Built-in evaluators</span>
+              <span class="tc-tag">Token usage tracking</span>
+              <span class="tc-tag">Replay capability</span>
+            </div>
+          </div>
+          <div class="step-foot">→ 40%+ reduction in time-to-submit vs. manual baseline</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE SECTION -->
+<section class="section" id="timeline">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Implementation Plan</div>
+    <div class="sec-heading">7-Week <em>Development Timeline</em></div>
+    <p class="sec-sub">Parallel tracks for Blazor frontend, MS SQL schema, Foundry Agent configuration, and Azure AI integration. No Power Platform dependencies.</p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Week</th>
+            <th>Track</th>
+            <th>Deliverables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Blazor Foundation + Azure AD</td>
+            <td>Scaffold .NET 8 Blazor Server project, configure Azure AD authentication with Microsoft.Identity.Web, MudBlazor theme, basic layout, SignalR hub setup</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>MS SQL Schema</td>
+            <td>Database project with tables: Proposals, ProposalSections, RFPDocuments, PastProjects, TeamProfiles, ReferenceDocs, PricingModels — all with vector(1536) columns where needed</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Azure Infrastructure</td>
+            <td>Provision Azure Blob Storage, Azure AI Search (4 indexes), Azure Document Intelligence, Azure OpenAI GPT-4o deployment, Key Vault with managed identities</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Foundry Agent Setup</td>
+            <td>Create Foundry Agent Service instance, configure MCP servers (Blob, SQL, Document Intelligence, Email), define agent system prompt, test basic tool calls</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Blazor — Upload & Storage</td>
+            <td>RFP upload page with drag-drop, Azure Blob SDK integration, real-time progress via SignalR, file validation, virus scanning via Defender</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Vector Data Pipeline</td>
+            <td>Populate MS SQL with sample data, generate embeddings using Azure OpenAI, store in vector columns, test cosine similarity queries via EF Core</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Foundry Integration</td>
+            <td>Wire Blazor to Foundry Agent HTTP API, implement session management, thread state tracking, document parsing workflow end-to-end</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Hybrid Search</td>
+            <td>Implement MS SQL vector search for projects/team, Azure AI Search for docs/pricing, hybrid ranking algorithm, Foundry IQ integration</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>AI Generation & Editor</td>
+            <td>Section generation via Foundry Model Catalogue, structured output handling, Blazor proposal editor with real-time collaboration, citation linking</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Review Workflow</td>
+            <td>Role-based review pages in Blazor, email notification service, approval state machine in MS SQL, revision tracking</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Document Export</td>
+            <td>PDF/DOCX generation using DocumentFormat.OpenXml, Blob storage integration, download portal, version history</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Observability</td>
+            <td>Application Insights integration, Foundry Control Plane monitoring dashboard, custom metrics for proposal pipeline</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Integration Testing</td>
+            <td>End-to-end testing with real RFPs, load testing (concurrent proposals), security review, penetration testing</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Pilot Launch</td>
+            <td>Production deployment via Azure DevOps, user training, documentation handover, go-live support</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- COSTS SECTION -->
+<section class="section alt" id="costs">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Cost Analysis</div>
+    <div class="sec-heading">Subscription & <em>Infrastructure Costs</em></div>
+    <p class="sec-sub">Monthly cost breakdown for the .NET + Foundry architecture — significantly lower per-user costs than Power Platform for enterprise scale.</p>
+
+    <div class="cost-cards">
+      <div class="cost-card cc-blue">
+        <div class="cc-lbl">Azure App Service</div>
+        <div class="cc-val">$54.75</div>
+        <div class="cc-sub">Blazor Server hosting (Basic tier)</div>
+      </div>
+      <div class="cost-card cc-amber">
+        <div class="cc-lbl">MS SQL Database</div>
+        <div class="cc-val">$14.72</div>
+        <div class="cc-sub">Azure SQL Database (S2 tier) with vector support</div>
+      </div>
+      <div class="cost-card cc-green">
+        <div class="cc-lbl">Foundry Agent Service</div>
+        <div class="cc-val">~$30.00</div>
+        <div class="cc-sub">Session costs (~200 proposals/month)</div>
+      </div>
+      <div class="cost-card cc-purple">
+        <div class="cc-lbl">Azure AI Search</div>
+        <div class="cc-val">$73.73</div>
+        <div class="cc-sub">Standard tier (4 indexes)</div>
+      </div>
+      <div class="cost-card cc-dark">
+        <div class="cc-lbl">Total Fixed</div>
+        <div class="cc-val">~$175</div>
+        <div class="cc-sub">Per month (excl. PAYG usage)</div>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem;background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.5rem;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#5a6a8a;font-weight:700;margin-bottom:1rem;">Variable Costs (Pay-as-you-go)</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#0D133E;">Azure OpenAI GPT-4o</div>
+          <div style="font-size:12px;color:#5a6a8a;">~$0.03 per 1K tokens (input) / $0.06 per 1K tokens (output)</div>
+          <div style="font-size:11px;color:#00B2ED;margin-top:4px;">Est. $50-100/month for 200 proposals</div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#0D133E;">Azure Document Intelligence</div>
+          <div style="font-size:12px;color:#5a6a8a;">$0.01 per page (standard model)</div>
+          <div style="font-size:11px;color:#00B2ED;margin-top:4px;">Est. $20-40/month for 200 RFPs</div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#0D133E;">Azure Blob Storage</div>
+          <div style="font-size:12px;color:#5a6a8a;">$0.0184 per GB/month + operations</div>
+          <div style="font-size:11px;color:#00B2ED;margin-top:4px;">Est. $5-10/month</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;padding:1.2rem;background:#f0fff4;border:1px solid rgba(22,163,74,0.2);border-radius:10px;">
+      <div style="font-size:13px;font-weight:700;color:#16A34A;margin-bottom:.5rem;">💡 Cost Advantage vs. Power Platform</div>
+      <div style="font-size:13px;color:#0D133E;line-height:1.7;">
+        The .NET + Foundry stack eliminates per-user licensing costs. Power Platform requires $20/user (Power Apps) + $15/user (Power Automate) + $14/user (Power BI) + $30/user (Copilot Studio) = <strong>$79/user/month</strong>. For a 20-user team, that's $1,580/month vs. ~$300/month for the .NET stack — <strong>80% cost reduction</strong> at scale.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <h2>Ready to build without limits?</h2>
+  <p>Get full source code control, native vector search, and enterprise-grade observability with the Blazor + Foundry architecture.</p>
+  <a href="#contact" class="cta-btn">Schedule Architecture Review →</a>
+</div>
+
+<footer>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <svg width="90" height="16" viewBox="0 0 223 40" fill="none">
+      <g clip-path="url(#clip0_foot)">
+        <path d="M48.1752 26.7534V31.0041H29.1777V29.7925C41.3177 16.5906 42.7908 14.3321 42.7908 11.1448C42.7908 8.71877 41.1167 7.08126 38.6143 7.08126C35.9983 7.08126 34.2765 8.76031 34.2765 11.1983V11.8156H29.7676V11.1746C29.7676 6.21053 33.2988 2.84277 38.5781 2.84277C43.7444 2.84277 47.3416 6.26328 47.3416 11.1211C47.3416 14.7612 45.8882 17.7153 37.8216 26.7534H48.1752Z" fill="#00B2ED"/>
+        <path d="M52.6162 0.37207H57.3039V31.0036H52.6162V0.37207Z" fill="#0D133E"/>
+        <path d="M73.3409 31.4976C66.4259 31.4976 61.2515 26.4892 61.2515 19.7639C61.2515 12.9973 66.4259 8.03027 73.3409 8.03027C80.2439 8.03027 85.4302 13.027 85.4302 19.7644C85.4302 26.4895 80.2439 31.498 73.3409 31.498V31.4976ZM80.6991 19.7639C80.6991 15.4808 77.6207 12.4225 73.3409 12.4225C69.0611 12.4225 65.9832 15.4808 65.9832 19.7639C65.9832 24.0469 69.0613 27.1054 73.3409 27.1054C77.6205 27.1054 80.6991 24.0472 80.6991 19.7639Z" fill="#0D133E"/>
+        <path d="M110.842 8.58131V28.2631C110.842 35.4876 106.511 39.897 99.4493 39.897C93.6009 39.897 89.4499 36.8888 88.2847 31.9156H92.9658C93.841 34.3999 96.5281 35.7703 99.4131 35.7703C103.36 35.7703 106.246 33.1909 106.246 28.8995V27.8547C104.267 29.5553 101.645 30.5631 98.6878 30.5631C92.3332 30.5631 87.4039 25.6623 87.4039 19.3176C87.4039 12.9851 92.3332 8.03027 98.6878 8.03027C102.037 8.03027 104.969 9.34661 107.017 11.504L107.764 8.5821L110.842 8.58131ZM99.2207 26.244C103.282 26.244 106.228 23.3105 106.228 19.3168C106.228 15.3054 103.295 12.372 99.2207 12.372C95.1582 12.372 92.1823 15.3356 92.1823 19.3172C92.1823 23.2808 95.1459 26.2444 99.22 26.2444L99.2207 26.244Z" fill="#0D133E"/>
+        <path d="M137.489 8.52441L127.1 31.4816C124.545 37.1504 122.295 39.156 117.687 39.156H115.389V34.9808H117.328C120.319 34.9808 121.239 34.1103 122.895 30.5024L123.403 29.4398L113.557 8.52441H118.612L125.798 24.247L132.541 8.52441H137.489Z" fill="#0D133E"/>
+        <path d="M17.0325 27.3299C14.8671 27.3299 13.0661 26.5576 11.8287 25.1854H6.58582C8.44178 29.1137 12.3338 31.6972 17.0325 31.6972C22.0836 31.6972 26.2145 28.7961 28.0156 24.0171H23.1212C21.923 26.0793 19.7343 27.3299 17.0325 27.3299Z" fill="#00B2ED"/>
+        <path d="M17.0325 7.94727C12.5687 7.94727 8.84894 10.2603 6.89117 13.8397H12.3534C13.5515 12.7576 15.1568 12.15 17.0325 12.15C20.4781 12.15 23.0702 14.1807 23.9042 17.6228H2.27389L0.0645752 21.4061H28.4698C28.5245 20.8964 28.5637 20.3867 28.5637 19.8771H28.5677C28.5677 13.2869 23.959 7.94727 17.0325 7.94727Z" fill="#00B2ED"/>
+      </g>
+    </svg>
+  </div>
+  <div class="foot-copy">© 2026 E2logy Software Solutions · Blazor + Foundry Architecture</div>
+</footer>
+
+</body>
+</html>

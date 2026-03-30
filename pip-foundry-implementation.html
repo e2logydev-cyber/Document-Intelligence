@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Implementing RFP to Proposal with Microsoft Foundry · Proposal Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#00B2ED;--dark:#0D133E;--navy:#f5fafd;
+  --border:rgba(0,178,237,0.18);--fh:'Mulish',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#fff;color:#0D133E;font-family:var(--fh);font-size:16px;line-height:1.7;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;width:100%;z-index:200;padding:.9rem 4%;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.96);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,178,237,0.15);box-shadow:0 1px 20px rgba(13,19,62,0.07);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-badge{background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.25);color:#00B2ED;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:.04em;}
+.nav-links{display:flex;gap:.5rem;}
+.nav-link{font-size:12px;font-weight:600;color:#5a6a8a;text-decoration:none;padding:4px 11px;border-radius:20px;border:1px solid transparent;transition:all .2s;}
+.nav-link:hover{color:#00B2ED;border-color:rgba(0,178,237,0.28);background:rgba(0,178,237,0.07);}
+.nav-cta{background:#00B2ED;color:#fff;padding:.48rem 1.2rem;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;transition:background .2s;}
+.nav-cta:hover{background:#0099cc;}
+
+/* HERO */
+.page-hero{padding:7rem 4% 3.5rem;background:#fff;position:relative;overflow:hidden;border-bottom:1px solid rgba(0,178,237,0.10);}
+.ph-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,178,237,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,178,237,0.06) 1px,transparent 1px);background-size:60px 60px;opacity:.7;}
+.ph-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:300px;background:radial-gradient(ellipse,rgba(0,178,237,0.09) 0%,transparent 68%);}
+.ph-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;}
+.ph-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.28);border-radius:30px;padding:.35rem 1rem;font-size:12px;color:#00B2ED;font-weight:600;margin-bottom:1.2rem;letter-spacing:.04em;}
+.ph-badge span{width:6px;height:6px;border-radius:50%;background:#00B2ED;display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.ph-title{font-family:var(--fh);font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:#0D133E;line-height:1.1;letter-spacing:-.03em;margin-bottom:.7rem;}
+.ph-title em{font-style:normal;color:#00B2ED;}
+.ph-sub{font-size:14.5px;color:#5a6a8a;max-width:740px;line-height:1.85;font-weight:300;}
+.ph-meta{display:flex;gap:2rem;margin-top:1.8rem;flex-wrap:wrap;}
+.ph-stat-val{font-family:var(--fh);font-size:1.15rem;font-weight:900;color:#00B2ED;}
+.ph-stat-lbl{font-size:12px;color:#5a6a8a;}
+
+/* INTRO COMPARE BANNER */
+.compare-strip{padding:2.5rem 4%;background:#f5fafd;border-bottom:1px solid rgba(0,178,237,0.10);}
+.compare-inner{max-width:1100px;margin:0 auto;}
+.compare-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:center;margin-top:1.5rem;}
+.compare-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;}
+.compare-card.old-card{border-color:rgba(136,135,128,0.30);}
+.compare-card.new-card{border-color:rgba(13,158,138,0.30);border-width:2px;}
+.compare-card-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:.6rem;}
+.old-card .compare-card-label{color:#888780;}
+.new-card .compare-card-label{color:#0D9E8A;}
+.compare-card-title{font-family:var(--fh);font-size:.95rem;font-weight:800;color:#0D133E;margin-bottom:.6rem;}
+.compare-list{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.compare-list li{font-size:12.5px;color:#5a6a8a;display:flex;align-items:flex-start;gap:.5rem;line-height:1.6;}
+.old-card li::before{content:'–';color:#888780;flex-shrink:0;font-weight:700;}
+.new-card li::before{content:'›';color:#0D9E8A;flex-shrink:0;font-weight:700;}
+.compare-arrow{display:flex;flex-direction:column;align-items:center;gap:.3rem;color:#0D9E8A;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;}
+.compare-arrow svg{width:28px;height:28px;}
+
+/* SECTION */
+.doc-section{padding:3.5rem 4% 4.5rem;}
+.doc-section.alt{background:#f5fafd;}
+.sec-inner{max-width:1100px;margin:0 auto;}
+.sec-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:#00B2ED;font-weight:700;margin-bottom:.4rem;}
+.sec-heading{font-family:var(--fh);font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:900;color:#0D133E;letter-spacing:-.02em;margin-bottom:.5rem;}
+.sec-heading em{font-style:normal;color:#00B2ED;}
+.sec-sub{font-size:14px;color:#5a6a8a;max-width:740px;line-height:1.85;margin-bottom:2.2rem;}
+.section-divider{height:3px;background:linear-gradient(90deg,#00B2ED,rgba(0,178,237,0.12));border-radius:2px;margin-bottom:2.5rem;}
+
+/* FOUNDRY ARCHITECTURE CARD */
+.arch-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:2rem;margin-bottom:2.5rem;overflow:hidden;}
+.arch-card-title{font-family:var(--fh);font-size:.95rem;font-weight:800;color:#0D133E;margin-bottom:1.5rem;padding-bottom:.8rem;border-bottom:1px solid var(--border);}
+
+/* FOUNDRY LAYER DIAGRAM */
+.foundry-diagram{display:grid;grid-template-columns:130px 1fr 130px;gap:1.2rem;align-items:stretch;margin:.5rem 0 1rem;}
+.fd-col{display:flex;flex-direction:column;gap:.7rem;}
+.fd-center{background:rgba(13,158,138,0.06);border:1.5px solid rgba(13,158,138,0.25);border-radius:12px;padding:1.2rem 1rem;}
+.fd-center-title{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:#0D9E8A;margin-bottom:.8rem;text-align:center;}
+.fd-agent{background:rgba(13,158,138,0.12);border:1px solid rgba(13,158,138,0.28);border-radius:8px;padding:.75rem .9rem;text-align:center;margin-bottom:.6rem;}
+.fd-agent-title{font-family:var(--fh);font-size:.82rem;font-weight:800;color:#0D133E;margin-bottom:.15rem;}
+.fd-agent-sub{font-size:11px;color:#0D9E8A;}
+.fd-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.fd-sub{background:#fff;border:1px solid rgba(13,158,138,0.18);border-radius:7px;padding:.6rem .75rem;text-align:center;}
+.fd-sub-title{font-size:11.5px;font-weight:700;color:#0D133E;margin-bottom:.1rem;}
+.fd-sub-desc{font-size:10.5px;color:#5a6a8a;}
+.fd-mcp-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-top:.5rem;}
+.fd-mcp{background:rgba(13,158,138,0.08);border:1px solid rgba(13,158,138,0.20);border-radius:7px;padding:.55rem .6rem;text-align:center;}
+.fd-mcp-title{font-size:11px;font-weight:700;color:#0D9E8A;}
+.fd-mcp-desc{font-size:10px;color:#5a6a8a;}
+.fd-control{background:#0D133E;border-radius:8px;padding:.65rem .8rem;text-align:center;margin-top:.5rem;}
+.fd-control-title{font-size:11.5px;font-weight:700;color:#fff;}
+.fd-control-desc{font-size:10.5px;color:rgba(255,255,255,0.55);}
+
+.fd-side-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;}
+.fd-side-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.3rem;}
+.fd-side-label.purple{color:#6B46C1;}
+.fd-side-label.amber{color:#E8960A;}
+.fd-side-title{font-size:12px;font-weight:700;color:#0D133E;margin-bottom:.1rem;}
+.fd-side-desc{font-size:11px;color:#5a6a8a;line-height:1.5;}
+
+/* FLOW STEPS */
+.flow-steps{display:flex;flex-direction:column;gap:0;position:relative;margin-top:2rem;}
+.flow-steps::before{content:'';position:absolute;left:46px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#00B2ED 0%,rgba(0,178,237,0.15) 100%);z-index:0;}
+.step{display:flex;gap:1.5rem;align-items:flex-start;position:relative;z-index:1;}
+.step+.step{margin-top:0;}
+.step-num{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:1.1rem;font-weight:800;flex-shrink:0;position:relative;z-index:2;transition:transform .2s;}
+.step:hover .step-num{transform:scale(1.08);}
+.step-num.blue{background:#00B2ED;color:#fff;box-shadow:0 4px 16px rgba(0,178,237,0.35);}
+.step-num.teal{background:#0D9E8A;color:#fff;box-shadow:0 4px 16px rgba(13,158,138,0.30);}
+.step-num.amber{background:#E8960A;color:#fff;box-shadow:0 4px 16px rgba(232,150,10,0.30);}
+.step-num.purple{background:#6B46C1;color:#fff;box-shadow:0 4px 16px rgba(107,70,193,0.30);}
+.step-num.green{background:#16A34A;color:#fff;box-shadow:0 4px 16px rgba(22,163,74,0.30);}
+.step-num.gray{background:#888780;color:#fff;box-shadow:0 4px 16px rgba(136,135,128,0.25);}
+
+.step-card{flex:1;background:#fff;border:1px solid rgba(0,178,237,0.18);border-radius:14px;padding:1.5rem 1.8rem;margin-bottom:22px;transition:border-color .2s,box-shadow .2s,transform .2s;position:relative;overflow:hidden;}
+.step-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;}
+.s-blue::before{background:linear-gradient(90deg,#00B2ED,#0099cc);}
+.s-teal::before{background:linear-gradient(90deg,#0D9E8A,#06766A);}
+.s-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+.s-purple::before{background:linear-gradient(90deg,#6B46C1,#553593);}
+.s-green::before{background:linear-gradient(90deg,#16A34A,#0E7A36);}
+.s-gray::before{background:linear-gradient(90deg,#888780,#5F5E5A);}
+.step-card:hover{border-color:rgba(0,178,237,0.40);box-shadow:0 8px 32px rgba(0,178,237,0.10);transform:translateY(-2px);}
+
+.step-tag{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.32rem;}
+.s-blue .step-tag{color:#00B2ED;} .s-teal .step-tag{color:#0D9E8A;} .s-amber .step-tag{color:#E8960A;} .s-purple .step-tag{color:#6B46C1;} .s-green .step-tag{color:#16A34A;} .s-gray .step-tag{color:#888780;}
+.step-title{font-family:var(--fh);font-size:1.02rem;font-weight:800;color:#0D133E;margin-bottom:.45rem;}
+.step-desc{font-size:13px;color:#5a6a8a;line-height:1.8;margin-bottom:.8rem;}
+
+/* PLAIN BOX */
+.plain-box{border-radius:10px;padding:1rem 1.2rem;margin:.4rem 0 .85rem;}
+.plain-box-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem;}
+.plain-box-text{font-size:13.5px;line-height:1.85;color:#0D133E;}
+.pb-blue{background:rgba(0,178,237,0.07);border:1px solid rgba(0,178,237,0.20);}
+.pb-blue .plain-box-label{color:#00B2ED;}
+.pb-teal{background:rgba(13,158,138,0.07);border:1px solid rgba(13,158,138,0.20);}
+.pb-teal .plain-box-label{color:#0D9E8A;}
+.pb-amber{background:rgba(232,150,10,0.07);border:1px solid rgba(232,150,10,0.20);}
+.pb-amber .plain-box-label{color:#B87208;}
+.pb-purple{background:rgba(107,70,193,0.07);border:1px solid rgba(107,70,193,0.20);}
+.pb-purple .plain-box-label{color:#6B46C1;}
+.pb-green{background:rgba(22,163,74,0.07);border:1px solid rgba(22,163,74,0.20);}
+.pb-green .plain-box-label{color:#16A34A;}
+.pb-gray{background:rgba(136,135,128,0.07);border:1px solid rgba(136,135,128,0.20);}
+.pb-gray .plain-box-label{color:#5F5E5A;}
+
+.what-happens{font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:#5a6a8a;margin:.8rem 0 .45rem;border-top:1px solid rgba(0,178,237,0.10);padding-top:.7rem;}
+
+/* ITEMS */
+.step-items{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem;}
+.step-item{font-size:11.5px;padding:3px 10px;border-radius:20px;font-weight:500;}
+.si-blue{background:rgba(0,178,237,0.09);border:1px solid rgba(0,178,237,0.22);color:#007DAF;}
+.si-teal{background:rgba(13,158,138,0.09);border:1px solid rgba(13,158,138,0.22);color:#0D9E8A;}
+.si-amber{background:rgba(232,150,10,0.09);border:1px solid rgba(232,150,10,0.22);color:#B87208;}
+.si-purple{background:rgba(107,70,193,0.09);border:1px solid rgba(107,70,193,0.22);color:#6B46C1;}
+.si-green{background:rgba(22,163,74,0.09);border:1px solid rgba(22,163,74,0.22);color:#16A34A;}
+.si-gray{background:rgba(136,135,128,0.09);border:1px solid rgba(136,135,128,0.22);color:#5F5E5A;}
+
+/* FOUNDRY COMPONENT HIGHLIGHT */
+.foundry-component{background:rgba(13,158,138,0.07);border:1px solid rgba(13,158,138,0.22);border-radius:10px;padding:.9rem 1.1rem;margin:.6rem 0 .85rem;}
+.fc-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:#0D9E8A;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem;}
+.fc-title{font-family:var(--fh);font-size:.9rem;font-weight:800;color:#0D133E;margin-bottom:.3rem;}
+.fc-desc{font-size:13px;color:#5a6a8a;line-height:1.75;}
+.fc-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.55rem;}
+.fc-tag{font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(13,158,138,0.10);border:1px solid rgba(13,158,138,0.22);color:#0D9E8A;font-weight:600;}
+
+/* VS COMPARISON INSIDE STEP */
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.6rem 0 .85rem;}
+.vs-card{border-radius:8px;padding:.8rem .9rem;}
+.vs-old{background:rgba(136,135,128,0.07);border:1px solid rgba(136,135,128,0.18);}
+.vs-new{background:rgba(13,158,138,0.07);border:1px solid rgba(13,158,138,0.22);}
+.vs-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.35rem;}
+.vs-old .vs-label{color:#888780;}
+.vs-new .vs-label{color:#0D9E8A;}
+.vs-text{font-size:12.5px;color:#5a6a8a;line-height:1.65;}
+
+/* OUTPUT GRID */
+.output-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:.7rem;margin:.7rem 0 .85rem;}
+.output-chip{background:linear-gradient(135deg,#0D133E 0%,#1a2260 100%);border-radius:10px;padding:.85rem .9rem;text-align:center;}
+.output-chip-label{font-size:10px;color:rgba(255,255,255,0.60);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:.25rem;}
+.output-chip-val{font-size:12px;color:#fff;font-weight:700;line-height:1.3;}
+.output-chip-sub{font-size:10px;color:rgba(255,255,255,0.45);margin-top:.2rem;}
+
+/* STEP FOOT */
+.step-foot{margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(0,178,237,0.12);font-size:11.5px;font-weight:600;font-style:italic;}
+.s-blue .step-foot{color:#00B2ED;} .s-teal .step-foot{color:#0D9E8A;} .s-amber .step-foot{color:#E8960A;} .s-purple .step-foot{color:#6B46C1;} .s-green .step-foot{color:#16A34A;} .s-gray .step-foot{color:#888780;}
+
+/* ANALOGY CARD */
+.analogy-card{background:#fff;border:1px solid rgba(0,178,237,0.18);border-radius:10px;padding:.9rem 1.1rem;margin:.6rem 0 .8rem;display:flex;align-items:flex-start;gap:.75rem;}
+.analogy-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#00B2ED;margin-bottom:.2rem;}
+.analogy-text{font-size:13px;color:#5a6a8a;line-height:1.7;}
+
+/* RESULT BANNER */
+.result-banner{display:flex;align-items:center;gap:.7rem;background:#fff;border:1px solid rgba(0,178,237,0.22);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem;}
+.rb-icon{width:28px;height:28px;border-radius:50%;background:#00B2ED;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rb-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#00B2ED;margin-bottom:.1rem;}
+.rb-text{font-size:13px;color:#5a6a8a;line-height:1.55;}
+
+/* WHAT YOU GAIN SECTION */
+.gains-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.1rem;margin-top:1.5rem;}
+.gain-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.3rem 1.5rem;position:relative;overflow:hidden;}
+.gain-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;}
+.gc-teal::before{background:linear-gradient(90deg,#0D9E8A,#06766A);}
+.gc-purple::before{background:linear-gradient(90deg,#6B46C1,#553593);}
+.gc-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+.gc-blue::before{background:linear-gradient(90deg,#00B2ED,#0099cc);}
+.gc-green::before{background:linear-gradient(90deg,#16A34A,#0E7A36);}
+.gain-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:.4rem;}
+.gc-teal .gain-label{color:#0D9E8A;} .gc-purple .gain-label{color:#6B46C1;} .gc-amber .gain-label{color:#E8960A;} .gc-blue .gain-label{color:#00B2ED;} .gc-green .gain-label{color:#16A34A;}
+.gain-title{font-family:var(--fh);font-size:.92rem;font-weight:800;color:#0D133E;margin-bottom:.4rem;}
+.gain-desc{font-size:13px;color:#5a6a8a;line-height:1.75;}
+
+/* TRADEOFF TABLE */
+.tradeoff-table{width:100%;border-collapse:collapse;margin-top:1.5rem;font-size:13px;}
+.tradeoff-table th{background:#f5fafd;padding:.65rem 1rem;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#5a6a8a;font-weight:700;border-bottom:1px solid rgba(0,178,237,0.15);}
+.tradeoff-table td{padding:.7rem 1rem;border-bottom:1px solid rgba(0,178,237,0.08);vertical-align:top;color:#0D133E;line-height:1.6;}
+.tradeoff-table tr:last-child td{border-bottom:none;}
+.tradeoff-table tr:hover td{background:rgba(0,178,237,0.03);}
+.tt-dim{font-weight:700;color:#0D133E;font-size:12.5px;}
+.tt-old{color:#5a6a8a;font-size:12.5px;}
+.tt-new{color:#0D9E8A;font-weight:600;font-size:12.5px;}
+.tt-gain{font-size:12px;color:#16A34A;font-weight:600;}
+.badge-r{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(16,163,74,0.10);border:1px solid rgba(16,163,74,0.22);color:#16A34A;font-weight:600;}
+.badge-s{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(0,178,237,0.09);border:1px solid rgba(0,178,237,0.22);color:#007DAF;font-weight:600;}
+
+/* SUMMARY STRIP */
+.summary-strip{padding:2.8rem 4%;background:#0D133E;}
+.ss-inner{max-width:1100px;margin:0 auto;}
+.ss-title{font-family:var(--fh);font-size:1rem;font-weight:700;color:#fff;margin-bottom:1.3rem;opacity:.85;}
+.ss-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.9rem;}
+.ss-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:1rem 1.1rem;}
+.ss-card-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.55);font-weight:600;margin-bottom:.3rem;}
+.ss-card-val{font-size:13px;color:#fff;font-weight:500;line-height:1.5;}
+.ss-card-system{font-size:10.5px;color:#00B2ED;margin-top:.3rem;font-weight:600;}
+
+/* CTA */
+.cta-strip{padding:3rem 4%;background:linear-gradient(135deg,#0D133E 0%,#00B2ED 100%);text-align:center;}
+.cta-strip h2{font-family:var(--fh);font-size:clamp(1.4rem,3vw,2rem);font-weight:900;color:#fff;margin-bottom:.65rem;letter-spacing:-.02em;}
+.cta-strip p{font-size:14px;color:rgba(255,255,255,0.80);margin-bottom:1.4rem;}
+.cta-btn{display:inline-block;background:#fff;color:#0D133E;padding:.72rem 1.8rem;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:transform .2s,box-shadow .2s;}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(13,19,62,0.18);}
+
+footer{padding:1.6rem 4%;border-top:1px solid rgba(0,178,237,0.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;background:#fff;}
+.foot-copy{font-size:11.5px;color:#5a6a8a;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.step{animation:fadeUp .48s ease both;}
+.step:nth-child(1){animation-delay:.04s;}.step:nth-child(2){animation-delay:.09s;}.step:nth-child(3){animation-delay:.14s;}.step:nth-child(4){animation-delay:.19s;}.step:nth-child(5){animation-delay:.24s;}.step:nth-child(6){animation-delay:.29s;}.step:nth-child(7){animation-delay:.34s;}.step:nth-child(8){animation-delay:.39s;}.step:nth-child(9){animation-delay:.44s;}
+
+@media(max-width:900px){.foundry-diagram{grid-template-columns:1fr;}.compare-grid{grid-template-columns:1fr;}.compare-arrow{display:none;}.nav-links{display:none;}}
+@media(max-width:700px){.vs-grid,.fd-mcp-row,.fd-row{grid-template-columns:1fr 1fr;}.output-grid{grid-template-columns:1fr 1fr;}.flow-steps::before{left:24px;}.step-num{width:36px;height:36px;font-size:.85rem;}.step-card{padding:1.1rem 1.2rem;}.tradeoff-table{font-size:12px;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="microsoft_e2logy_v2.html" class="nav-logo">
+    <svg width="110" height="20" viewBox="0 0 223 40" fill="none"><g clip-path="url(#cn)"><path d="M48.1752 26.7534V31.0041H29.1777V29.7925C41.3177 16.5906 42.7908 14.3321 42.7908 11.1448C42.7908 8.71877 41.1167 7.08126 38.6143 7.08126C35.9983 7.08126 34.2765 8.76031 34.2765 11.1983V11.8156H29.7676V11.1746C29.7676 6.21053 33.2988 2.84277 38.5781 2.84277C43.7444 2.84277 47.3416 6.26328 47.3416 11.1211C47.3416 14.7612 45.8882 17.7153 37.8216 26.7534H48.1752Z" fill="#00B2ED"/><path d="M52.6162 0.37207H57.3039V31.0036H52.6162V0.37207Z" fill="#0D133E"/><path d="M73.3409 31.4976C66.4259 31.4976 61.2515 26.4892 61.2515 19.7639C61.2515 12.9973 66.4259 8.03027 73.3409 8.03027C80.2439 8.03027 85.4302 13.027 85.4302 19.7644C85.4302 26.4895 80.2439 31.498 73.3409 31.498V31.4976ZM80.6991 19.7639C80.6991 15.4808 77.6207 12.4225 73.3409 12.4225C69.0611 12.4225 65.9832 15.4808 65.9832 19.7639C65.9832 24.0469 69.0613 27.1054 73.3409 27.1054C77.6205 27.1054 80.6991 24.0472 80.6991 19.7639Z" fill="#0D133E"/><path d="M110.842 8.58V28.26C110.842 35.49 106.511 39.9 99.449 39.9C93.6 39.9 89.45 36.89 88.285 31.92H92.966C93.841 34.4 96.528 35.77 99.413 35.77C103.36 35.77 106.246 33.19 106.246 28.9V27.85C104.267 29.56 101.645 30.56 98.688 30.56C92.333 30.56 87.404 25.66 87.404 19.32C87.404 12.99 92.333 8.03 98.688 8.03C102.037 8.03 104.969 9.35 107.017 11.5L107.764 8.58H110.842ZM99.22 26.24C103.282 26.24 106.228 23.31 106.228 19.32C106.228 15.31 103.295 12.37 99.22 12.37C95.158 12.37 92.182 15.34 92.182 19.32C92.182 23.28 95.146 26.24 99.22 26.24Z" fill="#0D133E"/><path d="M137.489 8.52L127.1 31.48C124.545 37.15 122.295 39.16 117.687 39.16H115.389V34.98H117.328C120.319 34.98 121.239 34.11 122.895 30.5L123.403 29.44L113.557 8.52H118.612L125.798 24.25L132.541 8.52H137.489Z" fill="#0D133E"/><path d="M17.0325 27.33C14.867 27.33 13.066 26.56 11.829 25.19H6.586C8.442 29.11 12.334 31.7 17.033 31.7C22.084 31.7 26.215 28.8 28.016 24.02H23.121C21.923 26.08 19.734 27.33 17.033 27.33Z" fill="#00B2ED"/><path d="M17.0325 7.95C12.569 7.95 8.849 10.26 6.891 13.84H12.353C13.552 12.76 15.157 12.15 17.033 12.15C20.478 12.15 23.07 14.18 23.904 17.62H2.274L0.065 21.41H28.47C28.524 20.9 28.564 20.39 28.564 19.88H28.568C28.568 13.29 23.959 7.95 17.033 7.95Z" fill="#00B2ED"/></g><defs><clipPath id="cn"><rect width="223" height="40" fill="white"/></clipPath></defs></svg>
+  </a>
+  <div class="nav-links">
+    <a href="#architecture" class="nav-link">Architecture</a>
+    <a href="#steps" class="nav-link">9-Step Flow</a>
+    <a href="#gains" class="nav-link">What You Gain</a>
+    <a href="#tradeoffs" class="nav-link">Trade-offs</a>
+  </div>
+  <span class="nav-badge">Microsoft Foundry · Proposal Intelligence Platform</span>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="ph-grid"></div>
+  <div class="ph-glow"></div>
+  <div class="ph-inner">
+    <div class="ph-badge"><span></span>Microsoft Foundry · Enterprise AI Platform · March 2026</div>
+    <div class="ph-title">Implementing the RFP Pipeline<br/>using <em>Microsoft Foundry</em></div>
+    <p class="ph-sub">The same nine-step Data Flow — from RFP upload to finished proposal — reimplemented on Microsoft Foundry. The manual HTTP wiring, polling loops, and parallel scopes are replaced by Foundry's unified Agent Service, Foundry IQ multi-index RAG, and MCP tool integrations. Every step mapped, compared, and explained.</p>
+    <div class="ph-meta">
+      <div><div class="ph-stat-val">9 steps</div><div class="ph-stat-lbl">Fully mapped to Foundry</div></div>
+      <div><div class="ph-stat-val">1 agent</div><div class="ph-stat-lbl">Replaces 9 Power Automate flows</div></div>
+      <div><div class="ph-stat-val">Foundry IQ</div><div class="ph-stat-lbl">Built-in 4-index RAG</div></div>
+      <div><div class="ph-stat-val">MCP tools</div><div class="ph-stat-lbl">No manual HTTP wiring</div></div>
+      <div><div class="ph-stat-val">Control Plane</div><div class="ph-stat-lbl">Full trace + evals</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE STRIP -->
+<div class="compare-strip">
+  <div class="compare-inner">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:#00B2ED;font-weight:700;margin-bottom:.3rem;">The fundamental shift</div>
+    <div style="font-family:'Mulish',sans-serif;font-size:1.3rem;font-weight:800;color:#0D133E;margin-bottom:.3rem;">Manual service wiring → Unified agent control plane</div>
+    <div style="font-size:14px;color:#5a6a8a;max-width:700px;">Without Foundry, the pipeline is 9+ separately maintained Azure service integrations. With Foundry, it's one agent definition, one deployment, one place to monitor, evaluate, and improve.</div>
+    <div class="compare-grid">
+      <div class="compare-card old-card">
+        <div class="compare-card-label">Without Foundry — manual wiring</div>
+        <div class="compare-card-title">Multiple services, multiple integrations</div>
+        <ul class="compare-list">
+          <li>Power Automate HTTP calls to 5 separate Azure REST endpoints</li>
+          <li>Manual Do Until polling loop for Document Intelligence</li>
+          <li>4 parallel Azure AI Search SDK calls with custom context assembly</li>
+          <li>Manual JSON parsing of GPT-4o response</li>
+          <li>No central observability — errors discovered in production</li>
+          <li>Model switch requires code changes across multiple flows</li>
+          <li>Evaluation requires building custom test infrastructure</li>
+        </ul>
+      </div>
+      <div class="compare-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0D9E8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Foundry
+      </div>
+      <div class="compare-card new-card">
+        <div class="compare-card-label">With Microsoft Foundry — unified platform</div>
+        <div class="compare-card-title">One agent, one control plane, one deployment</div>
+        <ul class="compare-list">
+          <li>Foundry Agent Service with durable state and persistent memory</li>
+          <li>Document Intelligence called as an MCP tool — async handled internally</li>
+          <li>Foundry IQ fans out across all 4 indexes with iterative reflection</li>
+          <li>Structured output mode enforces JSON schema automatically</li>
+          <li>Foundry Control Plane: full trace of every agent action and tool call</li>
+          <li>Model catalogue — switch GPT-4o / Claude / Llama without code changes</li>
+          <li>Built-in evaluators: coherence, groundedness, safety — continuous evals</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARCHITECTURE SECTION -->
+<section class="doc-section" id="architecture">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Foundry Architecture · How the layers fit together</div>
+    <div class="sec-heading">The <em>Foundry Layer Map</em></div>
+    <p class="sec-sub">Microsoft Foundry sits between your UI (Blazor + Power Apps) and your data stores (Dataverse, SharePoint, Power BI). It is the AI orchestration layer — replacing the manual HTTP wiring that previously connected them.</p>
+    <div class="section-divider"></div>
+
+    <div class="arch-card">
+      <div class="arch-card-title">Foundry architecture — how all components connect</div>
+      <div class="foundry-diagram">
+
+        <!-- LEFT: UI Layer -->
+        <div class="fd-col">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#6B46C1;margin-bottom:.4rem;text-align:center;">UI layer</div>
+          <div class="fd-side-card"><div class="fd-side-label purple">Entry point 1</div><div class="fd-side-title">Blazor Server</div><div class="fd-side-desc">.NET 8 workbench — RFP upload, proposal editor, AI Workspace page</div></div>
+          <div class="fd-side-card"><div class="fd-side-label purple">Entry point 2</div><div class="fd-side-title">Power Apps mobile</div><div class="fd-side-desc">RFP Quick Scan — camera capture, file pick, HTTP trigger to agent</div></div>
+          <div class="fd-side-card"><div class="fd-side-label purple">Collaboration</div><div class="fd-side-title">Microsoft Teams</div><div class="fd-side-desc">Adaptive Cards, agent channel — review and approval without leaving Teams</div></div>
+        </div>
+
+        <!-- CENTRE: Foundry -->
+        <div class="fd-center">
+          <div class="fd-center-title">Microsoft Foundry — unified AI control plane</div>
+          <div class="fd-agent">
+            <div class="fd-agent-title">Foundry Agent Service</div>
+            <div class="fd-agent-sub">Durable orchestration · persistent thread memory · multi-step reasoning</div>
+          </div>
+          <div class="fd-row">
+            <div class="fd-sub">
+              <div class="fd-sub-title">Model catalogue</div>
+              <div class="fd-sub-desc">GPT-4o · Claude · Llama · switchable without code</div>
+            </div>
+            <div class="fd-sub">
+              <div class="fd-sub-title">Foundry IQ</div>
+              <div class="fd-sub-desc">Multi-index RAG · iterative reflection · 4 AI Search indexes</div>
+            </div>
+          </div>
+          <div class="fd-mcp-row">
+            <div class="fd-mcp"><div class="fd-mcp-title">MCP: Doc AI</div><div class="fd-mcp-desc">RFP parsing — async handled</div></div>
+            <div class="fd-mcp"><div class="fd-mcp-title">MCP: Blob</div><div class="fd-mcp-desc">File upload + URL return</div></div>
+            <div class="fd-mcp"><div class="fd-mcp-title">MCP: Teams</div><div class="fd-mcp-desc">Adaptive Cards + chat</div></div>
+          </div>
+          <div class="fd-control">
+            <div class="fd-control-title">Foundry Control Plane</div>
+            <div class="fd-control-desc">Agent traces · evaluations · token usage · continuous quality measurement</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Data stores -->
+        <div class="fd-col">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#E8960A;margin-bottom:.4rem;text-align:center;">Data / output layer</div>
+          <div class="fd-side-card"><div class="fd-side-label amber">Record store</div><div class="fd-side-title">Microsoft Dataverse</div><div class="fd-side-desc">Single source of truth — Proposal, ProposalSection, RFPDocument records</div></div>
+          <div class="fd-side-card"><div class="fd-side-label amber">Analytics</div><div class="fd-side-title">Power BI</div><div class="fd-side-desc">Pipeline metrics, win/loss, utilisation — reads from Dataverse</div></div>
+          <div class="fd-side-card"><div class="fd-side-label amber">Document export</div><div class="fd-side-title">SharePoint</div><div class="fd-side-desc">Approved proposal PDF/DOCX archived here — MCP tool writes via agent</div></div>
+          <div class="fd-side-card"><div class="fd-side-label amber">Knowledge base</div><div class="fd-side-title">Azure AI Search</div><div class="fd-side-desc">4 indexes — queried via Foundry IQ, not direct SDK calls</div></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS SECTION -->
+<section class="doc-section alt" id="steps">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Step-by-Step Implementation · All 9 steps mapped to Foundry</div>
+    <div class="sec-heading">The 9-Step Data Flow — <em>Rebuilt on Foundry</em></div>
+    <p class="sec-sub">Each step below shows what the original implementation does, what Foundry replaces it with, and why the Foundry approach is simpler, more observable, and more flexible. Steps are colour-coded by the primary Foundry component involved.</p>
+    <div class="section-divider"></div>
+
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="step">
+        <div class="step-num blue">1</div>
+        <div class="step-card s-blue">
+          <div class="step-tag">Upload · Blazor / Power Apps · unchanged entry point</div>
+          <div class="step-title">Bid manager uploads RFP — triggers the Foundry Agent session</div>
+          <div class="plain-box pb-blue">
+            <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#007DAF" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#007DAF" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div>
+            <div class="plain-box-text">The UI entry point is identical — a bid manager still uploads via the Blazor workbench or the Power Apps mobile app. What changes is what happens after the upload. Instead of triggering a Power Automate flow via SharePoint, the upload fires an HTTP request to the Foundry Agent Service's durable session endpoint. Foundry creates a persistent "thread" for this proposal — a memory space that survives across all 9 steps and can be queried by the AI assistant later.</div>
+          </div>
+          <div class="vs-grid">
+            <div class="vs-card vs-old">
+              <div class="vs-label">Original approach</div>
+              <div class="vs-text">SharePoint file trigger OR Power Apps HTTP → fires a Power Automate cloud flow that runs linearly from step to step</div>
+            </div>
+            <div class="vs-card vs-new">
+              <div class="vs-label">With Foundry</div>
+              <div class="vs-text">HTTP POST to Foundry Agent Service durable session endpoint → agent thread created → all 9 steps run as agent tool calls within the same persistent session</div>
+            </div>
+          </div>
+          <div class="step-items">
+            <span class="step-item si-blue">Blazor or Power Apps — unchanged UI</span>
+            <span class="step-item si-teal">Foundry Agent Service — durable session start</span>
+            <span class="step-item si-teal">Thread created — persists across all 9 steps</span>
+          </div>
+          <div class="step-foot">→ UI unchanged — all complexity moves into the Foundry agent definition, not the application code</div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step">
+        <div class="step-num teal">2</div>
+        <div class="step-card s-teal">
+          <div class="step-tag">Storage + Record creation · MCP tools replace manual HTTP</div>
+          <div class="step-title">Agent calls MCP tools to upload file and create the Dataverse record</div>
+          <div class="plain-box pb-teal">
+            <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#0D9E8A" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#0D9E8A" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div>
+            <div class="plain-box-text">In the original implementation, Power Automate makes two manual HTTP calls — one to the Azure Blob REST API to upload the file, and one via the Dataverse connector to create the Proposal record. With Foundry, the agent calls two registered MCP tools: the Azure Blob MCP server and the Dataverse MCP server. The agent passes the file binary and the required fields; the MCP tools handle authentication, the REST calls, and error handling. No custom HTTP code to maintain.</div>
+          </div>
+          <div class="foundry-component">
+            <div class="fc-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="#0D9E8A" opacity=".2"/><circle cx="6" cy="6" r="2.5" fill="#0D9E8A"/></svg>Foundry component — MCP tool calls</div>
+            <div class="fc-title">MCP Server: Azure Blob + MCP Server: Dataverse</div>
+            <div class="fc-desc">The Foundry agent calls registered MCP tools as part of its reasoning step. Each MCP server exposes structured operations: the Blob server exposes UploadFile(blobName, data) → returns URL. The Dataverse server exposes CreateRecord(tableName, fields) → returns record ID. The agent stores both results in its persistent thread memory for use in later steps.</div>
+            <div class="fc-tags">
+              <span class="fc-tag">MCP: Azure Blob — UploadFile tool</span>
+              <span class="fc-tag">MCP: Dataverse — CreateRecord tool</span>
+              <span class="fc-tag">blobUrl stored in agent thread memory</span>
+              <span class="fc-tag">proposalId stored in agent thread memory</span>
+            </div>
+          </div>
+          <div class="step-foot">→ Two MCP tool calls replace two Power Automate HTTP actions — agent memory holds the results for downstream steps</div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step">
+        <div class="step-num amber">3</div>
+        <div class="step-card s-amber">
+          <div class="step-tag">Document parsing · MCP tool replaces Do Until polling loop</div>
+          <div class="step-title">Foundry calls the Document Intelligence MCP tool — no polling loop required</div>
+          <div class="plain-box pb-amber">
+            <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#B87208" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#B87208" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div>
+            <div class="plain-box-text">The most tedious part of the original pipeline — the Do Until polling loop that checks Document Intelligence's status every 5 seconds until it says "succeeded" — disappears entirely. Foundry's MCP tool abstraction handles asynchronous tool calls internally. The agent calls the Document Intelligence MCP tool, Foundry manages the wait-and-poll cycle, and the agent receives the structured extraction result as a clean tool response. To the agent, it's a synchronous call.</div>
+          </div>
+          <div class="vs-grid">
+            <div class="vs-card vs-old">
+              <div class="vs-label">Original — Do Until loop</div>
+              <div class="vs-text">HTTP POST → get Operation-Location → loop: GET every 5s → check status field → wait → repeat until "succeeded" → parse JSON → extract 6 fields manually</div>
+            </div>
+            <div class="vs-card vs-new">
+              <div class="vs-label">With Foundry — MCP tool call</div>
+              <div class="vs-text">Agent calls: AnalyseDocument(blobUrl) → Foundry handles async polling internally → agent receives: &#123; clientName, scope, requirements, budget, deadline, compliance &#125;</div>
+            </div>
+          </div>
+          <div class="step-items">
+            <span class="step-item si-amber">MCP: Azure Document Intelligence</span>
+            <span class="step-item si-amber">Async polling handled by Foundry internally</span>
+            <span class="step-item si-amber">Structured extraction result → agent memory</span>
+            <span class="step-item si-amber">Zero polling loop code in the agent definition</span>
+          </div>
+          <div class="step-foot">→ The Do Until loop is gone — Foundry's async MCP call abstraction eliminates the most complex part of the original flow</div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step">
+        <div class="step-num purple">4</div>
+        <div class="step-card s-purple">
+          <div class="step-tag">Knowledge retrieval · Foundry IQ replaces 4 parallel SDK calls</div>
+          <div class="step-title">Foundry IQ fans out across all four knowledge indexes with iterative reflection</div>
+          <div class="plain-box pb-purple">
+            <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B46C1" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#6B46C1" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div>
+            <div class="plain-box-text">In the original implementation, Power Automate's "Run in Parallel" scope fires four separate Azure AI Search HTTP calls at the same time — each manually constructed with the right endpoint, query vector, and field mappings. With Foundry IQ (Foundry's next-generation RAG engine), the agent simply asks a question and Foundry IQ handles the multi-index fan-out automatically. Foundry IQ also applies iterative reflection — after the initial retrieval, it evaluates the results and retrieves again if the quality isn't sufficient. This isn't possible with a static Power Automate parallel scope.</div>
+          </div>
+          <div class="foundry-component">
+            <div class="fc-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="#6B46C1" opacity=".2"/><circle cx="6" cy="6" r="2.5" fill="#6B46C1"/></svg>Foundry component — Foundry IQ</div>
+            <div class="fc-title">Foundry IQ — multi-source retrieval with iterative reflection</div>
+            <div class="fc-desc">Foundry IQ is configured with all four Azure AI Search indexes as knowledge sources. When the agent invokes retrieval, Foundry IQ fans the query out across all four indexes simultaneously, applies semantic reranking across the combined result set, and then uses iterative reflection — evaluating whether the retrieved context is sufficient to answer the question and re-querying if not. The agent receives a single, clean, ranked context package. No parallel scope code. No custom result assembly. No confidence threshold filtering in application code.</div>
+            <div class="fc-tags">
+              <span class="fc-tag">past-projects-index</span>
+              <span class="fc-tag">team-profiles-index</span>
+              <span class="fc-tag">ref-documents-index</span>
+              <span class="fc-tag">pricing-templates-index</span>
+              <span class="fc-tag">Iterative reflection — auto-retry if quality low</span>
+              <span class="fc-tag">Cross-index semantic reranking</span>
+            </div>
+          </div>
+          <div class="step-foot">→ Four parallel HTTP calls replaced by one Foundry IQ invocation — with higher quality retrieval through iterative reflection</div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step">
+        <div class="step-num purple">5</div>
+        <div class="step-card s-purple">
+          <div class="step-tag">Context assembly · Foundry IQ handles ranking and deduplication</div>
+          <div class="step-title">Ranked, deduplicated context assembled automatically — no manual result merging</div>
+          <div class="plain-box pb-purple">
+            <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B46C1" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#6B46C1" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div>
+            <div class="plain-box-text">In the original pipeline, the results from four separate searches had to be manually assembled inside the Power Automate flow — parsing each search response, filtering by confidence score, ranking within each result set, and then combining into a single context string. Foundry IQ does all of this automatically. By the time the agent's model is invoked, it receives a single clean context window — already ranked, deduplicated, and filtered — sourced from all four indexes. The agent doesn't need to know which index each piece came from; Foundry IQ handles provenance and citation automatically.</div>
+          </div>
+          <div class="step-items">
+            <span class="step-item si-purple">Top 5 similar past projects — ranked by semantic similarity</span>
+            <span class="step-item si-purple">Top 8 matched available team members</span>
+            <span class="step-item si-purple">Relevant reference document sections</span>
+            <span class="step-item si-purple">Applicable pricing templates</span>
+            <span class="step-item si-purple">Confidence threshold filtering applied by Foundry IQ</span>
+            <span class="step-item si-purple">Provenance tracked — citations auto-generated</span>
+          </div>
+          <div class="step-foot">→ Context assembly is zero-code in Foundry — Foundry IQ produces a clean, grounded context package automatically</div>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="step">
+        <div class="step-num amber">6</div>
+        <div class="step-card s-amber">
+          <div class="step-tag">AI generation · Model catalogue + structured output mode</div>
+          <div class="step-title">Agent generates all 5 sections — structured output enforced, model switchable</div>
+          <div class="plain-box pb-amber">
+            <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#B87208" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#B87208" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div>
+            <div class="plain-box-text">In the original implementation, the model is hardcoded as GPT-4o, the JSON response is parsed manually in Power Automate expressions, and if the schema changes the flow breaks. With Foundry, the model is selected from the model catalogue — GPT-4o today, Anthropic Claude or Meta Llama tomorrow, without changing any application code. Structured output mode is configured in the agent definition: Foundry enforces the JSON schema at the API level, so the agent always returns the exact structure expected. No manual parsing. No schema drift.</div>
+          </div>
+          <div class="foundry-component">
+            <div class="fc-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="#E8960A" opacity=".2"/><circle cx="6" cy="6" r="2.5" fill="#E8960A"/></svg>Foundry component — Model catalogue + structured output</div>
+            <div class="fc-title">Model catalogue selection + structured output mode</div>
+            <div class="fc-desc">The agent's model is defined in the Foundry agent configuration as a pointer to the model catalogue — not a hardcoded endpoint URL. Switching models is a single config change. Structured output mode is declared in the agent definition: the expected JSON schema (executiveSummary, technicalApproach, teamProfiles, pricingNarrative, projectTimeline — each with citations[]) is validated by Foundry before the response is returned to the agent. The agent writes the five section objects directly to its thread memory, from where the Dataverse MCP tool reads them in Step 7.</div>
+            <div class="fc-tags">
+              <span class="fc-tag">GPT-4o (default)</span>
+              <span class="fc-tag">Anthropic Claude (switchable)</span>
+              <span class="fc-tag">Meta Llama (switchable)</span>
+              <span class="fc-tag">Structured output — schema enforced by Foundry</span>
+              <span class="fc-tag">No manual JSON parsing</span>
+            </div>
+          </div>
+          <div class="output-grid">
+            <div class="output-chip"><div class="output-chip-label">Section 1</div><div class="output-chip-val">Executive Summary</div><div class="output-chip-sub">+ citations[]</div></div>
+            <div class="output-chip"><div class="output-chip-label">Section 2</div><div class="output-chip-val">Technical Approach</div><div class="output-chip-sub">+ citations[]</div></div>
+            <div class="output-chip"><div class="output-chip-label">Section 3</div><div class="output-chip-val">Team Profiles</div><div class="output-chip-sub">+ citations[]</div></div>
+            <div class="output-chip"><div class="output-chip-label">Section 4</div><div class="output-chip-val">Pricing Narrative</div><div class="output-chip-sub">+ citations[]</div></div>
+            <div class="output-chip"><div class="output-chip-label">Section 5</div><div class="output-chip-val">Project Timeline</div><div class="output-chip-sub">+ citations[]</div></div>
+          </div>
+          <div class="step-foot">→ Schema enforced by Foundry — model is swappable from the catalogue without touching application code</div>
+        </div>
+      </div>
+
+      <!-- STEP 7 -->
+      <div class="step">
+        <div class="step-num blue">7</div>
+        <div class="step-card s-blue">
+          <div class="step-tag">Persistence + display · MCP: Dataverse + Foundry thread state</div>
+          <div class="step-title">Agent writes sections to Dataverse via MCP — thread state enables instant AI Q&amp;A</div>
+          <div class="plain-box pb-blue">
+            <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#007DAF" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#007DAF" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div>
+            <div class="plain-box-text">The Dataverse write works the same way — the five ProposalSection records are created using the Dataverse MCP tool. Blazor's SignalR hub picks up the changes and renders the sections in the workbench. The important addition is that the sections also live in the Foundry agent's persistent thread memory. This means the moment the draft is ready, the bid manager can open the AI Workspace in Blazor and ask questions about the specific proposal — "why did you choose this team member?", "what past project supports the technical approach?" — and the agent answers immediately from thread context, without a separate search query.</div>
+          </div>
+          <div class="step-items">
+            <span class="step-item si-blue">MCP: Dataverse — CreateRecord × 5 ProposalSection</span>
+            <span class="step-item si-blue">MCP: Dataverse — UpdateRecord Proposal status</span>
+            <span class="step-item si-teal">Agent thread memory — full draft + citations retained</span>
+            <span class="step-item si-blue">Blazor SignalR — real-time section rendering</span>
+            <span class="step-item si-teal">Instant proposal Q&amp;A — no re-search needed</span>
+          </div>
+          <div class="step-foot">→ Thread memory enables zero-latency Q&amp;A on the draft — the agent already knows everything about this proposal</div>
+        </div>
+      </div>
+
+      <!-- STEP 8 -->
+      <div class="step">
+        <div class="step-num teal">8</div>
+        <div class="step-card s-teal">
+          <div class="step-tag">Review &amp; approval · MCP: Teams + agent-generated Adaptive Card</div>
+          <div class="step-title">Agent sends Adaptive Card to Teams — card content generated from thread memory</div>
+          <div class="plain-box pb-teal">
+            <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#0D9E8A" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#0D9E8A" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div>
+            <div class="plain-box-text">In the original implementation, the Adaptive Card JSON is manually constructed in Power Automate using concatenated expressions — a brittle, hard-to-maintain approach. With Foundry, the agent calls the Teams MCP tool and provides the card content as natural language instructions. Foundry generates the Adaptive Card JSON automatically from the agent's structured output. Additionally, reviewers can respond to the Adaptive Card by typing in Teams, and the Foundry agent reads their response — enabling a conversational review flow rather than just button clicks.</div>
+          </div>
+          <div class="foundry-component">
+            <div class="fc-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="#0D9E8A" opacity=".2"/><circle cx="6" cy="6" r="2.5" fill="#0D9E8A"/></svg>Foundry component — MCP: Microsoft Teams</div>
+            <div class="fc-title">Teams MCP server — Adaptive Card generation + conversational review</div>
+            <div class="fc-desc">The Teams MCP server exposes SendAdaptiveCard(channel, content) as a tool. The agent generates the card content from its thread memory — the right sections for the right reviewer role are selected automatically from the structured proposal data. Reviewers' responses (approve, request changes, comments) are read back by the agent via the Teams MCP ListMessages tool. This enables a conversational approval loop — the reviewer can ask the agent clarifying questions directly in Teams and receive grounded answers from the proposal context.</div>
+            <div class="fc-tags">
+              <span class="fc-tag">MCP: Teams — SendAdaptiveCard</span>
+              <span class="fc-tag">MCP: Teams — ListMessages (read responses)</span>
+              <span class="fc-tag">Role-scoped card content — from agent thread</span>
+              <span class="fc-tag">Conversational review — natural language in Teams</span>
+            </div>
+          </div>
+          <div class="step-foot">→ Card content from agent thread — no manual JSON construction, conversational review enabled</div>
+        </div>
+      </div>
+
+      <!-- STEP 9 -->
+      <div class="step">
+        <div class="step-num green">9</div>
+        <div class="step-card s-green">
+          <div class="step-tag">Delivery · MCP tools + Foundry Control Plane trace</div>
+          <div class="step-title">Agent packages and delivers the proposal — every action traced in Control Plane</div>
+          <div class="plain-box pb-green">
+            <div class="plain-box-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#16A34A" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#16A34A" stroke-width="1.2" stroke-linecap="round"/></svg>What changes with Foundry</div>
+            <div class="plain-box-text">On approval, the agent calls three MCP tools in sequence: the SharePoint MCP server (exports the proposal as PDF and DOCX, uploads to the archive library), the Dataverse MCP server (updates CRM status to Submitted), and the Teams MCP server (notifies the bid manager). Power BI refreshes as before via Dataverse change notifications. The critical addition is that every single action the agent took across all nine steps — every MCP tool call, every model invocation, every retrieval query — is recorded in the Foundry Control Plane. You can replay, audit, and evaluate any proposal that has ever been processed.</div>
+          </div>
+          <div class="foundry-component">
+            <div class="fc-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="#16A34A" opacity=".2"/><circle cx="6" cy="6" r="2.5" fill="#16A34A"/></svg>Foundry component — Control Plane full trace</div>
+            <div class="fc-title">Foundry Control Plane — complete agent observability</div>
+            <div class="fc-desc">Every step the agent took for this proposal is captured: the Document Intelligence tool call result, the Foundry IQ retrieval queries and their ranked results, the model input context and output, the Dataverse write confirmations, and the Teams delivery receipts. You can open any completed proposal in the Foundry portal and replay its entire processing history. Built-in evaluators score every proposal for groundedness (are the citations real?), coherence (does the proposal read well?), and safety (does it meet content policy?). Failed or low-quality proposals are flagged automatically.</div>
+            <div class="fc-tags">
+              <span class="fc-tag">MCP: SharePoint — PDF + DOCX export</span>
+              <span class="fc-tag">MCP: Dataverse — CRM status update</span>
+              <span class="fc-tag">MCP: Teams — bid manager notification</span>
+              <span class="fc-tag">Control Plane — full 9-step trace</span>
+              <span class="fc-tag">Built-in evaluators: groundedness · coherence · safety</span>
+              <span class="fc-tag">Continuous eval — catches quality regressions</span>
+            </div>
+          </div>
+          <div class="result-banner" style="border-color:rgba(22,163,74,0.30);">
+            <div class="rb-icon" style="background:#16A34A;"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6l2.5 2.5L9 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div>
+              <div class="rb-label" style="color:#16A34A;">Foundry implementation complete</div>
+              <div class="rb-text">All nine steps run as a single Foundry agent session. The entire processing history is in the Control Plane. The agent thread holds the full proposal in memory — ready for Q&amp;A from any channel at any time. The proposal is delivered, the CRM is updated, and the pipeline dashboard has refreshed.</div>
+            </div>
+          </div>
+          <div class="step-foot">→ Full end-to-end trace in Control Plane — audit, replay, and evaluate any proposal ever processed</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU GAIN -->
+<section class="doc-section" id="gains">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Benefits of the Foundry approach</div>
+    <div class="sec-heading">What You <em>Gain with Foundry</em></div>
+    <p class="sec-sub">Beyond replacing manual wiring, Foundry unlocks capabilities that simply aren't possible with the original Power Automate + SDK approach.</p>
+    <div class="section-divider"></div>
+    <div class="gains-grid">
+      <div class="gain-card gc-teal">
+        <div class="gain-label">Foundry Control Plane</div>
+        <div class="gain-title">Full observability — every agent action traced</div>
+        <div class="gain-desc">Every tool call, retrieval query, model invocation, and output across all nine steps is recorded in the Foundry Control Plane. You can audit any proposal, replay its processing history, and see exactly why the AI made each decision. This is impossible in a Power Automate flow without building custom logging infrastructure.</div>
+      </div>
+      <div class="gain-card gc-purple">
+        <div class="gain-label">Model catalogue</div>
+        <div class="gain-title">Switch models without touching application code</div>
+        <div class="gain-desc">The model is a pointer in the agent definition, not a hardcoded endpoint URL. Moving from GPT-4o to Anthropic Claude or Meta Llama is a single configuration change — no code deployments, no flow updates, no endpoint string changes across multiple services. You can A/B test models on real proposals and measure quality differences in the Control Plane.</div>
+      </div>
+      <div class="gain-card gc-amber">
+        <div class="gain-label">Foundry IQ</div>
+        <div class="gain-title">Iterative reflection improves retrieval quality</div>
+        <div class="gain-desc">Foundry IQ doesn't just run one retrieval pass. After the initial search across all four indexes, it evaluates whether the results are sufficient and re-queries if not. This iterative reflection produces better context for the model — more relevant past projects, better-matched team members — without any additional code. The original parallel Power Automate scope retrieves once and stops.</div>
+      </div>
+      <div class="gain-card gc-blue">
+        <div class="gain-label">Persistent thread memory</div>
+        <div class="gain-title">Zero-latency Q&amp;A on any processed proposal</div>
+        <div class="gain-desc">Because the Foundry agent maintains durable thread state across all nine steps, the full proposal context — RFP extract, search results, generated sections, citations — lives in the agent's memory. The bid manager can ask questions about the proposal in Blazor or Teams and receive instant, grounded answers without triggering a new search cycle.</div>
+      </div>
+      <div class="gain-card gc-green">
+        <div class="gain-label">Continuous evaluations</div>
+        <div class="gain-title">Catch quality regressions before they reach users</div>
+        <div class="gain-desc">The Foundry Control Plane's built-in evaluators run automatically on every processed proposal — scoring for groundedness (are citations real?), coherence (does the proposal read well?), and safety. You can define custom domain-specific evaluators and run them continuously. If a change to the knowledge base or model version degrades proposal quality, the evaluators flag it before a bid manager notices.</div>
+      </div>
+      <div class="gain-card gc-teal">
+        <div class="gain-label">MCP tool ecosystem</div>
+        <div class="gain-title">Connect any service without custom HTTP code</div>
+        <div class="gain-desc">Any MCP server in the Foundry ecosystem — today Azure Blob, Dataverse, Document Intelligence, SharePoint, Teams — and tomorrow Salesforce, Jira, Slack, or any custom internal service — becomes available to the agent as a typed tool call with authentication, retry, and error handling managed by Foundry. No custom HTTP code. No credential management in flow expressions.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRADEOFFS -->
+<section class="doc-section alt" id="tradeoffs">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Honest comparison · What changes, what stays, what costs more</div>
+    <div class="sec-heading">Step-by-Step <em>Trade-off Table</em></div>
+    <p class="sec-sub">A direct comparison of every step — what the original approach does, what Foundry replaces it with, and what the net change is in complexity and capability.</p>
+    <div class="section-divider"></div>
+    <div style="overflow-x:auto;">
+      <table class="tradeoff-table">
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th>Original (manual wiring)</th>
+            <th>With Microsoft Foundry</th>
+            <th>Net change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tt-dim">1 — Upload trigger</td>
+            <td class="tt-old">SharePoint trigger or Power Apps HTTP → Power Automate flow start</td>
+            <td class="tt-new">HTTP to Foundry Agent Service → durable session created</td>
+            <td><span class="badge-s">Same complexity</span> — UI unchanged</td>
+          </tr>
+          <tr>
+            <td class="tt-dim">2 — File + record creation</td>
+            <td class="tt-old">2 manual HTTP calls: Blob REST API + Dataverse connector with expression mapping</td>
+            <td class="tt-new">2 MCP tool calls: Blob MCP + Dataverse MCP — auth handled by Foundry</td>
+            <td><span class="badge-r">Simpler</span> — no expression mapping</td>
+          </tr>
+          <tr>
+            <td class="tt-dim">3 — RFP parsing</td>
+            <td class="tt-old">HTTP POST + Do Until loop polling every 5s + manual JSON field extraction</td>
+            <td class="tt-new">Single MCP tool call — async polling managed internally by Foundry</td>
+            <td><span class="badge-r">Much simpler</span> — polling loop gone</td>
+          </tr>
+          <tr>
+            <td class="tt-dim">4 — 4-index search</td>
+            <td class="tt-old">Run in Parallel scope with 4 separate AI Search HTTP calls, manual vector construction</td>
+            <td class="tt-new">Foundry IQ single invocation — multi-index fan-out with iterative reflection</td>
+            <td><span class="badge-r">Simpler + higher quality</span> — iterative reflection</td>
+          </tr>
+          <tr>
+            <td class="tt-dim">5 — Context assembly</td>
+            <td class="tt-old">Manual result merging, confidence filtering, context string construction in flow expressions</td>
+            <td class="tt-new">Foundry IQ handles ranking, deduplication, provenance, and context assembly automatically</td>
+            <td><span class="badge-r">Zero code</span> — fully managed</td>
+          </tr>
+          <tr>
+            <td class="tt-dim">6 — Section generation</td>
+            <td class="tt-old">HTTP POST to hardcoded GPT-4o endpoint, manual JSON parsing with error handling</td>
+            <td class="tt-new">Model catalogue (switchable), structured output enforced, sections in thread memory</td>
+            <td><span class="badge-r">Simpler + flexible</span> — model switchable</td>
+          </tr>
+          <tr>
+            <td class="tt-dim">7 — Save + display</td>
+            <td class="tt-old">Dataverse connector writes + Blazor SignalR refresh</td>
+            <td class="tt-new">Dataverse MCP tool write + thread memory for Q&amp;A + Blazor SignalR refresh</td>
+            <td><span class="badge-r">More capable</span> — instant Q&amp;A added</td>
+          </tr>
+          <tr>
+            <td class="tt-dim">8 — Teams review</td>
+            <td class="tt-old">Manual Adaptive Card JSON construction in Power Automate expressions</td>
+            <td class="tt-new">Teams MCP tool — card content from agent thread, conversational review enabled</td>
+            <td><span class="badge-r">Simpler + richer</span> — conversational review</td>
+          </tr>
+          <tr>
+            <td class="tt-dim">9 — Delivery + audit</td>
+            <td class="tt-old">Power Automate export flow, no central trace, no quality evaluations</td>
+            <td class="tt-new">MCP tool calls + Foundry Control Plane full trace + built-in evaluators</td>
+            <td><span class="badge-r">Much more capable</span> — full observability</td>
+          </tr>
+          <tr>
+            <td class="tt-dim">Cost</td>
+            <td class="tt-old">Azure OpenAI token cost + Power Automate Premium + AI Search + Doc Intelligence</td>
+            <td class="tt-new">Same underlying services + Foundry Agent Service session cost (~$0.05–$0.15 per proposal run)</td>
+            <td><span style="font-size:12px;color:#E8960A;font-weight:600;">Slightly higher per run</span> — offset by dev time savings and eval capability</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SUMMARY -->
+<div class="summary-strip">
+  <div class="ss-inner">
+    <div class="ss-title">Foundry components used across the 9-step implementation</div>
+    <div class="ss-grid">
+      <div class="ss-card"><div class="ss-card-label">Core engine</div><div class="ss-card-val">Foundry Agent Service</div><div class="ss-card-system">Durable · persistent thread · MCP orchestration</div></div>
+      <div class="ss-card"><div class="ss-card-label">Knowledge retrieval</div><div class="ss-card-val">Foundry IQ</div><div class="ss-card-system">Multi-index RAG · iterative reflection</div></div>
+      <div class="ss-card"><div class="ss-card-label">Model layer</div><div class="ss-card-val">Model catalogue</div><div class="ss-card-system">GPT-4o · Claude · Llama · switchable</div></div>
+      <div class="ss-card"><div class="ss-card-label">Tool integrations</div><div class="ss-card-val">MCP servers × 5</div><div class="ss-card-system">Blob · Dataverse · Doc AI · Teams · SharePoint</div></div>
+      <div class="ss-card"><div class="ss-card-label">Observability</div><div class="ss-card-val">Foundry Control Plane</div><div class="ss-card-system">Traces · evals · coherence · groundedness</div></div>
+      <div class="ss-card"><div class="ss-card-label">UI unchanged</div><div class="ss-card-val">Blazor + Power Apps</div><div class="ss-card-system">.NET 8 · SignalR · MudBlazor · MAUI</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <h2>Ready to build the platform on Microsoft Foundry?</h2>
+  <p>Book a free 60-minute architecture session with our Microsoft Foundry-certified team — we'll map your specific requirements and produce a production-ready implementation plan.</p>
+  <a href="#" class="cta-btn">Book a Free Consultation →</a>
+</div>
+
+<footer>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <svg width="90" height="16" viewBox="0 0 223 40" fill="none"><g clip-path="url(#cf)"><path d="M48.1752 26.7534V31.0041H29.1777V29.7925C41.3177 16.5906 42.7908 14.3321 42.7908 11.1448C42.7908 8.71877 41.1167 7.08126 38.6143 7.08126C35.9983 7.08126 34.2765 8.76031 34.2765 11.1983V11.8156H29.7676V11.1746C29.7676 6.21053 33.2988 2.84277 38.5781 2.84277C43.7444 2.84277 47.3416 6.26328 47.3416 11.1211C47.3416 14.7612 45.8882 17.7153 37.8216 26.7534H48.1752Z" fill="#00B2ED"/><path d="M52.6162 0.37207H57.3039V31.0036H52.6162V0.37207Z" fill="#0D133E"/><path d="M73.3409 31.4976C66.4259 31.4976 61.2515 26.4892 61.2515 19.7639C61.2515 12.9973 66.4259 8.03027 73.3409 8.03027C80.2439 8.03027 85.4302 13.027 85.4302 19.7644C85.4302 26.4895 80.2439 31.498 73.3409 31.498V31.4976ZM80.6991 19.7639C80.6991 15.4808 77.6207 12.4225 73.3409 12.4225C69.0611 12.4225 65.9832 15.4808 65.9832 19.7639C65.9832 24.0469 69.0613 27.1054 73.3409 27.1054C77.6205 27.1054 80.6991 24.0472 80.6991 19.7639Z" fill="#0D133E"/><path d="M110.842 8.58V28.26C110.842 35.49 106.511 39.9 99.449 39.9C93.6 39.9 89.45 36.89 88.285 31.92H92.966C93.841 34.4 96.528 35.77 99.413 35.77C103.36 35.77 106.246 33.19 106.246 28.9V27.85C104.267 29.56 101.645 30.56 98.688 30.56C92.333 30.56 87.404 25.66 87.404 19.32C87.404 12.99 92.333 8.03 98.688 8.03C102.037 8.03 104.969 9.35 107.017 11.5L107.764 8.58H110.842ZM99.22 26.24C103.282 26.24 106.228 23.31 106.228 19.32C106.228 15.31 103.295 12.37 99.22 12.37C95.158 12.37 92.182 15.34 92.182 19.32C92.182 23.28 95.146 26.24 99.22 26.24Z" fill="#0D133E"/><path d="M137.489 8.52L127.1 31.48C124.545 37.15 122.295 39.16 117.687 39.16H115.389V34.98H117.328C120.319 34.98 121.239 34.11 122.895 30.5L123.403 29.44L113.557 8.52H118.612L125.798 24.25L132.541 8.52H137.489Z" fill="#0D133E"/><path d="M17.0325 27.33C14.867 27.33 13.066 26.56 11.829 25.19H6.586C8.442 29.11 12.334 31.7 17.033 31.7C22.084 31.7 26.215 28.8 28.016 24.02H23.121C21.923 26.08 19.734 27.33 17.033 27.33Z" fill="#00B2ED"/><path d="M17.0325 7.95C12.569 7.95 8.849 10.26 6.891 13.84H12.353C13.552 12.76 15.157 12.15 17.033 12.15C20.478 12.15 23.07 14.18 23.904 17.62H2.274L0.065 21.41H28.47C28.524 20.9 28.564 20.39 28.564 19.88H28.568C28.568 13.29 23.959 7.95 17.033 7.95Z" fill="#00B2ED"/></g><defs><clipPath id="cf"><rect width="223" height="40" fill="white"/></clipPath></defs></svg>
+  </div>
+  <div class="foot-copy">© 2026 E2logy Software Solutions · Proposal Intelligence Platform · Microsoft Foundry · Confidential</div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Proposal Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink: #0e0e14;
+    --paper: #f5f4f0;
+    --azure: #0078d4;
+    --azure-light: #d0e8fa;
+    --accent: #5b2ff5;
+    --accent2: #ff5c35;
+    --green: #107c41;
+    --steel: #2d3142;
+    --muted: #8a8fa3;
+    --card: #ffffff;
+    --border: rgba(14,14,20,0.1);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 40px;
+    background: rgba(245,244,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 15px;
+    letter-spacing: -0.3px;
+    color: var(--ink);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-dots {
+    display: flex; gap: 6px;
+  }
+  .nav-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    border: none;
+  }
+  .nav-dot.active { background: var(--accent); transform: scale(1.3); }
+  .slide-counter {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px; color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* ── SLIDES ── */
+  .slides-wrap { padding-top: 60px; }
+  .slide {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    padding: 60px 60px 80px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .slide:nth-child(even) { background: #fafaf8; }
+
+  /* slide number badge */
+  .s-num {
+    position: absolute; top: 60px; right: 60px;
+    font-family: 'Syne', sans-serif;
+    font-size: 80px; font-weight: 800;
+    color: rgba(14,14,20,0.04);
+    line-height: 1; pointer-events: none;
+    user-select: none;
+  }
+
+  /* ── HERO SLIDE ── */
+  #s1 {
+    background: var(--steel);
+    color: white;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  #s1 .s-num { color: rgba(255,255,255,0.04); }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .hero-eyebrow {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+  }
+  .hero-title em {
+    font-style: normal;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.5);
+  }
+  .hero-subtitle {
+    font-size: 17px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.65);
+    max-width: 480px;
+    margin-bottom: 40px;
+  }
+  .hero-badges {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 48px;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 12px; font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.8);
+  }
+  .badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent2);
+    flex-shrink: 0;
+  }
+  .hero-right {
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .stat-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px; font-weight: 800;
+    color: white; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 13px; color: rgba(255,255,255,0.5);
+  }
+
+  /* ── SECTION HEADING ── */
+  .section-eyebrow {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800; letter-spacing: -0.5px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .section-lead {
+    font-size: 17px; line-height: 1.7;
+    color: #4a4a5a;
+    max-width: 600px;
+    margin-bottom: 48px;
+  }
+
+  /* ── TECH STACK GRID ── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .tech-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 12px;
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .tech-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    transform: translateY(-3px);
+  }
+  .tech-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .tech-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 14px;
+  }
+  .tech-desc {
+    font-size: 13px; color: var(--muted); line-height: 1.5;
+  }
+  .tech-layer {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 500; margin-top: auto;
+  }
+
+  /* colors per layer */
+  .layer-fe { background: #ede9fe; }
+  .layer-db { background: #dbeafe; }
+  .layer-ai { background: #fce7f3; }
+  .layer-store { background: #d1fae5; }
+  .layer-search { background: #fef9c3; }
+  .layer-share { background: #fee2e2; }
+  .layer-auth { background: #f3f4f6; }
+
+  /* ── ARCH DIAGRAM ── */
+  .arch-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 48px;
+    margin-bottom: 48px;
+  }
+  .arch-layers {
+    display: flex; flex-direction: column; gap: 1px;
+    overflow: hidden; border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .arch-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    min-height: 64px;
+  }
+  .arch-label {
+    background: var(--steel);
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    display: flex; align-items: center;
+    padding: 0 20px;
+  }
+  .arch-content {
+    background: #fafaf8;
+    display: flex; align-items: center;
+    gap: 12px; padding: 12px 20px;
+    flex-wrap: wrap;
+    border-left: 3px solid transparent;
+  }
+  .arch-row:nth-child(1) .arch-content { border-color: var(--accent); }
+  .arch-row:nth-child(2) .arch-content { border-color: var(--azure); }
+  .arch-row:nth-child(3) .arch-content { border-color: #107c41; }
+  .arch-row:nth-child(4) .arch-content { border-color: var(--accent2); }
+  .arch-row:nth-child(5) .arch-content { border-color: #a855f7; }
+  .arch-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 8px;
+    font-size: 12px; font-weight: 500;
+    background: white;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  /* ── PHASE DIAGRAM SLIDES ── */
+  .phase-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 32px;
+  }
+  .phase-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 100px;
+    white-space: nowrap;
+  }
+  .pb1 { background: #ede9fe; color: var(--accent); }
+  .pb2 { background: #d1fae5; color: #065f46; }
+  .pb3 { background: #fce7f3; color: #9d174d; }
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(22px, 3vw, 36px);
+    font-weight: 800; letter-spacing: -0.5px;
+  }
+  .phase-desc {
+    font-size: 15px; color: #4a4a5a; line-height: 1.7;
+    max-width: 700px;
+    margin-bottom: 32px;
+  }
+  .diagram-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    overflow: hidden;
+  }
+  .diagram-box svg { width: 100%; height: auto; display: block; }
+  .phase-bullets {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-top: 32px;
+  }
+  .bullet {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .bullet-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .bullet-text { font-size: 13px; line-height: 1.5; }
+  .bullet-text strong { display: block; font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+
+  /* ── ROLES SLIDE ── */
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .role-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+  }
+  .role-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    margin: 0 auto 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+  }
+  .role-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 15px;
+    margin-bottom: 8px;
+  }
+  .role-perms {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;
+  }
+  .perm {
+    font-size: 10px; padding: 3px 8px; border-radius: 4px;
+    background: var(--paper); border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ── VALUE SLIDE ── */
+  .value-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    margin-bottom: 48px;
+  }
+  .value-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    position: relative; overflow: hidden;
+  }
+  .value-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  }
+  .vc1::after { background: var(--accent); }
+  .vc2::after { background: var(--azure); }
+  .vc3::after { background: #107c41; }
+  .vc4::after { background: var(--accent2); }
+  .value-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 52px; font-weight: 800;
+    line-height: 1; margin-bottom: 8px;
+  }
+  .vc1 .value-num { color: var(--accent); }
+  .vc2 .value-num { color: var(--azure); }
+  .vc3 .value-num { color: #107c41; }
+  .vc4 .value-num { color: var(--accent2); }
+  .value-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .value-desc {
+    font-size: 14px; color: var(--muted); line-height: 1.6;
+  }
+
+  /* ── CLOSING SLIDE ── */
+  #s-close {
+    background: var(--steel);
+    color: white;
+    align-items: center; justify-content: center;
+    text-align: center;
+  }
+  #s-close .s-num { color: rgba(255,255,255,0.04); }
+  .close-icon {
+    font-size: 64px; margin-bottom: 28px;
+  }
+  .close-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800; letter-spacing: -1px;
+    margin-bottom: 20px;
+    color: white;
+  }
+  .close-sub {
+    font-size: 18px; color: rgba(255,255,255,0.55);
+    max-width: 500px; margin: 0 auto 40px; line-height: 1.6;
+  }
+  .close-chips {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center;
+  }
+  .close-chip {
+    padding: 10px 22px; border-radius: 100px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    font-size: 13px; color: rgba(255,255,255,0.7);
+    font-weight: 500;
+  }
+
+  /* ── ANIMATIONS ── */
+  .slide { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .slide.visible { opacity: 1; transform: translateY(0); }
+
+  /* responsive */
+  @media (max-width: 768px) {
+    .slide { padding: 40px 24px 60px; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .value-grid { grid-template-columns: 1fr; }
+    .phase-bullets { grid-template-columns: 1fr; }
+    nav { padding: 14px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">⬡ Proposal<span>Intelligence</span></div>
+  <div class="nav-dots" id="navDots"></div>
+  <div class="slide-counter" id="slideCounter">01 / 09</div>
+</nav>
+
+<div class="slides-wrap" id="slidesWrap">
+
+<!-- ───────────────────────────── SLIDE 1 HERO ── -->
+<section class="slide" id="s1" data-slide="1">
+  <div class="s-num">01</div>
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow">Microsoft Foundry · Azure · .NET Core</div>
+      <h1 class="hero-title">Proposal<br/><em>Intelligence</em><br/>Platform</h1>
+      <p class="hero-subtitle">An AI-driven solution that automates and orchestrates the entire proposal lifecycle—from RFP intake to final submission—using a single intelligent agent.</p>
+      <div class="hero-badges">
+        <span class="badge"><span class="badge-dot"></span>.NET Core Frontend</span>
+        <span class="badge"><span class="badge-dot"></span>MS SQL Database</span>
+        <span class="badge"><span class="badge-dot"></span>Azure Blob Storage</span>
+        <span class="badge"><span class="badge-dot"></span>Microsoft Foundry Agent</span>
+        <span class="badge"><span class="badge-dot"></span>ChatGPT LLM</span>
+        <span class="badge"><span class="badge-dot"></span>SharePoint Integration</span>
+        <span class="badge"><span class="badge-dot"></span>Role-Based Access</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="stat-card">
+        <div class="stat-val">3 Phases</div>
+        <div class="stat-label">Upload & AI → Review & Approval → Generate, Share & Roles</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">7 Azure Services</div>
+        <div class="stat-label">Foundry Agent · Blob · AI Search · Data Intelligence · SQL · SignalR · SharePoint</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">End-to-End</div>
+        <div class="stat-label">Single intelligent agent orchestrates the full proposal lifecycle automatically</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── SLIDE 2 PROBLEM ── -->
+<section class="slide" id="s2" data-slide="2">
+  <div class="s-num">02</div>
+  <div class="section-eyebrow">The Challenge</div>
+  <h2 class="section-title">Proposal creation<br/>is broken</h2>
+  <p class="section-lead">Teams spend hundreds of hours manually extracting RFP requirements, searching for past proposals, coordinating reviews, and assembling final documents — all while racing deadlines.</p>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-icon" style="background:#fee2e2; font-size:28px;">⏱️</div>
+      <div class="tech-name">Time-Intensive</div>
+      <div class="tech-desc">Manual extraction of RFP requirements takes days. Context is scattered across emails, SharePoint, and siloed knowledge.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon" style="background:#fef9c3; font-size:28px;">📋</div>
+      <div class="tech-name">Inconsistent Output</div>
+      <div class="tech-desc">Every proposal writer reinvents the wheel. No consistent voice, structure, or reuse of winning proposal content.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon" style="background:#dbeafe; font-size:28px;">🔄</div>
+      <div class="tech-name">Broken Reviews</div>
+      <div class="tech-desc">Review cycles are tracked via email. Approvals get lost. Version control is chaotic without a structured workflow.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon" style="background:#d1fae5; font-size:28px;">🔒</div>
+      <div class="tech-name">No Access Control</div>
+      <div class="tech-desc">Sensitive commercial data shared without proper role boundaries. No audit trail for who approved what.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── SLIDE 3 SOLUTION ── -->
+<section class="slide" id="s3" data-slide="3">
+  <div class="s-num">03</div>
+  <div class="section-eyebrow">The Solution</div>
+  <h2 class="section-title">One Agent.<br/>Full Lifecycle.</h2>
+  <p class="section-lead">The Proposal Intelligence Platform uses Microsoft Foundry as a single orchestration agent that coordinates every service — from document intelligence to LLM drafting to SharePoint delivery — automatically.</p>
+  <div class="arch-wrap">
+    <div class="arch-layers">
+      <div class="arch-row">
+        <div class="arch-label">Frontend</div>
+        <div class="arch-content">
+          <span class="arch-chip">🖥️ .NET Core (Blazor)</span>
+          <span class="arch-chip">📤 File Upload UI</span>
+          <span class="arch-chip">✏️ Review &amp; Edit Editor</span>
+          <span class="arch-chip">📊 Dashboard &amp; Status</span>
+          <span class="arch-chip">🔔 SignalR Real-time</span>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-label">Agent Layer</div>
+        <div class="arch-content">
+          <span class="arch-chip">🤖 Microsoft Foundry Agent</span>
+          <span class="arch-chip">🧠 Orchestration Logic</span>
+          <span class="arch-chip">🔗 Tool Calling</span>
+          <span class="arch-chip">📝 Workflow State Machine</span>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-label">AI Services</div>
+        <div class="arch-content">
+          <span class="arch-chip">💬 ChatGPT (LLM)</span>
+          <span class="arch-chip">📄 Azure Document Intelligence</span>
+          <span class="arch-chip">🔍 Azure AI Search</span>
+          <span class="arch-chip">🧬 Embeddings &amp; Indexing</span>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-label">Storage</div>
+        <div class="arch-content">
+          <span class="arch-chip">🗃️ MS SQL Server</span>
+          <span class="arch-chip">☁️ Azure Blob Storage</span>
+          <span class="arch-chip">📁 SharePoint</span>
+          <span class="arch-chip">📦 Document Versioning</span>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-label">Security</div>
+        <div class="arch-content">
+          <span class="arch-chip">👤 Role-Based Access Control</span>
+          <span class="arch-chip">🔐 Azure AD / Entra ID</span>
+          <span class="arch-chip">📋 Audit Logging</span>
+          <span class="arch-chip">✅ Approval Workflow</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── SLIDE 4 TECH STACK ── -->
+<section class="slide" id="s4" data-slide="4">
+  <div class="s-num">04</div>
+  <div class="section-eyebrow">Technology Stack</div>
+  <h2 class="section-title">Built on Microsoft<br/>Azure Ecosystem</h2>
+  <p class="section-lead">Every component is purpose-selected for its role in the proposal lifecycle — from AI extraction to final delivery.</p>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-icon layer-fe">🖥️</div>
+      <div class="tech-name">.NET Core</div>
+      <div class="tech-desc">Blazor Server/WASM frontend. Real-time updates via SignalR. Rich interactive proposal editor.</div>
+      <div class="tech-layer">Frontend</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon layer-db">🗃️</div>
+      <div class="tech-name">MS SQL Server</div>
+      <div class="tech-desc">Relational store for proposals, workflows, user roles, approval states, and audit history.</div>
+      <div class="tech-layer">Database</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon layer-store">☁️</div>
+      <div class="tech-name">Azure Blob Storage</div>
+      <div class="tech-desc">Scalable binary storage for RFP PDFs, generated proposal documents, and all file attachments.</div>
+      <div class="tech-layer">Storage</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon layer-ai">🤖</div>
+      <div class="tech-name">Microsoft Foundry</div>
+      <div class="tech-desc">Central AI agent that orchestrates all tools and services across the full proposal workflow.</div>
+      <div class="tech-layer">Agent / Orchestration</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon layer-search">🔍</div>
+      <div class="tech-name">Azure AI Search</div>
+      <div class="tech-desc">Vector + keyword indexing of past proposals. Enables semantic search to retrieve relevant content during drafting.</div>
+      <div class="tech-layer">Search &amp; RAG</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon layer-ai" style="background:#fce7f3;">📄</div>
+      <div class="tech-name">Azure Document Intelligence</div>
+      <div class="tech-desc">Extracts structured data from uploaded RFP PDFs — sections, tables, requirements, and deadlines automatically.</div>
+      <div class="tech-layer">Document Extraction</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon layer-ai" style="background:#fff7ed;">💬</div>
+      <div class="tech-name">ChatGPT (OpenAI)</div>
+      <div class="tech-desc">Large Language Model for drafting proposal sections in the company's voice, with RAG context injected.</div>
+      <div class="tech-layer">LLM</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon layer-share">📁</div>
+      <div class="tech-name">SharePoint</div>
+      <div class="tech-desc">Final approved proposals published directly to SharePoint libraries for organisation-wide sharing and access control.</div>
+      <div class="tech-layer">Document Sharing</div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── SLIDE 5 PHASE 1 ── -->
+<section class="slide" id="s5" data-slide="5">
+  <div class="s-num">05</div>
+  <div class="phase-header">
+    <span class="phase-badge pb1">Phase 1</span>
+    <h2 class="phase-title">Upload &amp; AI Processing</h2>
+  </div>
+  <p class="phase-desc">The Uploader submits the RFP via the Blazor UI. The .NET API routes the file to Azure Blob and triggers Microsoft Foundry. The agent calls Azure Document Intelligence to extract requirements, then Azure AI Search to retrieve relevant past proposals, and finally ChatGPT to draft each section in the company's voice.</p>
+  <div class="diagram-box">
+    <svg width="100%" viewBox="0 0 680 520" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+<mask id="imagine-text-gaps-jt3br1" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="680" height="520" fill="white"/><rect x="47.21004867553711" y="17.027612686157227" width="153.57994079589844" height="21.94477653503418" fill="black" rx="2"/><rect x="44.46002960205078" y="55.44430923461914" width="107.07994842529297" height="19.11138916015625" fill="black" rx="2"/><rect x="202.9539794921875" y="55.44430923461914" width="102.69682312011719" height="19.11138916015625" fill="black" rx="2"/><rect x="364.62078857421875" y="55.44430923461914" width="91.39810180664062" height="19.11138916015625" fill="black" rx="2"/><rect x="537.5636596679688" y="55.44430923461914" width="73.31877899169922" height="19.11138916015625" fill="black" rx="2"/><rect x="55.66075897216797" y="109.02761840820312" width="85.46258544921875" height="21.944774627685547" fill="black" rx="2"/><rect x="35.92298126220703" y="128.44430541992188" width="125.0303726196289" height="19.11138916015625" fill="black" rx="2"/><rect x="208.51007080078125" y="109.02761840820312" width="91.28563690185547" height="21.944774627685547" fill="black" rx="2"/><rect x="194.80799865722656" y="128.44430541992188" width="118.49349975585938" height="19.11138916015625" fill="black" rx="2"/><rect x="367.3730163574219" y="109.02761840820312" width="84.30956268310547" height="21.944774627685547" fill="black" rx="2"/><rect x="356.9839172363281" y="128.44430541992188" width="106.15104675292969" height="19.11138916015625" fill="black" rx="2"/><rect x="362.11944580078125" y="209.02761840820312" width="96.04425811767578" height="21.944774627685547" fill="black" rx="2"/><rect x="361.6545715332031" y="228.44430541992188" width="98.25570678710938" height="19.11138916015625" fill="black" rx="2"/><rect x="352.505126953125" y="309.0276184082031" width="115.30432891845703" height="21.944774627685547" fill="black" rx="2"/><rect x="353.0068664550781" y="328.4443054199219" width="113.47976684570312" height="19.11138916015625" fill="black" rx="2"/><rect x="511.84185791015625" y="309.0276184082031" width="123.67317199707031" height="21.944774627685547" fill="black" rx="2"/><rect x="508.9715576171875" y="328.4443054199219" width="131.4479751586914" height="19.11138916015625" fill="black" rx="2"/><rect x="351.87054443359375" y="409.0276184082031" width="115.33200073242188" height="21.944774627685547" fill="black" rx="2"/><rect x="368.2215576171875" y="428.4443054199219" width="84.30348205566406" height="19.11138916015625" fill="black" rx="2"/><rect x="518.0841064453125" y="409.0276184082031" width="113.06480407714844" height="21.944774627685547" fill="black" rx="2"/><rect x="494.7529602050781" y="428.4443054199219" width="158.15098571777344" height="19.11138916015625" fill="black" rx="2"/><rect x="193.7454833984375" y="461.027587890625" width="119.92996978759766" height="21.944774627685547" fill="black" rx="2"/><rect x="40" y="479.72198486328125" width="72.79415130615234" height="19.11138916015625" fill="black" rx="2"/><rect x="141.0555419921875" y="479.72198486328125" width="87.11863708496094" height="19.11138916015625" fill="black" rx="2"/><rect x="251.0555419921875" y="479.72198486328125" width="55.350372314453125" height="19.11138916015625" fill="black" rx="2"/><rect x="341.0555419921875" y="479.72198486328125" width="65.4172134399414" height="19.11138916015625" fill="black" rx="2"/></mask></defs>
+
+<!-- Phase label -->
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"><rect x="24" y="14" width="200" height="28" rx="14" stroke-width="0.5" style="fill:rgb(238, 237, 254);stroke:rgb(83, 74, 183);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="124" y="28" text-anchor="middle" dominant-baseline="central" style="fill:rgb(60, 52, 137);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Phase 1 — Upload &amp; AI</text></g>
+
+<!-- Swim lane headers -->
+<rect x="24" y="52" width="148" height="26" rx="6" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" style="fill:none;stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="98" y="65" text-anchor="middle" dominant-baseline="central" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Uploader (Blazor)</text>
+<rect x="180" y="52" width="148" height="26" rx="6" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" style="fill:none;stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="254" y="65" text-anchor="middle" dominant-baseline="central" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">.NET API + Azure</text>
+<rect x="336" y="52" width="148" height="26" rx="6" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" style="fill:none;stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="410" y="65" text-anchor="middle" dominant-baseline="central" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Foundry Agent</text>
+<rect x="492" y="52" width="164" height="26" rx="6" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" style="fill:none;stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="574" y="65" text-anchor="middle" dominant-baseline="central" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">AI Services</text>
+
+<!-- Vertical dividers -->
+<line x1="172" y1="52" x2="172" y2="500" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="3 3" mask="url(#imagine-text-gaps-jt3br1)" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:3px, 3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="328" y1="52" x2="328" y2="500" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="3 3" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:3px, 3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="484" y1="52" x2="484" y2="500" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="3 3" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:3px, 3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- ROW 1 — Upload -->
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="28" y="100" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(238, 237, 254);stroke:rgb(83, 74, 183);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="98" y="120" text-anchor="middle" dominant-baseline="central" style="fill:rgb(60, 52, 137);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Upload RFP</text>
+  <text x="98" y="138" text-anchor="middle" dominant-baseline="central" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">PDF / DOCX via form</text>
+</g>
+<line x1="168" y1="126" x2="180" y2="126" stroke="#7F77DD" marker-end="url(#arr1)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="184" y="100" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="254" y="120" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Blob storage</text>
+  <text x="254" y="138" text-anchor="middle" dominant-baseline="central" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Versioned, secured</text>
+</g>
+<!-- Blob → SQL -->
+<path d="M254 152 L254 168 L410 168 L410 152" fill="none" stroke="var(--color-border-secondary)" stroke-width="0.5" marker-end="url(#arr1)" style="fill:none;stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="340" y="100" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(241, 239, 232);stroke:rgb(95, 94, 90);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="410" y="120" text-anchor="middle" dominant-baseline="central" style="fill:rgb(68, 68, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">SQL record</text>
+  <text x="410" y="138" text-anchor="middle" dominant-baseline="central" style="fill:rgb(95, 94, 90);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Status: Uploaded</text>
+</g>
+
+<!-- ROW 2 — Agent wakes -->
+<line x1="410" y1="152" x2="410" y2="196" stroke="var(--color-border-secondary)" marker-end="url(#arr1)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="340" y="200" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(238, 237, 254);stroke:rgb(83, 74, 183);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="410" y="220" text-anchor="middle" dominant-baseline="central" style="fill:rgb(60, 52, 137);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Agent wakes</text>
+  <text x="410" y="238" text-anchor="middle" dominant-baseline="central" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Reads blob URL</text>
+</g>
+
+<!-- ROW 3 — Doc Intel -->
+<line x1="410" y1="252" x2="410" y2="296" stroke="#534AB7" stroke-width="1" marker-end="url(#arr1)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="340" y="300" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="410" y="320" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Doc Intelligence</text>
+  <text x="410" y="338" text-anchor="middle" dominant-baseline="central" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Scans PDF / DOCX</text>
+</g>
+<line x1="480" y1="326" x2="492" y2="326" stroke="#1D9E75" marker-end="url(#arr1)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="496" y="300" width="156" height="52" rx="8" stroke-width="0.5" style="fill:rgb(241, 239, 232);stroke:rgb(95, 94, 90);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="574" y="320" text-anchor="middle" dominant-baseline="central" style="fill:rgb(68, 68, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Structured JSON</text>
+  <text x="574" y="338" text-anchor="middle" dominant-baseline="central" style="fill:rgb(95, 94, 90);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Fields · criteria · dates</text>
+</g>
+
+<!-- ROW 4 — AI Search + ChatGPT -->
+<line x1="410" y1="352" x2="410" y2="396" stroke="#534AB7" stroke-width="1" marker-end="url(#arr1)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="340" y="400" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="410" y="420" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Azure AI Search</text>
+  <text x="410" y="438" text-anchor="middle" dominant-baseline="central" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">RAG retrieval</text>
+</g>
+<line x1="480" y1="426" x2="492" y2="426" stroke="#1D9E75" marker-end="url(#arr1)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="496" y="400" width="156" height="52" rx="8" stroke-width="0.5" style="fill:rgb(250, 236, 231);stroke:rgb(153, 60, 29);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="574" y="420" text-anchor="middle" dominant-baseline="central" style="fill:rgb(113, 43, 19);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">ChatGPT drafts</text>
+  <text x="574" y="438" text-anchor="middle" dominant-baseline="central" style="fill:rgb(153, 60, 29);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Sections in company voice</text>
+</g>
+
+<!-- Status update -->
+<path d="M574 452 L574 472 L254 472 L254 452" fill="none" stroke="var(--color-border-secondary)" stroke-width="0.5" marker-end="url(#arr1)" mask="url(#imagine-text-gaps-jt3br1)" style="fill:none;stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="184" y="452" width="140" height="40" rx="8" stroke-width="0.5" style="fill:rgb(241, 239, 232);stroke:rgb(95, 94, 90);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="254" y="472" text-anchor="middle" dominant-baseline="central" style="fill:rgb(68, 68, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">SQL: Draft ready</text>
+</g>
+
+<!-- Legend -->
+<rect x="28" y="484" width="10" height="10" rx="2" fill="#534AB7" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="44" y="494" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">User action</text>
+<rect x="130" y="484" width="10" height="10" rx="2" fill="#1D9E75" style="fill:rgb(29, 158, 117);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="146" y="494" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Azure service</text>
+<rect x="240" y="484" width="10" height="10" rx="2" fill="#D85A30" style="fill:rgb(216, 90, 48);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="256" y="494" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">AI / LLM</text>
+<rect x="330" y="484" width="10" height="10" rx="2" fill="#888780" style="fill:rgb(136, 135, 128);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="346" y="494" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">State / DB</text>
+</svg>
+  </div>
+  <div class="phase-bullets">
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#ede9fe;">📤</div>
+      <div class="bullet-text"><strong>Blazor Upload UI</strong>Uploader selects RFP file; progress tracked in real time via SignalR push.</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#d1fae5;">📄</div>
+      <div class="bullet-text"><strong>Document Intelligence</strong>Azure extracts structured requirements, dates, and sections from the PDF automatically.</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#dbeafe;">🔍</div>
+      <div class="bullet-text"><strong>AI Search (RAG)</strong>Foundry queries the index for semantically similar past proposals to inject as context.</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#fff7ed;">💬</div>
+      <div class="bullet-text"><strong>ChatGPT Drafting</strong>LLM drafts each proposal section in the company's voice with full RAG context.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── SLIDE 6 PHASE 2 ── -->
+<section class="slide" id="s6" data-slide="6">
+  <div class="s-num">06</div>
+  <div class="phase-header">
+    <span class="phase-badge pb2">Phase 2</span>
+    <h2 class="phase-title">Review &amp; Approval</h2>
+  </div>
+  <p class="phase-desc">Once the draft is ready, SignalR pushes a real-time notification to the assigned Proposal Manager. The manager reviews, annotates, and routes sections to Subject Matter Experts. Each review decision is recorded in MS SQL. Approvals flow through a structured chain — no more email threads.</p>
+  <div class="diagram-box">
+    <svg width="100%" viewBox="0 0 680 580" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+<mask id="imagine-text-gaps-bffdkw" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="680" height="580" fill="white"/><rect x="36.97565841674805" y="17.02765655517578" width="204.19937133789062" height="21.944686889648438" fill="black" rx="2"/><rect x="43.493675231933594" y="55.44434356689453" width="109.83934783935547" height="19.11131477355957" fill="black" rx="2"/><rect x="223.7396697998047" y="55.44434356689453" width="61.34523010253906" height="19.11131477355957" fill="black" rx="2"/><rect x="360.6882019042969" y="55.44434356689453" width="97.67916107177734" height="19.11131477355957" fill="black" rx="2"/><rect x="529.8532104492188" y="55.44434356689453" width="87.64891052246094" height="19.11131477355957" fill="black" rx="2"/><rect x="527.4035034179688" y="105.02765655517578" width="93.482421875" height="21.944679260253906" fill="black" rx="2"/><rect x="522.5631713867188" y="124.44435119628906" width="103.26606750488281" height="19.11131477355957" fill="black" rx="2"/><rect x="368.1700744628906" y="105.02765655517578" width="84.28044891357422" height="21.944679260253906" fill="black" rx="2"/><rect x="357.56707763671875" y="124.44435119628906" width="105.91975402832031" height="19.11131477355957" fill="black" rx="2"/><rect x="57.49082565307617" y="105.02765655517578" width="81.6420669555664" height="21.944679260253906" fill="black" rx="2"/><rect x="31.510875701904297" y="124.44435119628906" width="133.81653594970703" height="19.11131477355957" fill="black" rx="2"/><rect x="50.658267974853516" y="205.0276641845703" width="95.91817474365234" height="21.944686889648438" fill="black" rx="2"/><rect x="26.973052978515625" y="224.44435119628906" width="143.44198608398438" height="19.11131477355957" fill="black" rx="2"/><rect x="355.61175537109375" y="205.0276641845703" width="108.77653503417969" height="21.944686889648438" fill="black" rx="2"/><rect x="368.1110534667969" y="224.44435119628906" width="83.88861083984375" height="19.11131477355957" fill="black" rx="2"/><rect x="39.84128189086914" y="305.0276794433594" width="116.22093200683594" height="21.944686889648438" fill="black" rx="2"/><rect x="33.56211853027344" y="324.4443664550781" width="128.43626403808594" height="19.11131477355957" fill="black" rx="2"/><rect x="191.22230529785156" y="305.0276794433594" width="125.55540466308594" height="21.944686889648438" fill="black" rx="2"/><rect x="212.93006896972656" y="324.4443664550781" width="81.57675170898438" height="19.11131477355957" fill="black" rx="2"/><rect x="207.67652893066406" y="405.0276794433594" width="93.26642608642578" height="21.944686889648438" fill="black" rx="2"/><rect x="192.47666931152344" y="424.4443359375" width="122.61890411376953" height="19.11131477355957" fill="black" rx="2"/><rect x="217.7408905029297" y="484.4443359375" width="72.61680603027344" height="19.11131477355957" fill="black" rx="2"/><rect x="375.08709716796875" y="471.7220458984375" width="30.275907516479492" height="19.11131477355957" fill="black" rx="2"/><rect x="511.1558837890625" y="477.02764892578125" width="124.74375915527344" height="21.944686889648438" fill="black" rx="2"/><rect x="523.66259765625" y="496.4443664550781" width="100.60614776611328" height="19.11131477355957" fill="black" rx="2"/><rect x="14" y="365.7220764160156" width="25.93985939025879" height="19.11131477355957" fill="black" rx="2"/><rect x="44" y="365.7220764160156" width="54.980690002441406" height="19.11131477355957" fill="black" rx="2"/></mask></defs>
+
+<!-- Phase label -->
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"><rect x="24" y="14" width="230" height="28" rx="14" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="139" y="28" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Phase 2 — Review &amp; Approval</text></g>
+
+<!-- Swim lane headers -->
+<rect x="24" y="52" width="148" height="26" rx="6" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" style="fill:none;stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="98" y="65" text-anchor="middle" dominant-baseline="central" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Proposal manager</text>
+<rect x="180" y="52" width="148" height="26" rx="6" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" style="fill:none;stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="254" y="65" text-anchor="middle" dominant-baseline="central" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Reviewer</text>
+<rect x="336" y="52" width="148" height="26" rx="6" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" style="fill:none;stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="410" y="65" text-anchor="middle" dominant-baseline="central" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">System (Blazor)</text>
+<rect x="492" y="52" width="164" height="26" rx="6" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" style="fill:none;stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="574" y="65" text-anchor="middle" dominant-baseline="central" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">SQL + SignalR</text>
+
+<line x1="172" y1="52" x2="172" y2="558" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="3 3" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:3px, 3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="328" y1="52" x2="328" y2="558" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="3 3" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:3px, 3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="484" y1="52" x2="484" y2="558" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="3 3" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:3px, 3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- ROW 1 — SignalR notification fires -->
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="496" y="96" width="156" height="52" rx="8" stroke-width="0.5" style="fill:rgb(241, 239, 232);stroke:rgb(95, 94, 90);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="574" y="116" text-anchor="middle" dominant-baseline="central" style="fill:rgb(68, 68, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">SignalR fires</text>
+  <text x="574" y="134" text-anchor="middle" dominant-baseline="central" style="fill:rgb(95, 94, 90);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Draft ready push</text>
+</g>
+<line x1="496" y1="122" x2="484" y2="122" stroke="var(--color-border-secondary)" marker-end="url(#arr2)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="340" y="96" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="410" y="116" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Blazor alert</text>
+  <text x="410" y="134" text-anchor="middle" dominant-baseline="central" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Manager notified</text>
+</g>
+<line x1="340" y1="122" x2="172" y2="122" stroke="#1D9E75" marker-end="url(#arr2)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="28" y="96" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(238, 237, 254);stroke:rgb(83, 74, 183);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="98" y="116" text-anchor="middle" dominant-baseline="central" style="fill:rgb(60, 52, 137);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Open draft</text>
+  <text x="98" y="134" text-anchor="middle" dominant-baseline="central" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Review panel in Blazor</text>
+</g>
+
+<!-- ROW 2 — Manager edits -->
+<line x1="98" y1="148" x2="98" y2="192" stroke="var(--color-border-secondary)" marker-end="url(#arr2)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="28" y="196" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(238, 237, 254);stroke:rgb(83, 74, 183);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="98" y="216" text-anchor="middle" dominant-baseline="central" style="fill:rgb(60, 52, 137);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Edit sections</text>
+  <text x="98" y="234" text-anchor="middle" dominant-baseline="central" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Inline edits + comments</text>
+</g>
+<line x1="168" y1="222" x2="340" y2="222" stroke="#534AB7" marker-end="url(#arr2)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="340" y="196" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(241, 239, 232);stroke:rgb(95, 94, 90);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="410" y="216" text-anchor="middle" dominant-baseline="central" style="fill:rgb(68, 68, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Changes saved</text>
+  <text x="410" y="234" text-anchor="middle" dominant-baseline="central" style="fill:rgb(95, 94, 90);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">SQL updated</text>
+</g>
+
+<!-- ROW 3 — Assign reviewer -->
+<line x1="98" y1="248" x2="98" y2="292" stroke="var(--color-border-secondary)" marker-end="url(#arr2)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="28" y="296" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(238, 237, 254);stroke:rgb(83, 74, 183);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="98" y="316" text-anchor="middle" dominant-baseline="central" style="fill:rgb(60, 52, 137);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Assign reviewer</text>
+  <text x="98" y="334" text-anchor="middle" dominant-baseline="central" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Click Send for review</text>
+</g>
+<line x1="168" y1="322" x2="180" y2="322" stroke="#534AB7" marker-end="url(#arr2)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="184" y="296" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(250, 238, 218);stroke:rgb(133, 79, 11);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="254" y="316" text-anchor="middle" dominant-baseline="central" style="fill:rgb(99, 56, 6);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Reviewer notified</text>
+  <text x="254" y="334" text-anchor="middle" dominant-baseline="central" style="fill:rgb(133, 79, 11);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">SignalR push</text>
+</g>
+
+<!-- ROW 4 — Reviewer opens -->
+<line x1="254" y1="348" x2="254" y2="392" stroke="var(--color-border-secondary)" marker-end="url(#arr2)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="184" y="396" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(250, 238, 218);stroke:rgb(133, 79, 11);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="254" y="416" text-anchor="middle" dominant-baseline="central" style="fill:rgb(99, 56, 6);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Review draft</text>
+  <text x="254" y="434" text-anchor="middle" dominant-baseline="central" style="fill:rgb(133, 79, 11);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Comment-only view</text>
+</g>
+
+<!-- Decision diamond -->
+<line x1="254" y1="448" x2="254" y2="470" stroke="var(--color-border-secondary)" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<polygon points="254,472 284,494 254,516 224,494" fill="none" stroke="var(--color-border-secondary)" stroke-width="0.5" style="fill:none;stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="254" y="494" text-anchor="middle" dominant-baseline="central" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Approved?</text>
+
+<!-- Yes path -->
+<line x1="284" y1="494" x2="496" y2="494" stroke="#1D9E75" marker-end="url(#arr2)" mask="url(#imagine-text-gaps-bffdkw)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="390" y="486" text-anchor="middle" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Yes</text>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="496" y="468" width="156" height="52" rx="8" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="574" y="488" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Status: Approved</text>
+  <text x="574" y="506" text-anchor="middle" dominant-baseline="central" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Triggers Phase 3</text>
+</g>
+
+<!-- No path — revise -->
+<line x1="224" y1="494" x2="28" y2="494" fill="none" stroke="var(--color-border-secondary)" stroke-width="0.5" mask="url(#imagine-text-gaps-bffdkw)" style="fill:none;stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="28" y1="494" x2="28" y2="222" fill="none" stroke="var(--color-border-secondary)" stroke-width="0.5" mask="url(#imagine-text-gaps-bffdkw)" style="fill:none;stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="28" y1="222" x2="28" y2="222" stroke="var(--color-border-secondary)" marker-end="url(#arr2)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="18" y="380" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">No</text>
+<text x="48" y="380" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">↻ revise</text>
+
+</svg>
+  </div>
+  <div class="phase-bullets">
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#d1fae5;">🔔</div>
+      <div class="bullet-text"><strong>SignalR Notification</strong>Real-time push alert fires the moment the AI draft is ready for review.</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#ede9fe;">✏️</div>
+      <div class="bullet-text"><strong>Inline Editor</strong>Proposal Manager edits sections, adds comments, and assigns reviewers directly in Blazor.</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#dbeafe;">👥</div>
+      <div class="bullet-text"><strong>SME Assignment</strong>Sections routed to Subject Matter Experts by role. Each section has a clear owner and deadline.</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#fef9c3;">✅</div>
+      <div class="bullet-text"><strong>Approval Chain</strong>Structured approve / reject / request-changes workflow persisted to SQL with full audit trail.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── SLIDE 7 PHASE 3 ── -->
+<section class="slide" id="s7" data-slide="7">
+  <div class="s-num">07</div>
+  <div class="phase-header">
+    <span class="phase-badge pb3">Phase 3</span>
+    <h2 class="phase-title">Generate, Share &amp; Roles</h2>
+  </div>
+  <p class="phase-desc">After final approval, Microsoft Foundry orchestrates document generation — assembling the complete proposal as a formatted file in Azure Blob. It then publishes directly to SharePoint, notifies stakeholders, and the RBAC layer enforces who can view, edit, or export each proposal going forward.</p>
+  <div class="diagram-box">
+    <svg width="100%" viewBox="0 0 680 640" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+<mask id="imagine-text-gaps-ycs4lu" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="680" height="640" fill="white"/><rect x="33.763179779052734" y="17.027690887451172" width="251.70201110839844" height="21.944612503051758" fill="black" rx="2"/><rect x="31.055545806884766" y="55.72210693359375" width="179.5511016845703" height="19.111254692077637" fill="black" rx="2"/><rect x="40.167808532714844" y="87.0276870727539" width="130.71991729736328" height="21.94461441040039" fill="black" rx="2"/><rect x="33.83702087402344" y="106.44436645507812" width="144.4307403564453" height="19.111254692077637" fill="black" rx="2"/><rect x="210.91180419921875" y="87.0276870727539" width="119.0341796875" height="21.94461441040039" fill="black" rx="2"/><rect x="198.1100311279297" y="106.44436645507812" width="144.38900756835938" height="19.111254692077637" fill="black" rx="2"/><rect x="387.7678527832031" y="87.0276870727539" width="82.19332122802734" height="21.94461441040039" fill="black" rx="2"/><rect x="375.52685546875" y="106.44436645507812" width="108.00645446777344" height="19.111254692077637" fill="black" rx="2"/><rect x="533.5737915039062" y="87.0276870727539" width="95.90795135498047" height="21.94461441040039" fill="black" rx="2"/><rect x="525.7968139648438" y="106.44436645507812" width="112.51324462890625" height="19.111254692077637" fill="black" rx="2"/><rect x="43.999996185302734" y="183.72210693359375" width="112.78337097167969" height="19.111254692077637" fill="black" rx="2"/><rect x="72.62132263183594" y="219.02769470214844" width="234.7573699951172" height="21.94461441040039" fill="black" rx="2"/><rect x="80.48235321044922" y="269.0276794433594" width="69.8914566040039" height="21.94461441040039" fill="black" rx="2"/><rect x="69.06774139404297" y="287.4443664550781" width="92.60902404785156" height="19.111254692077637" fill="black" rx="2"/><rect x="231.45631408691406" y="269.0276794433594" width="67.93889617919922" height="21.94461441040039" fill="black" rx="2"/><rect x="210.5233917236328" y="287.4443664550781" width="109.55084991455078" height="19.111254692077637" fill="black" rx="2"/><rect x="79.94371795654297" y="323.0277099609375" width="70.96923065185547" height="21.94461441040039" fill="black" rx="2"/><rect x="68.80211639404297" y="341.4443664550781" width="93.14278411865234" height="19.111254692077637" fill="black" rx="2"/><rect x="243.49072265625" y="323.0277099609375" width="43.6328239440918" height="21.94461441040039" fill="black" rx="2"/><rect x="217.84291076660156" y="341.4443664550781" width="94.91150665283203" height="19.111254692077637" fill="black" rx="2"/><rect x="219.70619201660156" y="393.7220764160156" width="93.96996307373047" height="19.111254692077637" fill="black" rx="2"/><rect x="211.99562072753906" y="407.72210693359375" width="107.83873748779297" height="19.111254692077637" fill="black" rx="2"/><rect x="72.46636962890625" y="444.0277099609375" width="235.69036865234375" height="21.94461441040039" fill="black" rx="2"/><rect x="367.0555419921875" y="183.72210693359375" width="115.91083526611328" height="19.111254692077637" fill="black" rx="2"/><rect x="427.3812255859375" y="219.02769470214844" width="161.5977325439453" height="21.94461441040039" fill="black" rx="2"/><rect x="399.4823303222656" y="269.0276794433594" width="69.89144515991211" height="21.94461441040039" fill="black" rx="2"/><rect x="392.59075927734375" y="287.4443664550781" width="84.20639038085938" height="19.111254692077637" fill="black" rx="2"/><rect x="536.456298828125" y="269.0276794433594" width="67.93889617919922" height="21.94461441040039" fill="black" rx="2"/><rect x="533.1507568359375" y="287.4443664550781" width="74.3049087524414" height="19.111254692077637" fill="black" rx="2"/><rect x="398.9436950683594" y="323.0277099609375" width="70.96923065185547" height="21.94461441040039" fill="black" rx="2"/><rect x="381.7148132324219" y="341.4443664550781" width="105.62551879882812" height="19.111254692077637" fill="black" rx="2"/><rect x="548.49072265625" y="323.0277099609375" width="43.6328239440918" height="21.94461441040039" fill="black" rx="2"/><rect x="530.9002685546875" y="341.4443664550781" width="79.58246612548828" height="19.111254692077637" fill="black" rx="2"/><rect x="516" y="395.72210693359375" width="106.74414825439453" height="19.111254692077637" fill="black" rx="2"/><rect x="515.0555419921875" y="409.7220764160156" width="78.51211547851562" height="19.111254692077637" fill="black" rx="2"/><rect x="433.2693176269531" y="444.0277099609375" width="148.51695251464844" height="21.94461441040039" fill="black" rx="2"/><rect x="48" y="497.72210693359375" width="60.60736846923828" height="19.111254692077637" fill="black" rx="2"/><rect x="142" y="497.72210693359375" width="58.80818176269531" height="19.111254692077637" fill="black" rx="2"/><rect x="232" y="497.72210693359375" width="61.34501647949219" height="19.111254692077637" fill="black" rx="2"/><rect x="322" y="497.72210693359375" width="81.69374084472656" height="19.111254692077637" fill="black" rx="2"/><rect x="432" y="497.72210693359375" width="88.81224822998047" height="19.111254692077637" fill="black" rx="2"/><rect x="539.0555419921875" y="497.72210693359375" width="115.91083526611328" height="19.111254692077637" fill="black" rx="2"/></mask></defs>
+
+<!-- Phase label -->
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"><rect x="24" y="14" width="270" height="28" rx="14" stroke-width="0.5" style="fill:rgb(230, 241, 251);stroke:rgb(24, 95, 165);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="159" y="28" text-anchor="middle" dominant-baseline="central" style="fill:rgb(12, 68, 124);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Phase 3 — Generate, Share &amp; Access</text></g>
+
+<!-- GENERATE section -->
+<rect x="24" y="54" width="632" height="130" rx="10" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="4 3" style="fill:none;stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:4px, 3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="36" y="70" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Auto-generation (on approval)</text>
+
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="36" y="78" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(238, 237, 254);stroke:rgb(83, 74, 183);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="106" y="98" text-anchor="middle" dominant-baseline="central" style="fill:rgb(60, 52, 137);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Approval received</text>
+  <text x="106" y="116" text-anchor="middle" dominant-baseline="central" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">SQL: Status = Approved</text>
+</g>
+<line x1="176" y1="104" x2="196" y2="104" stroke="#534AB7" marker-end="url(#arr3)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="200" y="78" width="140" height="52" rx="8" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="270" y="98" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">DOCX generator</text>
+  <text x="270" y="116" text-anchor="middle" dominant-baseline="central" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">.NET · branded template</text>
+</g>
+<line x1="340" y1="104" x2="360" y2="104" stroke="#1D9E75" marker-end="url(#arr3)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="364" y="78" width="130" height="52" rx="8" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="429" y="98" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Azure Blob</text>
+  <text x="429" y="116" text-anchor="middle" dominant-baseline="central" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Final .docx stored</text>
+</g>
+<line x1="494" y1="104" x2="514" y2="104" stroke="#1D9E75" marker-end="url(#arr3)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="518" y="78" width="128" height="52" rx="8" stroke-width="0.5" style="fill:rgb(241, 239, 232);stroke:rgb(95, 94, 90);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="582" y="98" text-anchor="middle" dominant-baseline="central" style="fill:rgb(68, 68, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">SQL updated</text>
+  <text x="582" y="116" text-anchor="middle" dominant-baseline="central" style="fill:rgb(95, 94, 90);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Status: Generated</text>
+</g>
+
+<!-- Split line from Blob downward -->
+<line x1="429" y1="130" x2="429" y2="158" stroke="var(--color-border-secondary)" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="180" y1="158" x2="580" y2="158" stroke="var(--color-border-secondary)" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="180" y1="158" x2="180" y2="178" stroke="#534AB7" marker-end="url(#arr3)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="580" y1="158" x2="580" y2="178" stroke="#378ADD" marker-end="url(#arr3)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- TWO SURFACE containers side by side -->
+
+<!-- LEFT: Blazor surface -->
+<rect x="36" y="180" width="310" height="300" rx="10" fill="none" stroke="#7F77DD" stroke-width="0.5" stroke-dasharray="4 3" style="fill:none;stroke:rgb(127, 119, 221);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:4px, 3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="48" y="198" fill="#534AB7" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Blazor app surface</text>
+
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="50" y="208" width="280" height="44" rx="8" stroke-width="0.5" style="fill:rgb(238, 237, 254);stroke:rgb(83, 74, 183);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="190" y="230" text-anchor="middle" dominant-baseline="central" style="fill:rgb(60, 52, 137);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Download link active in dashboard</text>
+</g>
+
+<!-- Role rows Blazor -->
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="50" y="266" width="130" height="40" rx="8" stroke-width="0.5" style="fill:rgb(238, 237, 254);stroke:rgb(83, 74, 183);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="115" y="280" text-anchor="middle" dominant-baseline="central" style="fill:rgb(60, 52, 137);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Uploader</text>
+  <text x="115" y="297" text-anchor="middle" dominant-baseline="central" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Download final</text>
+</g>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="200" y="266" width="130" height="40" rx="8" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="265" y="280" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Manager</text>
+  <text x="265" y="297" text-anchor="middle" dominant-baseline="central" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Download + share</text>
+</g>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="50" y="320" width="130" height="40" rx="8" stroke-width="0.5" style="fill:rgb(250, 238, 218);stroke:rgb(133, 79, 11);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="115" y="334" text-anchor="middle" dominant-baseline="central" style="fill:rgb(99, 56, 6);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Reviewer</text>
+  <text x="115" y="351" text-anchor="middle" dominant-baseline="central" style="fill:rgb(133, 79, 11);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Read-only final</text>
+</g>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="200" y="320" width="130" height="40" rx="8" stroke-width="0.5" style="fill:rgb(241, 239, 232);stroke:rgb(95, 94, 90);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="265" y="334" text-anchor="middle" dominant-baseline="central" style="fill:rgb(68, 68, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Staff</text>
+  <text x="265" y="351" text-anchor="middle" dominant-baseline="central" style="fill:rgb(95, 94, 90);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">No access here</text>
+</g>
+
+<!-- Manager triggers SP publish -->
+<line x1="265" y1="306" x2="265" y2="390" stroke="var(--color-border-secondary)" stroke-width="0.5" mask="url(#imagine-text-gaps-ycs4lu)" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="265" y1="390" x2="350" y2="390" stroke="#534AB7" marker-end="url(#arr3)" style="fill:none;stroke:rgb(115, 114, 108);color:rgb(0, 0, 0);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="266" y="408" text-anchor="middle" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Manager clicks</text>
+<text x="266" y="422" text-anchor="middle" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">"Share internally"</text>
+
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="50" y="440" width="280" height="30" rx="8" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="190" y="455" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Graph API publishes to SharePoint</text>
+</g>
+
+<!-- RIGHT: SharePoint surface -->
+<rect x="360" y="180" width="296" height="300" rx="10" fill="none" stroke="#378ADD" stroke-width="0.5" stroke-dasharray="4 3" style="fill:none;stroke:rgb(55, 138, 221);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:4px, 3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="372" y="198" fill="#185FA5" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">SharePoint surface</text>
+
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="374" y="208" width="268" height="44" rx="8" stroke-width="0.5" style="fill:rgb(230, 241, 251);stroke:rgb(24, 95, 165);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="508" y="230" text-anchor="middle" dominant-baseline="central" style="fill:rgb(12, 68, 124);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">File in Proposals library</text>
+</g>
+
+<!-- Role rows SP -->
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="374" y="266" width="120" height="40" rx="8" stroke-width="0.5" style="fill:rgb(241, 239, 232);stroke:rgb(95, 94, 90);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="434" y="280" text-anchor="middle" dominant-baseline="central" style="fill:rgb(68, 68, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Uploader</text>
+  <text x="434" y="297" text-anchor="middle" dominant-baseline="central" style="fill:rgb(95, 94, 90);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">No SP access</text>
+</g>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="510" y="266" width="120" height="40" rx="8" stroke-width="0.5" style="fill:rgb(225, 245, 238);stroke:rgb(15, 110, 86);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="570" y="280" text-anchor="middle" dominant-baseline="central" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Manager</text>
+  <text x="570" y="297" text-anchor="middle" dominant-baseline="central" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Manage file</text>
+</g>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="374" y="320" width="120" height="40" rx="8" stroke-width="0.5" style="fill:rgb(250, 238, 218);stroke:rgb(133, 79, 11);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="434" y="334" text-anchor="middle" dominant-baseline="central" style="fill:rgb(99, 56, 6);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Reviewer</text>
+  <text x="434" y="351" text-anchor="middle" dominant-baseline="central" style="fill:rgb(133, 79, 11);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Read + download</text>
+</g>
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="510" y="320" width="120" height="40" rx="8" stroke-width="0.5" style="fill:rgb(230, 241, 251);stroke:rgb(24, 95, 165);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="570" y="334" text-anchor="middle" dominant-baseline="central" style="fill:rgb(12, 68, 124);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">Staff</text>
+  <text x="570" y="351" text-anchor="middle" dominant-baseline="central" style="fill:rgb(24, 95, 165);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:central">Read access</text>
+</g>
+
+<!-- Staff email notification -->
+<line x1="570" y1="360" x2="570" y2="390" stroke="var(--color-border-secondary)" stroke-width="0.5" mask="url(#imagine-text-gaps-ycs4lu)" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="570" y1="390" x2="642" y2="390" stroke="var(--color-border-secondary)" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="520" y="410" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Email notification</text>
+<text x="520" y="424" fill="var(--color-text-tertiary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">sent to staff</text>
+
+<g style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+  <rect x="374" y="440" width="268" height="30" rx="8" stroke-width="0.5" style="fill:rgb(230, 241, 251);stroke:rgb(24, 95, 165);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <text x="508" y="455" text-anchor="middle" dominant-baseline="central" style="fill:rgb(12, 68, 124);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central">SQL: Status = Shared</text>
+</g>
+
+<!-- Bottom legend -->
+<rect x="36" y="502" width="10" height="10" rx="2" fill="#534AB7" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="52" y="512" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Uploader</text>
+<rect x="130" y="502" width="10" height="10" rx="2" fill="#1D9E75" style="fill:rgb(29, 158, 117);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="146" y="512" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Manager</text>
+<rect x="220" y="502" width="10" height="10" rx="2" fill="#BA7517" style="fill:rgb(186, 117, 23);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="236" y="512" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Reviewer</text>
+<rect x="310" y="502" width="10" height="10" rx="2" fill="#378ADD" style="fill:rgb(55, 138, 221);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="326" y="512" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Internal staff</text>
+<rect x="420" y="502" width="10" height="10" rx="2" fill="#7F77DD" style="fill:rgb(127, 119, 221);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="436" y="512" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Blazor surface</text>
+<rect x="528" y="502" width="10" height="10" rx="2" fill="#378ADD" style="fill:rgb(55, 138, 221);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="544" y="512" fill="var(--color-text-secondary)" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">SharePoint surface</text>
+</svg>
+  </div>
+  <div class="phase-bullets">
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#fce7f3;">📝</div>
+      <div class="bullet-text"><strong>Document Generation</strong>Foundry assembles final proposal DOCX/PDF from approved sections. Stored in Azure Blob.</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#fee2e2;">📁</div>
+      <div class="bullet-text"><strong>SharePoint Publish</strong>Final document pushed to SharePoint library automatically. Accessible to permitted stakeholders.</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#d1fae5;">🔐</div>
+      <div class="bullet-text"><strong>Role-Based Access</strong>RBAC controls who can view, download, or re-open the proposal for revision.</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-icon" style="background:#dbeafe;">📊</div>
+      <div class="bullet-text"><strong>Audit &amp; Analytics</strong>Every action logged. Dashboards show cycle times, win rates, and contributor activity.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── SLIDE 8 ROLES ── -->
+<section class="slide" id="s8" data-slide="8">
+  <div class="s-num">08</div>
+  <div class="section-eyebrow">Access Control</div>
+  <h2 class="section-title">Role-Based<br/>User Model</h2>
+  <p class="section-lead">Every user operates within a defined role. Permissions are enforced at API, UI, and SharePoint layers — ensuring the right people see and do the right things.</p>
+  <div class="roles-grid">
+    <div class="role-card">
+      <div class="role-avatar" style="background:#ede9fe;">👤</div>
+      <div class="role-name">Uploader</div>
+      <div class="role-perms">
+        <span class="perm">Upload RFP</span>
+        <span class="perm">Track Status</span>
+        <span class="perm">View Draft</span>
+      </div>
+    </div>
+    <div class="role-card">
+      <div class="role-avatar" style="background:#d1fae5;">📋</div>
+      <div class="role-name">Proposal Manager</div>
+      <div class="role-perms">
+        <span class="perm">Edit Sections</span>
+        <span class="perm">Assign SMEs</span>
+        <span class="perm">Submit</span>
+        <span class="perm">Re-generate</span>
+      </div>
+    </div>
+    <div class="role-card">
+      <div class="role-avatar" style="background:#fce7f3;">🔬</div>
+      <div class="role-name">SME Reviewer</div>
+      <div class="role-perms">
+        <span class="perm">Review Assigned</span>
+        <span class="perm">Comment</span>
+        <span class="perm">Approve/Reject</span>
+      </div>
+    </div>
+    <div class="role-card">
+      <div class="role-avatar" style="background:#fff7ed;">✅</div>
+      <div class="role-name">Approver</div>
+      <div class="role-perms">
+        <span class="perm">Final Approve</span>
+        <span class="perm">Lock Version</span>
+        <span class="perm">Trigger Publish</span>
+      </div>
+    </div>
+    <div class="role-card">
+      <div class="role-avatar" style="background:#dbeafe;">📊</div>
+      <div class="role-name">Viewer</div>
+      <div class="role-perms">
+        <span class="perm">Read Only</span>
+        <span class="perm">Download PDF</span>
+        <span class="perm">SharePoint Access</span>
+      </div>
+    </div>
+    <div class="role-card">
+      <div class="role-avatar" style="background:#fee2e2;">⚙️</div>
+      <div class="role-name">Admin</div>
+      <div class="role-perms">
+        <span class="perm">All Permissions</span>
+        <span class="perm">User Mgmt</span>
+        <span class="perm">Config</span>
+        <span class="perm">Audit Logs</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── SLIDE 9 VALUE ── -->
+<section class="slide" id="s9" data-slide="9">
+  <div class="s-num">09</div>
+  <div class="section-eyebrow">Business Value</div>
+  <h2 class="section-title">What the platform<br/>delivers</h2>
+  <p class="section-lead">From first RFP upload to SharePoint delivery, every step is automated, tracked, and auditable.</p>
+  <div class="value-grid">
+    <div class="value-card vc1">
+      <div class="value-num">80%</div>
+      <div class="value-label">Faster First Draft</div>
+      <div class="value-desc">Document Intelligence + ChatGPT produces a complete draft in minutes — not days. Writers focus on refinement, not extraction.</div>
+    </div>
+    <div class="value-card vc2">
+      <div class="value-num">100%</div>
+      <div class="value-label">Structured Reviews</div>
+      <div class="value-desc">Every review, comment, and approval is tracked in SQL with a full audit trail. No more lost email chains.</div>
+    </div>
+    <div class="value-card vc3">
+      <div class="value-num">1 Agent</div>
+      <div class="value-label">Full Orchestration</div>
+      <div class="value-desc">Microsoft Foundry coordinates all Azure services automatically — no custom glue code between systems.</div>
+    </div>
+    <div class="value-card vc4">
+      <div class="value-num">Zero</div>
+      <div class="value-label">Manual Publishing Steps</div>
+      <div class="value-desc">Approved proposals are assembled, formatted, and pushed to SharePoint automatically. Humans approve — the platform delivers.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── CLOSING SLIDE ── -->
+<section class="slide" id="s-close" data-slide="10">
+  <div class="s-num">10</div>
+  <div class="close-icon">⬡</div>
+  <h2 class="close-title">Proposal Intelligence<br/>Platform</h2>
+  <p class="close-sub">Built on Microsoft Foundry · Azure · .NET Core<br/>One agent. Full lifecycle. Zero proposal left behind.</p>
+  <div class="close-chips">
+    <span class="close-chip">.NET Core</span>
+    <span class="close-chip">MS SQL</span>
+    <span class="close-chip">Azure Blob</span>
+    <span class="close-chip">Microsoft Foundry</span>
+    <span class="close-chip">Azure AI Search</span>
+    <span class="close-chip">Document Intelligence</span>
+    <span class="close-chip">ChatGPT</span>
+    <span class="close-chip">SharePoint</span>
+    <span class="close-chip">RBAC</span>
+  </div>
+</section>
+
+</div><!-- /slides-wrap -->
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  const navDots = document.getElementById('navDots');
+  const slideCounter = document.getElementById('slideCounter');
+
+  // Create nav dots
+  slides.forEach((_, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    btn.title = `Slide ${i+1}`;
+    btn.addEventListener('click', () => {
+      slides[i].scrollIntoView({ behavior: 'smooth' });
+    });
+    navDots.appendChild(btn);
+  });
+
+  // Intersection observer for animations + dot sync
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        const idx = Array.from(slides).indexOf(entry.target);
+        document.querySelectorAll('.nav-dot').forEach((d,i) => {
+          d.classList.toggle('active', i === idx);
+        });
+        slideCounter.textContent = String(idx+1).padStart(2,'0') + ' / ' + String(totalSlides).padStart(2,'0');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  slides.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

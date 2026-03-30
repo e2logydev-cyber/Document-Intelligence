@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Proposal Intelligence Platform · Interactive Dataflow</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#00B2ED;--dark:#0D133E;--navy:#f5fafd;--slate:#e8f5fb;
+  --accent:#00B2ED;--white:#ffffff;--muted:#5a6a8a;
+  --border:rgba(0,178,237,0.18);--fh:'Mulish',sans-serif;
+  --blazor:#00B2ED;--sql:#E8960A;--foundry:#16A34A;--ai:#6B46C1;--blob:#9333ea;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#f5fafd;color:#0D133E;font-family:var(--fh);font-size:16px;line-height:1.7;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;width:100%;z-index:200;padding:0.9rem 4%;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.96);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,178,237,0.15);box-shadow:0 1px 20px rgba(13,19,62,0.07);}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-size:17px;font-weight:700;color:#0D133E;text-decoration:none;}
+.nav-links{display:flex;gap:1.6rem;list-style:none;}
+.nav-links a{color:#5a6a8a;text-decoration:none;font-size:13.5px;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:#00B2ED;}
+.nav-cta{background:#00B2ED;color:#fff;padding:0.5rem 1.3rem;border-radius:6px;font-size:13.5px;font-weight:500;text-decoration:none;transition:background .2s;}
+.nav-cta:hover{background:#0099cc;}
+
+/* HERO */
+.page-hero{padding:7rem 4% 3rem;background:#ffffff;position:relative;overflow:hidden;border-bottom:1px solid rgba(0,178,237,0.10);}
+.ph-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,178,237,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,178,237,0.06) 1px,transparent 1px);background-size:60px 60px;opacity:0.7;}
+.ph-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:300px;background:radial-gradient(ellipse,rgba(0,178,237,0.09) 0%,transparent 68%);}
+.ph-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;}
+.ph-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.28);border-radius:30px;padding:0.35rem 1rem;font-size:12px;color:#00B2ED;font-weight:600;margin-bottom:1.2rem;letter-spacing:.04em;}
+.ph-badge span{width:6px;height:6px;border-radius:50%;background:#00B2ED;display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.ph-title{font-family:var(--fh);font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:#0D133E;line-height:1.1;letter-spacing:-.03em;margin-bottom:.7rem;}
+.ph-title em{font-style:normal;color:#00B2ED;}
+.ph-sub{font-size:14.5px;color:#5a6a8a;max-width:740px;line-height:1.85;font-weight:300;}
+.ph-meta{display:flex;gap:2rem;margin-top:1.8rem;flex-wrap:wrap;}
+.ph-stat-val{font-family:var(--fh);font-size:1.15rem;font-weight:900;color:#00B2ED;}
+.ph-stat-lbl{font-size:12px;color:#5a6a8a;}
+
+/* DIAGRAM CONTAINER */
+.diagram-section{padding:3rem 4% 5rem;background:#f5fafd;}
+.diagram-container{max-width:1400px;margin:0 auto;background:#fff;border-radius:24px;box-shadow:0 8px 40px rgba(0,178,237,0.12);overflow:hidden;}
+.diagram-header{padding:1.5rem 2rem;background:#0D133E;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.dh-title{color:#fff;font-family:var(--fh);font-size:1.1rem;font-weight:800;}
+.dh-controls{display:flex;gap:.5rem;flex-wrap:wrap;}
+.control-btn{padding:.4rem 1rem;border-radius:20px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;background:rgba(255,255,255,0.1);color:#fff;}
+.control-btn:hover{background:rgba(255,255,255,0.2);}
+.control-btn.active{background:#00B2ED;}
+
+/* SVG DIAGRAM */
+.diagram-wrap{position:relative;padding:2rem;min-height:800px;overflow:auto;}
+#dataflow-svg{width:100%;height:900px;}
+.node-group{cursor:pointer;}
+.node-rect{transition:all .3s ease;}
+.node-group:hover .node-rect{filter:drop-shadow(0 4px 12px rgba(0,0,0,0.15));transform:translateY(-2px);}
+.node-header{fill:#fff;font-family:'Mulish',sans-serif;font-size:13px;font-weight:800;}
+.node-sub{fill:rgba(255,255,255,0.8);font-family:'Mulish',sans-serif;font-size:10px;font-weight:500;}
+.node-icon{font-size:20px;text-anchor:middle;dominant-baseline:middle;}
+.connection{fill:none;stroke-width:2;stroke-linecap:round;transition:all .3s;opacity:.6;}
+.connection.active{stroke-width:3;opacity:1;animation:dashFlow 1.5s linear infinite;}
+.connection.dimmed{opacity:.2;}
+@keyframes dashFlow{to{stroke-dashoffset:-20;}}
+.data-packet{fill:#fff;stroke:#00B2ED;stroke-width:2;r:6;opacity:0;}
+.data-packet.active{opacity:1;animation:packetMove 2s ease-in-out infinite;}
+@keyframes packetMove{
+  0%{transform:translate(0,0);opacity:0;}
+  10%{opacity:1;}
+  90%{opacity:1;}
+  100%{transform:translate(var(--tx),var(--ty));opacity:0;}
+}
+
+/* STEP INDICATOR */
+.step-indicator{position:absolute;top:20px;right:20px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;box-shadow:0 4px 20px rgba(0,0,0,0.08);max-width:280px;}
+.si-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#5a6a8a;font-weight:700;margin-bottom:.5rem;}
+.si-step{font-family:var(--fh);font-size:1rem;font-weight:800;color:#0D133E;margin-bottom:.3rem;}
+.si-desc{font-size:12px;color:#5a6a8a;line-height:1.6;margin-bottom:.8rem;}
+.si-data{background:#f5fafd;border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;font-size:11px;color:#0D133E;font-family:monospace;word-break:break-all;}
+
+/* LEGEND */
+.legend-wrap{padding:1.5rem 2rem;background:#fff;border-top:1px solid var(--border);display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;}
+.legend-item{display:flex;align-items:center;gap:.6rem;}
+.legend-dot{width:12px;height:12px;border-radius:3px;}
+.legend-label{font-size:12px;font-weight:600;color:#5a6a8a;}
+
+/* DETAIL PANELS */
+.detail-panels{padding:3rem 4%;background:#fff;}
+.dp-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;}
+.dp-card{background:#f5fafd;border:1px solid var(--border);border-radius:14px;padding:1.5rem;position:relative;overflow:hidden;}
+.dp-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;}
+.dp-blazor::before{background:var(--blazor);}
+.dp-sql::before{background:var(--sql);}
+.dp-foundry::before{background:var(--foundry);}
+.dp-ai::before{background:var(--ai);}
+.dp-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.4rem;}
+.dp-blazor .dp-label{color:var(--blazor);}
+.dp-sql .dp-label{color:var(--sql);}
+.dp-foundry .dp-label{color:var(--foundry);}
+.dp-ai .dp-label{color:var(--ai);}
+.dp-title{font-family:var(--fh);font-size:1rem;font-weight:800;color:#0D133E;margin-bottom:.5rem;}
+.dp-list{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.dp-list li{font-size:12.5px;color:#5a6a8a;display:flex;align-items:flex-start;gap:.5rem;}
+.dp-list li::before{content:'›';color:var(--blue);font-weight:700;}
+
+/* SEQUENCE TABLE */
+.sequence-section{padding:3rem 4%;background:#f5fafd;}
+.seq-inner{max-width:1100px;margin:0 auto;}
+.seq-title{font-family:var(--fh);font-size:1.5rem;font-weight:800;color:#0D133E;margin-bottom:1.5rem;}
+.seq-table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,178,237,0.07);}
+.seq-table th{background:#0D133E;padding:1rem 1.2rem;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.7);font-weight:700;}
+.seq-table td{padding:.9rem 1.2rem;border-bottom:1px solid rgba(0,178,237,0.1);font-size:13px;color:#0D133E;vertical-align:top;}
+.seq-table tr:last-child td{border-bottom:none;}
+.seq-table tr:hover td{background:rgba(0,178,237,0.03);}
+.seq-step{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;margin-right:.8rem;}
+.seq-from,.seq-to{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;padding:2px 8px;border-radius:12px;margin-bottom:4px;display:inline-block;}
+.seq-from.blazor,.seq-to.blazor{background:rgba(0,178,237,0.1);color:var(--blazor);}
+.seq-from.sql,.seq-to.sql{background:rgba(232,150,10,0.1);color:var(--sql);}
+.seq-from.foundry,.seq-to.foundry{background:rgba(22,163,74,0.1);color:var(--foundry);}
+.seq-from.ai,.seq-to.ai{background:rgba(107,70,193,0.1);color:var(--ai);}
+.seq-from.blob,.seq-to.blob{background:rgba(147,51,234,0.1);color:var(--blob);}
+.seq-arrow{color:#5a6a8a;font-size:16px;margin:0 .5rem;}
+.data-payload{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:.5rem .8rem;font-size:11px;color:#475569;font-family:monospace;margin-top:.5rem;word-break:break-all;}
+
+/* CTA */
+.cta-strip{padding:3rem 4%;background:linear-gradient(135deg,#0D133E 0%,#00B2ED 100%);text-align:center;}
+.cta-strip h2{font-family:var(--fh);font-size:clamp(1.4rem,3vw,2rem);font-weight:900;color:#fff;margin-bottom:.65rem;letter-spacing:-.02em;}
+.cta-strip p{font-size:14px;color:rgba(255,255,255,0.80);margin-bottom:1.4rem;}
+.cta-btn{display:inline-block;background:#fff;color:#0D133E;padding:.72rem 1.8rem;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:transform .2s,box-shadow .2s;}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(13,19,62,0.18);}
+
+/* FOOTER */
+footer{padding:1.6rem 4%;border-top:1px solid rgba(0,178,237,0.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;background:#fff;}
+.foot-copy{font-size:11.5px;color:#5a6a8a;}
+
+@media(max-width:900px){
+  .diagram-wrap{overflow-x:auto;}
+  #dataflow-svg{width:1200px;}
+  .step-indicator{position:relative;top:auto;right:auto;margin:1rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg width="120" height="22" viewBox="0 0 223 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clip-path="url(#clip0_nav)">
+        <path d="M48.1752 26.7534V31.0041H29.1777V29.7925C41.3177 16.5906 42.7908 14.3321 42.7908 11.1448C42.7908 8.71877 41.1167 7.08126 38.6143 7.08126C35.9983 7.08126 34.2765 8.76031 34.2765 11.1983V11.8156H29.7676V11.1746C29.7676 6.21053 33.2988 2.84277 38.5781 2.84277C43.7444 2.84277 47.3416 6.26328 47.3416 11.1211C47.3416 14.7612 45.8882 17.7153 37.8216 26.7534H48.1752Z" fill="#00B2ED"/>
+        <path d="M52.6162 0.37207H57.3039V31.0036H52.6162V0.37207Z" fill="#0D133E"/>
+        <path d="M73.3409 31.4976C66.4259 31.4976 61.2515 26.4892 61.2515 19.7639C61.2515 12.9973 66.4259 8.03027 73.3409 8.03027C80.2439 8.03027 85.4302 13.027 85.4302 19.7644C85.4302 26.4895 80.2439 31.498 73.3409 31.498V31.4976ZM80.6991 19.7639C80.6991 15.4808 77.6207 12.4225 73.3409 12.4225C69.0611 12.4225 65.9832 15.4808 65.9832 19.7639C65.9832 24.0469 69.0613 27.1054 73.3409 27.1054C77.6205 27.1054 80.6991 24.0472 80.6991 19.7639Z" fill="#0D133E"/>
+      </g>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#diagram">Interactive Diagram</a></li>
+    <li><a href="#sequence">Data Sequence</a></li>
+    <li><a href="#components">Components</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Download Architecture</a>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="ph-grid"></div>
+  <div class="ph-glow"></div>
+  <div class="ph-inner">
+    <div class="ph-badge"><span></span>Interactive System Architecture</div>
+    <div class="ph-title">Complete Dataflow<br/><em>Blazor + Foundry + MS SQL</em></div>
+    <p class="ph-sub">Visualize every data packet as it flows through the 9-step proposal pipeline. Click any connection to trace the journey, or use the step controls to animate the sequence.</p>
+    <div class="ph-meta">
+      <div><div class="ph-stat-val">9 Steps</div><div class="ph-stat-lbl">Visualized</div></div>
+      <div><div class="ph-stat-val">5 Systems</div><div class="ph-stat-lbl">Integrated</div></div>
+      <div><div class="ph-stat-val">Real-time</div><div class="ph-stat-lbl">Animation</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE DIAGRAM -->
+<section class="diagram-section" id="diagram">
+  <div class="diagram-container">
+    <div class="diagram-header">
+      <div class="dh-title">🔄 Interactive Dataflow Diagram</div>
+      <div class="dh-controls">
+        <button class="control-btn active" onclick="showStep(0)">All</button>
+        <button class="control-btn" onclick="showStep(1)">1</button>
+        <button class="control-btn" onclick="showStep(2)">2</button>
+        <button class="control-btn" onclick="showStep(3)">3</button>
+        <button class="control-btn" onclick="showStep(4)">4</button>
+        <button class="control-btn" onclick="showStep(5)">5</button>
+        <button class="control-btn" onclick="showStep(6)">6</button>
+        <button class="control-btn" onclick="showStep(7)">7</button>
+        <button class="control-btn" onclick="showStep(8)">8</button>
+        <button class="control-btn" onclick="showStep(9)">9</button>
+        <button class="control-btn" onclick="playAnimation()" style="background:#16A34A;">▶ Play</button>
+      </div>
+    </div>
+    
+    <div class="diagram-wrap">
+      <svg id="dataflow-svg" viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Gradients -->
+          <linearGradient id="gradBlazor" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#00B2ED"/>
+            <stop offset="100%" style="stop-color:#0099cc"/>
+          </linearGradient>
+          <linearGradient id="gradSQL" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#E8960A"/>
+            <stop offset="100%" style="stop-color:#B87208"/>
+          </linearGradient>
+          <linearGradient id="gradFoundry" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#16A34A"/>
+            <stop offset="100%" style="stop-color:#0E7A36"/>
+          </linearGradient>
+          <linearGradient id="gradAI" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#6B46C1"/>
+            <stop offset="100%" style="stop-color:#553593"/>
+          </linearGradient>
+          <linearGradient id="gradBlob" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#9333ea"/>
+            <stop offset="100%" style="stop-color:#7c3aed"/>
+          </linearGradient>
+          
+          <!-- Arrow markers -->
+          <marker id="arrowBlazor" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#00B2ED"/>
+          </marker>
+          <marker id="arrowSQL" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#E8960A"/>
+          </marker>
+          <marker id="arrowFoundry" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#16A34A"/>
+          </marker>
+          <marker id="arrowAI" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#6B46C1"/>
+          </marker>
+          <marker id="arrowBlob" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#9333ea"/>
+          </marker>
+          
+          <!-- Filters -->
+          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.15"/>
+          </filter>
+        </defs>
+        
+        <!-- BACKGROUND GRID -->
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0,178,237,0.08)" stroke-width="1"/>
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#grid)"/>
+        
+        <!-- ========================================== -->
+        <!-- NODES -->
+        <!-- ========================================== -->
+        
+        <!-- BLOB STORAGE (Top) -->
+        <g class="node-group" id="node-blob" transform="translate(500, 50)">
+          <rect class="node-rect" x="0" y="0" width="200" height="80" rx="12" fill="url(#gradBlob)" filter="url(#shadow)"/>
+          <text x="100" y="25" class="node-header" text-anchor="middle" fill="white">Azure Blob Storage</text>
+          <text x="100" y="45" class="node-sub" text-anchor="middle">RFP PDFs, Generated Docs</text>
+          <text x="100" y="65" class="node-icon" fill="white">☁️</text>
+        </g>
+        
+        <!-- BLAZER FRONTEND (Left) -->
+        <g class="node-group" id="node-blazor" transform="translate(50, 300)">
+          <rect class="node-rect" x="0" y="0" width="220" height="120" rx="12" fill="url(#gradBlazor)" filter="url(#shadow)"/>
+          <text x="110" y="25" class="node-header" text-anchor="middle" fill="white">Blazor Server (.NET 8)</text>
+          <text x="110" y="42" class="node-sub" text-anchor="middle">Upload Interface</text>
+          <text x="110" y="55" class="node-sub" text-anchor="middle">Proposal Editor</text>
+          <text x="110" y="68" class="node-sub" text-anchor="middle">Review Dashboard</text>
+          <text x="110" y="90" class="node-icon" fill="white">💻</text>
+          <text x="110" y="108" class="node-sub" text-anchor="middle" font-size="9">SignalR Real-time</text>
+        </g>
+        
+        <!-- MS SQL (Left-Middle) -->
+        <g class="node-group" id="node-sql" transform="translate(50, 550)">
+          <rect class="node-rect" x="0" y="0" width="220" height="140" rx="12" fill="url(#gradSQL)" filter="url(#shadow)"/>
+          <text x="110" y="25" class="node-header" text-anchor="middle" fill="white">MS SQL Server</text>
+          <text x="110" y="45" class="node-sub" text-anchor="middle">Proposals (vector)</text>
+          <text x="110" y="58" class="node-sub" text-anchor="middle">Past Projects (vector)</text>
+          <text x="110" y="71" class="node-sub" text-anchor="middle">Team Profiles (vector)</text>
+          <text x="110" y="84" class="node-sub" text-anchor="middle">Reference Docs</text>
+          <text x="110" y="97" class="node-sub" text-anchor="middle">Pricing Models</text>
+          <text x="110" y="120" class="node-icon" fill="white">🗄️</text>
+        </g>
+        
+        <!-- FOUNDRY AGENT (Center) -->
+        <g class="node-group" id="node-foundry" transform="translate(450, 350)">
+          <rect class="node-rect" x="0" y="0" width="300" height="200" rx="16" fill="url(#gradFoundry)" filter="url(#shadow)"/>
+          <text x="150" y="30" class="node-header" text-anchor="middle" fill="white" font-size="16">Microsoft Foundry Agent</text>
+          
+          <!-- MCP Tools sub-box -->
+          <rect x="20" y="50" width="260" height="130" rx="8" fill="rgba(255,255,255,0.15)"/>
+          <text x="150" y="70" class="node-sub" text-anchor="middle" fill="white" font-weight="700">MCP Tool Servers</text>
+          
+          <text x="40" y="95" class="node-sub" fill="white">• Blob Storage MCP</text>
+          <text x="40" y="112" class="node-sub" fill="white">• MS SQL MCP</text>
+          <text x="40" y="129" class="node-sub" fill="white">• Document Intelligence</text>
+          <text x="40" y="146" class="node-sub" fill="white">• Azure AI Search MCP</text>
+          <text x="40" y="163" class="node-sub" fill="white">• Email/Teams MCP</text>
+          
+          <text x="150" y="190" class="node-icon" fill="white">🤖</text>
+        </g>
+        
+        <!-- AZURE AI SEARCH (Right) -->
+        <g class="node-group" id="node-aisearch" transform="translate(850, 200)">
+          <rect class="node-rect" x="0" y="0" width="200" height="100" rx="12" fill="url(#gradAI)" filter="url(#shadow)"/>
+          <text x="100" y="25" class="node-header" text-anchor="middle" fill="white">Azure AI Search</text>
+          <text x="100" y="45" class="node-sub" text-anchor="middle">4 Indexes:</text>
+          <text x="100" y="60" class="node-sub" text-anchor="middle">Projects • Team • Docs • Pricing</text>
+          <text x="100" y="85" class="node-icon" fill="white">🔍</text>
+        </g>
+        
+        <!-- DOCUMENT INTELLIGENCE (Right-Middle) -->
+        <g class="node-group" id="node-docint" transform="translate(850, 350)">
+          <rect class="node-rect" x="0" y="0" width="200" height="80" rx="12" fill="url(#gradAI)" filter="url(#shadow)"/>
+          <text x="100" y="25" class="node-header" text-anchor="middle" fill="white">Document Intelligence</text>
+          <text x="100" y="45" class="node-sub" text-anchor="middle">RFP Parsing • Extraction</text>
+          <text x="100" y="65" class="node-icon" fill="white">📄</text>
+        </g>
+        
+        <!-- AZURE OPENAI (Right-Bottom) -->
+        <g class="node-group" id="node-openai" transform="translate(850, 480)">
+          <rect class="node-rect" x="0" y="0" width="200" height="100" rx="12" fill="url(#gradAI)" filter="url(#shadow)"/>
+          <text x="100" y="25" class="node-header" text-anchor="middle" fill="white">Azure OpenAI</text>
+          <text x="100" y="45" class="node-sub" text-anchor="middle">GPT-4o • Embeddings</text>
+          <text x="100" y="60" class="node-sub" text-anchor="middle">Structured Output Mode</text>
+          <text x="100" y="85" class="node-icon" fill="white">🧠</text>
+        </g>
+        
+        <!-- FOUNDRY CONTROL PLANE (Bottom) -->
+        <g class="node-group" id="node-control" transform="translate(450, 650)">
+          <rect class="node-rect" x="0" y="0" width="300" height="80" rx="12" fill="#0D133E" filter="url(#shadow)"/>
+          <text x="150" y="30" class="node-header" text-anchor="middle" fill="#00B2ED">Foundry Control Plane</text>
+          <text x="150" y="50" class="node-sub" text-anchor="middle" fill="rgba(255,255,255,0.8)">Traces • Evaluators • Observability</text>
+          <text x="150" y="70" class="node-icon" fill="#00B2ED">📊</text>
+        </g>
+        
+        <!-- ========================================== -->
+        <!-- CONNECTIONS (Data Flows) -->
+        <!-- ========================================== -->
+        
+        <!-- Step 1: Blazor → Blob (Upload) -->
+        <path id="conn-1a" class="connection step-1" d="M 270 360 Q 385 360 500 110" 
+              stroke="#00B2ED" stroke-dasharray="5,5" marker-end="url(#arrowBlob)"/>
+        
+        <!-- Step 2: Blazor → Foundry (Trigger) -->
+        <path id="conn-2a" class="connection step-2" d="M 270 380 L 450 420" 
+              stroke="#00B2ED" marker-end="url(#arrowFoundry)"/>
+        
+        <!-- Step 2: Foundry → Blob (Read) -->
+        <path id="conn-2b" class="connection step-2" d="M 600 350 Q 550 200 500 130" 
+              stroke="#16A34A" stroke-dasharray="5,5" marker-end="url(#arrowBlob)"/>
+        
+        <!-- Step 3: Foundry → Doc Intelligence -->
+        <path id="conn-3" class="connection step-3" d="M 750 390 L 850 390" 
+              stroke="#16A34A" marker-end="url(#arrowAI)"/>
+        
+        <!-- Step 4: Foundry → SQL (Vector Search) -->
+        <path id="conn-4a" class="connection step-4" d="M 450 450 Q 300 520 270 550" 
+              stroke="#16A34A" marker-end="url(#arrowSQL)"/>
+        
+        <!-- Step 4: Foundry → AI Search -->
+        <path id="conn-4b" class="connection step-4" d="M 750 380 L 850 250" 
+              stroke="#16A34A" marker-end="url(#arrowAI)"/>
+        
+        <!-- Step 5: Foundry internal (Context Assembly) - shown as loop -->
+        <path id="conn-5" class="connection step-5" d="M 600 350 Q 700 300 600 250 Q 500 300 600 350" 
+              stroke="#16A34A" stroke-dasharray="3,3" fill="none"/>
+        
+        <!-- Step 6: Foundry → OpenAI -->
+        <path id="conn-6" class="connection step-6" d="M 750 480 L 850 530" 
+              stroke="#16A34A" marker-end="url(#arrowAI)"/>
+        
+        <!-- Step 7: Foundry → SQL (Write Sections) -->
+        <path id="conn-7" class="connection step-7" d="M 450 500 Q 300 580 270 620" 
+              stroke="#16A34A" marker-end="url(#arrowSQL)"/>
+        
+        <!-- Step 7: SQL → Blazor (SignalR Push) -->
+        <path id="conn-7b" class="connection step-7" d="M 270 580 Q 160 500 160 420" 
+              stroke="#E8960A" stroke-dasharray="5,5" marker-end="url(#arrowBlazor)"/>
+        
+        <!-- Step 8: Blazor → Foundry (Review Trigger) -->
+        <path id="conn-8" class="connection step-8" d="M 270 400 L 450 400" 
+              stroke="#00B2ED" marker-end="url(#arrowFoundry)"/>
+        
+        <!-- Step 9: Foundry → Blob (Export) -->
+        <path id="conn-9a" class="connection step-9" d="M 600 550 Q 550 300 600 130" 
+              stroke="#16A34A" stroke-dasharray="5,5" marker-end="url(#arrowBlob)"/>
+        
+        <!-- Step 9: Foundry → SQL (Status Update) -->
+        <path id="conn-9b" class="connection step-9" d="M 450 550 L 270 690" 
+              stroke="#16A34A" marker-end="url(#arrowSQL)"/>
+        
+        <!-- Control Plane Connections (dashed, all steps) -->
+        <path id="conn-ctl" class="connection" d="M 600 550 L 600 650" 
+              stroke="#0D133E" stroke-dasharray="3,3" stroke-width="1" opacity=".4"/>
+        
+        <!-- Data Packets (Animated circles) -->
+        <circle id="packet-1" class="data-packet" cx="0" cy="0"/>
+        <circle id="packet-2" class="data-packet" cx="0" cy="0"/>
+        <circle id="packet-3" class="data-packet" cx="0" cy="0"/>
+        
+      </svg>
+      
+      <!-- Step Indicator Panel -->
+      <div class="step-indicator" id="step-panel">
+        <div class="si-title">Current Data Flow</div>
+        <div class="si-step" id="si-step-name">All Steps Visible</div>
+        <div class="si-desc" id="si-step-desc">Click step buttons above to highlight individual data flows through the system.</div>
+        <div class="si-data" id="si-payload" style="display:none;">Payload: <span id="si-payload-text"></span></div>
+      </div>
+    </div>
+    
+    <!-- Legend -->
+    <div class="legend-wrap">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--blazor);"></div>
+        <span class="legend-label">Blazor Frontend</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--foundry);"></div>
+        <span class="legend-label">Foundry Agent</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--sql);"></div>
+        <span class="legend-label">MS SQL Database</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--ai);"></div>
+        <span class="legend-label">Azure AI Services</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--blob);"></div>
+        <span class="legend-label">Azure Blob Storage</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPONENT DETAILS -->
+<section class="detail-panels" id="components">
+  <div class="dp-inner">
+    <div class="dp-card dp-blazor">
+      <div class="dp-label">Frontend Layer</div>
+      <div class="dp-title">Blazor Server (.NET 8)</div>
+      <ul class="dp-list">
+        <li>Drag-drop RFP upload with progress</li>
+        <li>SignalR real-time collaboration</li>
+        <li>MudBlazor rich UI components</li>
+        <li>Azure AD authentication</li>
+        <li>Proposal editor with AI suggestions</li>
+        <li>Role-based review dashboards</li>
+      </ul>
+    </div>
+    
+    <div class="dp-card dp-foundry">
+      <div class="dp-label">Orchestration Layer</div>
+      <div class="dp-title">Microsoft Foundry Agent</div>
+      <ul class="dp-list">
+        <li>Durable session management</li>
+        <li>Persistent thread memory</li>
+        <li>MCP tool orchestration</li>
+        <li>Multi-model support (GPT-4o, Claude)</li>
+        <li>Structured output enforcement</li>
+        <li>Automatic retry & error handling</li>
+      </ul>
+    </div>
+    
+    <div class="dp-card dp-sql">
+      <div class="dp-label">Data Layer</div>
+      <div class="dp-title">MS SQL Server</div>
+      <ul class="dp-list">
+        <li>Native vector(1536) columns</li>
+        <li>Cosine similarity search</li>
+        <li>EF Core VectorSearch integration</li>
+        <li>Full ACID transaction support</li>
+        <li>JSON document storage</li>
+        <li>Query notifications for SignalR</li>
+      </ul>
+    </div>
+    
+    <div class="dp-card dp-ai">
+      <div class="dp-label">AI Services Layer</div>
+      <div class="dp-title">Azure AI + OpenAI</div>
+      <ul class="dp-list">
+        <li>GPT-4o section generation</li>
+        <li>Text-embedding-3-large</li>
+        <li>Azure AI Search (4 indexes)</li>
+        <li>Document Intelligence RFP parsing</li>
+        <li>Hybrid retrieval (SQL + Search)</li>
+        <li>Iterative reflection (Foundry IQ)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SEQUENCE TABLE -->
+<section class="sequence-section" id="sequence">
+  <div class="seq-inner">
+    <div class="seq-title">Complete Data Sequence</div>
+    <table class="seq-table">
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>From → To</th>
+          <th>Action</th>
+          <th>Data Payload</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div style="display:flex;align-items:center;"><span class="seq-step" style="background:var(--blazor);">1</span>Upload</div></td>
+          <td>
+            <span class="seq-from blazor">Blazor</span>
+            <span class="seq-arrow">→</span>
+            <span class="seq-to blob">Blob</span>
+          </td>
+          <td>User uploads RFP PDF via drag-drop</td>
+          <td>
+            <div class="data-payload">POST /blobs/proposals { file: RFP.pdf, metadata: {uploadedBy, timestamp} }</div>
+          </td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;"><span class="seq-step" style="background:var(--foundry);">2</span>Trigger</div></td>
+          <td>
+            <span class="seq-from blazor">Blazor</span>
+            <span class="seq-arrow">→</span>
+            <span class="seq-to foundry">Foundry</span>
+          </td>
+          <td>Initialize agent session with blob URL</td>
+          <td>
+            <div class="data-payload">POST /agents/sessions { blobUrl: "...", userId: "...", proposalId: "..." }</div>
+          </td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;"><span class="seq-step" style="background:var(--ai);">3</span>Parse</div></td>
+          <td>
+            <span class="seq-from foundry">Foundry</span>
+            <span class="seq-arrow">→</span>
+            <span class="seq-to ai">Doc Intelligence</span>
+          </td>
+          <td>Extract structured data from RFP (MCP tool)</td>
+          <td>
+            <div class="data-payload">MCP: documentIntelligence.analyze(blobUrl) → {clientName, scope, requirements[], budget, deadline}</div>
+          </td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;"><span class="seq-step" style="background:var(--sql);">4</span>Search</div></td>
+          <td>
+            <span class="seq-from foundry">Foundry</span>
+            <span class="seq-arrow">→</span>
+            <span class="seq-to sql">MS SQL + AI Search</span>
+          </td>
+          <td>Hybrid vector search for relevant content</td>
+          <td>
+            <div class="data-payload">SELECT TOP 5 * FROM PastProjects ORDER BY CosineSimilarity(@embedding, ProjectVector); + AI Search queries</div>
+          </td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;"><span class="seq-step" style="background:var(--foundry);">5</span>Assemble</div></td>
+          <td>
+            <span class="seq-from foundry">Foundry IQ</span>
+            <span class="seq-arrow">↻</span>
+            <span class="seq-to foundry">Internal</span>
+          </td>
+          <td>Rank, deduplicate, and assemble context</td>
+          <td>
+            <div class="data-payload">Foundry IQ: iterative reflection, confidence scoring, provenance tracking</div>
+          </td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;"><span class="seq-step" style="background:var(--ai);">6</span>Generate</div></td>
+          <td>
+            <span class="seq-from foundry">Foundry</span>
+            <span class="seq-arrow">→</span>
+            <span class="seq-to ai">Azure OpenAI</span>
+          </td>
+          <td>GPT-4o generates 5 proposal sections</td>
+          <td>
+            <div class="data-payload">model.generate({context, schema: ProposalSchema, outputFormat: "structured_json"})</div>
+          </td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;"><span class="seq-step" style="background:var(--sql);">7</span>Store</div></td>
+          <td>
+            <span class="seq-from foundry">Foundry</span>
+            <span class="seq-arrow">→</span>
+            <span class="seq-to sql">MS SQL</span>
+            <span class="seq-arrow">→</span>
+            <span class="seq-to blazor">Blazor</span>
+          </td>
+          <td>Save sections + SignalR push to clients</td>
+          <td>
+            <div class="data-payload">INSERT ProposalSections + SQL Query Notification → SignalR Hub → Client update</div>
+          </td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;"><span class="seq-step" style="background:var(--blazor);">8</span>Review</div></td>
+          <td>
+            <span class="seq-from blazor">Blazor</span>
+            <span class="seq-arrow">→</span>
+            <span class="seq-to foundry">Foundry</span>
+          </td>
+          <td>Role-based approval workflow</td>
+          <td>
+            <div class="data-payload">POST /review {sectionId, reviewerRole, decision, comments} → Agent processes revision</div>
+          </td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;"><span class="seq-step" style="background:var(--blob);">9</span>Deliver</div></td>
+          <td>
+            <span class="seq-from foundry">Foundry</span>
+            <span class="seq-arrow">→</span>
+            <span class="seq-to blob">Blob</span>
+            <span class="seq-arrow">+</span>
+            <span class="seq-to sql">SQL</span>
+          </td>
+          <td>Export PDF/DOCX, update status, notify</td>
+          <td>
+            <div class="data-payload">MCP: blob.upload(pdfBytes) + UPDATE Proposals SET status='Submitted' + Email notification</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <h2>See the architecture in action</h2>
+  <p>Deploy this exact dataflow in your environment with our reference implementation.</p>
+  <a href="#" class="cta-btn">Get Source Code →</a>
+</div>
+
+<footer>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <svg width="90" height="16" viewBox="0 0 223 40" fill="none">
+      <g clip-path="url(#clip0_foot)">
+        <path d="M48.1752 26.7534V31.0041H29.1777V29.7925C41.3177 16.5906 42.7908 14.3321 42.7908 11.1448C42.7908 8.71877 41.1167 7.08126 38.6143 7.08126C35.9983 7.08126 34.2765 8.76031 34.2765 11.1983V11.8156H29.7676V11.1746C29.7676 6.21053 33.2988 2.84277 38.5781 2.84277C43.7444 2.84277 47.3416 6.26328 47.3416 11.1211C47.3416 14.7612 45.8882 17.7153 37.8216 26.7534H48.1752Z" fill="#00B2ED"/>
+        <path d="M52.6162 0.37207H57.3039V31.0036H52.6162V0.37207Z" fill="#0D133E"/>
+      </g>
+    </svg>
+  </div>
+  <div class="foot-copy">© 2026 E2logy Software Solutions · Interactive Dataflow Architecture</div>
+</footer>
+
+<script>
+// Step definitions for the interactive diagram
+const steps = {
+  0: {
+    name: "All Steps Visible",
+    desc: "Complete dataflow showing all 9 steps of the proposal pipeline.",
+    connections: ['conn-1a','conn-2a','conn-2b','conn-3','conn-4a','conn-4b','conn-5','conn-6','conn-7','conn-7b','conn-8','conn-9a','conn-9b'],
+    payload: null
+  },
+  1: {
+    name: "Step 1: RFP Upload",
+    desc: "User uploads RFP PDF via Blazor drag-drop interface. File streams directly to Azure Blob Storage using Azure.Storage.Blobs SDK with managed identity.",
+    connections: ['conn-1a'],
+    payload: "multipart/form-data: RFP.pdf (50MB max) → BlobContainer: 'proposals/{guid}/RFP.pdf'"
+  },
+  2: {
+    name: "Step 2: Agent Initialization",
+    desc: "Blazor calls Foundry Agent Service HTTP API to create durable session. Agent initializes thread memory with blob URL and proposal metadata.",
+    connections: ['conn-2a','conn-2b'],
+    payload: "POST /v1/agents/sessions {agentId: 'proposal-agent', threadMemory: {blobUrl, proposalId, userId}}"
+  },
+  3: {
+    name: "Step 3: Document Parsing",
+    desc: "Foundry Agent invokes Document Intelligence MCP tool. Foundry handles async polling internally; agent receives structured extraction.",
+    connections: ['conn-3'],
+    payload: "MCP Call: documentIntelligence.analyzeDocument({blobUrl, model: 'prebuilt-layout'}) → {extractedFields[], tables[], keyValuePairs[]}"
+  },
+  4: {
+    name: "Step 4: Hybrid Search",
+    desc: "Parallel retrieval: (1) MS SQL vector similarity for projects/team using CosineSimilarity(), (2) Azure AI Search for docs/pricing.",
+    connections: ['conn-4a','conn-4b'],
+    payload: "SQL: SELECT TOP 5 * FROM PastProjects ORDER BY vector_distance('cosine', @queryVec, ProjectVector) + AI Search: search.indexes.query({queries: [...]})"
+  },
+  5: {
+    name: "Step 5: Context Assembly",
+    desc: "Foundry IQ applies iterative reflection — evaluates retrieval quality, re-queries if needed, ranks cross-source results, tracks provenance.",
+    connections: ['conn-5'],
+    payload: "Foundry IQ internal: {iterations: 2, confidence: 0.94, sources: [sql: 5, search: 8], rerankedContext: [...]}"
+  },
+  6: {
+    name: "Step 6: AI Generation",
+    desc: "GPT-4o via Foundry Model Catalogue with structured output mode. Schema enforced by Foundry; returns 5 sections with citations.",
+    connections: ['conn-6'],
+    payload: "model.generate({messages: [{role: 'system', content: 'Generate proposal...'}, {role: 'user', content: context}], response_format: {type: 'json_object', schema: ProposalSchema}})"
+  },
+  7: {
+    name: "Step 7: Persistence & Sync",
+    desc: "Agent writes to MS SQL via EF Core MCP tool. SQL Query Notifications trigger SignalR push to all connected Blazor clients.",
+    connections: ['conn-7','conn-7b'],
+    payload: "EF Core: ctx.ProposalSections.AddRange(sections) + SaveChanges() → SQL Service Broker → SignalR Hub.Clients.Group(proposalId).SendAsync('Update', sections)"
+  },
+  8: {
+    name: "Step 8: Review Workflow",
+    desc: "Role-based review in Blazor. Reviewer decisions posted to Foundry Agent, which updates thread state and triggers revision if needed.",
+    connections: ['conn-8'],
+    payload: "POST /review {proposalId, sectionId, reviewerRole: 'TechLead', decision: 'Approve' | 'RequestChanges', comments: '...'}"
+  },
+  9: {
+    name: "Step 9: Delivery",
+    desc: "Final export: OpenXML generates PDF/DOCX, uploaded to Blob, MS SQL status updated, email notification via MCP tool.",
+    connections: ['conn-9a','conn-9b'],
+    payload: "MCP: blob.upload({content: pdfBytes, path: 'proposals/{id}/final.pdf'}) + sql.execute('UPDATE Proposals SET Status = @status') + email.send({to, template: 'proposal-ready'})"
+  }
+};
+
+let currentStep = 0;
+let animationInterval = null;
+
+function showStep(stepNum) {
+  currentStep = stepNum;
+  
+  // Update button states
+  document.querySelectorAll('.control-btn').forEach((btn, idx) => {
+    btn.classList.toggle('active', idx === stepNum);
+  });
+  
+  // Update step panel
+  const step = steps[stepNum];
+  document.getElementById('si-step-name').textContent = step.name;
+  document.getElementById('si-step-desc').textContent = step.desc;
+  
+  const payloadDiv = document.getElementById('si-payload');
+  const payloadText = document.getElementById('si-payload-text');
+  if (step.payload) {
+    payloadDiv.style.display = 'block';
+    payloadText.textContent = step.payload;
+  } else {
+    payloadDiv.style.display = 'none';
+  }
+  
+  // Highlight connections
+  document.querySelectorAll('.connection').forEach(conn => {
+    conn.classList.remove('active', 'dimmed');
+    
+    if (stepNum === 0) {
+      // All visible - no special styling
+    } else {
+      const stepClass = `step-${stepNum}`;
+      if (conn.classList.contains(stepClass)) {
+        conn.classList.add('active');
+      } else {
+        conn.classList.add('dimmed');
+      }
+    }
+  });
+  
+  // Stop any running animation
+  stopAnimation();
+}
+
+function playAnimation() {
+  stopAnimation();
+  let step = 1;
+  showStep(step);
+  
+  animationInterval = setInterval(() => {
+    step++;
+    if (step > 9) {
+      step = 1;
+    }
+    showStep(step);
+  }, 2500);
+}
+
+function stopAnimation() {
+  if (animationInterval) {
+    clearInterval(animationInterval);
+    animationInterval = null;
+  }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  showStep(0);
+  
+  // Add click handlers to nodes for extra interactivity
+  document.querySelectorAll('.node-group').forEach(node => {
+    node.addEventListener('click', () => {
+      const nodeId = node.id.replace('node-', '');
+      console.log('Clicked node:', nodeId);
+      // Could expand to show node-specific details
+    });
+  });
+});
+</script>
+
+</body>
+</html>

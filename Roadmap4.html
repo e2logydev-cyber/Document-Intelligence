@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Proposal Intelligence Platform · How It Works (Simple Guide)</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#00B2ED;--dark:#0D133E;--navy:#f5fafd;
+  --blazor:#00B2ED;--sql:#E8960A;--foundry:#16A34A;--ai:#6B46C1;--blob:#9333ea;
+  --border:rgba(0,178,237,0.18);--fh:'Mulish',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#f8fafc;color:#0D133E;font-family:var(--fh);font-size:16px;line-height:1.7;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;width:100%;z-index:200;padding:0.9rem 4%;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.98);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,178,237,0.15);box-shadow:0 1px 20px rgba(13,19,62,0.07);}
+.nav-logo{font-family:var(--fh);font-size:17px;font-weight:800;color:#0D133E;text-decoration:none;}
+.nav-links{display:flex;gap:1.6rem;list-style:none;}
+.nav-links a{color:#5a6a8a;text-decoration:none;font-size:13.5px;font-weight:600;transition:color .2s;}
+.nav-links a:hover{color:#00B2ED;}
+
+/* HERO */
+.hero{padding:8rem 4% 4rem;background:linear-gradient(135deg,#0D133E 0%,#1a2260 100%);position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,178,237,0.15) 1px,transparent 1px);background-size:30px 30px;opacity:.3;}
+.hero-inner{position:relative;z-index:1;max-width:900px;margin:0 auto;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,178,237,0.2);border:1px solid rgba(0,178,237,0.4);border-radius:30px;padding:0.5rem 1.2rem;font-size:12px;color:#00B2ED;font-weight:700;margin-bottom:1.5rem;}
+.hero-title{font-family:var(--fh);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-.02em;margin-bottom:1rem;}
+.hero-title em{font-style:normal;color:#00B2ED;}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.85);max-width:700px;margin:0 auto 2rem;line-height:1.8;font-weight:400;}
+.hero-stats{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;margin-top:2rem;}
+.stat-number{font-family:var(--fh);font-size:2.5rem;font-weight:900;color:#00B2ED;}
+.stat-label{font-size:13px;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+
+/* SECTIONS */
+.section{padding:4rem 4%;max-width:1200px;margin:0 auto;}
+.section-title{font-family:var(--fh);font-size:clamp(1.5rem,3vw,2.2rem);font-weight:900;color:#0D133E;margin-bottom:1rem;text-align:center;}
+.section-title em{color:#00B2ED;font-style:normal;}
+.section-sub{text-align:center;font-size:16px;color:#5a6a8a;max-width:700px;margin:0 auto 3rem;}
+
+/* BEFORE/AFTER CARDS */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:4rem;}
+@media(max-width:768px){.compare-grid{grid-template-columns:1fr;}}
+.compare-card{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 4px 20px rgba(0,0,0,0.08);position:relative;overflow:hidden;}
+.compare-card.old{border-top:4px solid #E8960A;}
+.compare-card.new{border-top:4px solid #16A34A;}
+.compare-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-bottom:1rem;}
+.old .compare-label{color:#E8960A;}
+.new .compare-label{color:#16A34A;}
+.compare-title{font-family:var(--fh);font-size:1.3rem;font-weight:800;color:#0D133E;margin-bottom:1rem;}
+.compare-list{list-style:none;display:flex;flex-direction:column;gap:.8rem;}
+.compare-list li{display:flex;align-items:flex-start;gap:.8rem;font-size:14px;color:#5a6a8a;line-height:1.6;}
+.compare-list li::before{content:'•';color:var(--blue);font-weight:900;font-size:18px;line-height:1;}
+.old .compare-list li::before{color:#E8960A;}
+.new .compare-list li::before{color:#16A34A;}
+.time-badge{display:inline-flex;align-items:center;gap:.5rem;background:#f5fafd;border:1px solid var(--border);border-radius:20px;padding:.4rem 1rem;font-size:12px;font-weight:700;color:#5a6a8a;margin-top:1rem;}
+.time-badge strong{color:#0D133E;}
+
+/* INTERACTIVE DIAGRAM */
+.diagram-section{background:#fff;padding:4rem 0;}
+.diagram-container{max-width:1400px;margin:0 auto;padding:0 4%;}
+.diagram-header{text-align:center;margin-bottom:3rem;}
+.diagram-header h2{font-family:var(--fh);font-size:1.8rem;font-weight:800;color:#0D133E;margin-bottom:.5rem;}
+.diagram-header p{color:#5a6a8a;font-size:16px;}
+
+/* Controls */
+.controls{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;}
+.step-btn{padding:.6rem 1.2rem;border-radius:25px;border:2px solid #e2e8f0;background:#fff;font-family:var(--fh);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;color:#5a6a8a;}
+.step-btn:hover{border-color:#00B2ED;color:#00B2ED;}
+.step-btn.active{background:#00B2ED;border-color:#00B2ED;color:#fff;}
+.play-btn{background:#16A34A;border-color:#16A34A;color:#fff;padding:.6rem 1.5rem;}
+.play-btn:hover{background:#0E7A36;border-color:#0E7A36;}
+
+/* SVG Container */
+.svg-wrapper{background:#f8fafc;border-radius:20px;padding:2rem;position:relative;overflow-x:auto;}
+#dataflow-svg{min-width:1000px;height:700px;display:block;margin:0 auto;}
+
+/* Node Styles */
+.node{cursor:pointer;transition:all .3s ease;}
+.node:hover{transform:translateY(-3px);}
+.node-rect{filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));}
+.node-label{font-family:'Mulish',sans-serif;font-size:12px;font-weight:700;fill:#fff;text-anchor:middle;}
+.node-sublabel{font-family:'Mulish',sans-serif;font-size:9px;font-weight:500;fill:rgba(255,255,255,0.9);text-anchor:middle;}
+.node-icon{font-size:24px;text-anchor:middle;dominant-baseline:middle;}
+
+/* Connection Styles */
+.connection{fill:none;stroke-width:3;stroke-linecap:round;transition:all .3s;opacity:.3;}
+.connection.active{opacity:1;stroke-width:4;animation:dashFlow 1s linear infinite;}
+.connection.dimmed{opacity:.1;}
+@keyframes dashFlow{to{stroke-dashoffset:-24;}}
+
+/* Data Packet Animation */
+.packet{fill:#fff;stroke-width:3;r:8;opacity:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));}
+.packet.active{opacity:1;animation:packetMove 2s ease-in-out forwards;}
+@keyframes packetMove{
+  0%{transform:translate(0,0) scale(0);opacity:0;}
+  15%{transform:translate(var(--dx),var(--dy)) scale(1);opacity:1;}
+  85%{transform:translate(var(--dx),var(--dy)) scale(1);opacity:1;}
+  100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0;}
+}
+
+/* Step Detail Panel */
+.step-panel{background:#fff;border-radius:16px;padding:2rem;margin-top:2rem;box-shadow:0 4px 20px rgba(0,0,0,0.08);border-left:4px solid #00B2ED;}
+.step-number{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:1.2rem;font-weight:900;color:#fff;background:#00B2ED;margin-bottom:1rem;}
+.step-panel h3{font-family:var(--fh);font-size:1.4rem;font-weight:800;color:#0D133E;margin-bottom:1rem;}
+.step-panel p{font-size:15px;color:#5a6a8a;line-height:1.8;margin-bottom:1.5rem;}
+.example-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:1.5rem;}
+.example-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:#00B2ED;margin-bottom:.8rem;}
+.example-title{font-size:16px;font-weight:700;color:#0D133E;margin-bottom:.5rem;}
+.example-desc{font-size:14px;color:#5a6a8a;line-height:1.7;}
+
+/* Data Transformation Visualization */
+.transform-section{background:#f8fafc;padding:4rem 4%;}
+.transform-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;max-width:1200px;margin:0 auto;}
+.transform-card{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 4px 15px rgba(0,0,0,0.06);}
+.transform-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+.transform-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.transform-icon.input{background:#fee2e2;}
+.transform-icon.process{background:#dbeafe;}
+.transform-icon.output{background:#dcfce7;}
+.transform-title{font-family:var(--fh);font-size:1.1rem;font-weight:800;color:#0D133E;}
+.transform-sub{font-size:13px;color:#5a6a8a;}
+.data-box{background:#f1f5f9;border-radius:8px;padding:1rem;font-family:monospace;font-size:12px;color:#475569;margin:1rem 0;overflow-x:auto;}
+.arrow-down{text-align:center;font-size:24px;color:#cbd5e1;margin:.5rem 0;}
+.process-tag{display:inline-flex;align-items:center;gap:.5rem;background:#dbeafe;color:#1d4ed8;padding:.4rem 1rem;border-radius:20px;font-size:12px;font-weight:700;margin:.5rem 0;}
+
+/* Complete Journey Timeline */
+.journey-section{background:#fff;padding:4rem 4%;}
+.journey-timeline{max-width:900px;margin:0 auto;position:relative;}
+.journey-timeline::before{content:'';position:absolute;left:30px;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#00B2ED,#16A34A);border-radius:3px;}
+.journey-step{position:relative;padding-left:80px;margin-bottom:3rem;}
+.journey-step:last-child{margin-bottom:0;}
+.journey-dot{position:absolute;left:15px;width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid #00B2ED;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:12px;font-weight:900;color:#00B2ED;}
+.journey-content{background:#f8fafc;border-radius:12px;padding:1.5rem;}
+.journey-step-title{font-family:var(--fh);font-size:1.1rem;font-weight:800;color:#0D133E;margin-bottom:.5rem;}
+.journey-desc{font-size:14px;color:#5a6a8a;line-height:1.7;margin-bottom:1rem;}
+.journey-example{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:1rem;}
+.journey-example-label{font-size:11px;font-weight:700;color:#00B2ED;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;}
+.journey-example-text{font-size:13px;color:#0D133E;line-height:1.6;}
+
+/* Summary Cards */
+.summary-section{background:linear-gradient(135deg,#0D133E 0%,#1a2260 100%);padding:4rem 4%;color:#fff;}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;max-width:1200px;margin:0 auto;}
+.summary-card{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:1.5rem;}
+.summary-number{font-family:var(--fh);font-size:2.5rem;font-weight:900;color:#00B2ED;margin-bottom:.5rem;}
+.summary-label{font-size:14px;font-weight:600;color:#fff;margin-bottom:1rem;}
+.summary-desc{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;}
+
+/* CTA */
+.cta-section{padding:4rem 4%;text-align:center;background:#fff;}
+.cta-title{font-family:var(--fh);font-size:1.8rem;font-weight:800;color:#0D133E;margin-bottom:1rem;}
+.cta-button{display:inline-flex;align-items:center;gap:.8rem;background:#00B2ED;color:#fff;padding:1rem 2rem;border-radius:30px;font-family:var(--fh);font-size:16px;font-weight:700;text-decoration:none;transition:all .2s;box-shadow:0 4px 15px rgba(0,178,237,0.3);}
+.cta-button:hover{background:#0099cc;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,178,237,0.4);}
+
+/* Footer */
+footer{padding:2rem 4%;background:#0D133E;color:rgba(255,255,255,0.6);text-align:center;font-size:13px;}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero-stats{gap:2rem;}
+  .stat-number{font-size:2rem;}
+  .svg-wrapper{padding:1rem;}
+  #dataflow-svg{min-width:800px;height:600px;}
+  .journey-timeline::before{left:20px;}
+  .journey-step{padding-left:60px;}
+  .journey-dot{left:5px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <a href="#" class="nav-logo">📄 Proposal Intelligence Platform</a>
+  <ul class="nav-links">
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#diagram">Live Diagram</a></li>
+    <li><a href="#journey">Complete Journey</a></li>
+    <li><a href="#transformations">Data Transformations</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">🤖 AI-Powered Proposal Automation</div>
+    <h1 class="hero-title">From RFP to Winning Proposal<br/><em>Without the Chaos</em></h1>
+    <p class="hero-sub">See exactly how your proposal team goes from "We just got an RFP" to "Proposal submitted" — with AI doing the heavy lifting and humans just reviewing.</p>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-number">2-4 hrs</div>
+        <div class="stat-label">vs. 3-5 days</div>
+      </div>
+      <div>
+        <div class="stat-number">84%</div>
+        <div class="stat-label">Cost Savings</div>
+      </div>
+      <div>
+        <div class="stat-number">95%</div>
+        <div class="stat-label">Quality Score</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEFORE & AFTER -->
+<section class="section" id="how-it-works">
+  <h2 class="section-title">The Old Way vs. <em>The New Way</em></h2>
+  <p class="section-sub">Same RFP. Completely different experience for your team.</p>
+  
+  <div class="compare-grid">
+    <div class="compare-card old">
+      <div class="compare-label">😰 The Old Manual Process</div>
+      <h3 class="compare-title">"Everyone Panic and Start Writing"</h3>
+      <ul class="compare-list">
+        <li><strong>RFP arrives via email</strong> — Someone has to notice it, download it, and figure out who should handle it</li>
+        <li><strong>6 people print and read separately</strong> — Each person highlights different things, no shared understanding</li>
+        <li><strong>Emergency meeting called</strong> — 90 minutes to decide who writes what. 6 people × 90 min = 9 hours burned</li>
+        <li><strong>Everyone hunts through old files</strong> — "Didn't we write something like this for Acme Corp?" Searching shared drives, emails, personal folders</li>
+        <li><strong>Writing in isolation</strong> — 6 people write 6 different voices. Technical lead uses jargon. Sales uses buzzwords. No consistency</li>
+        <li><strong>Email ping-pong for reviews</strong> — v1, v2_Final, v2_Final_FINAL, v2_Final_FINAL_v2. Version chaos.</li>
+        <li><strong>Submit and hope</strong> — Quality depends on who had time and sleep. Inconsistent, stressful, expensive.</li>
+      </ul>
+      <div class="time-badge">
+        ⏱️ <strong>3-5 days</strong> · 6 people · ₹26,000 per proposal
+      </div>
+    </div>
+    
+    <div class="compare-card new">
+      <div class="compare-label">⚡ The New AI-Powered Process</div>
+      <h3 class="compare-title">"Upload, Review, Submit"</h3>
+      <ul class="compare-list">
+        <li><strong>Upload RFP to one place</strong> — Drag, drop, done. 30 seconds. Everyone knows where it is.</li>
+        <li><strong>AI reads and understands instantly</strong> — No human reads first. AI extracts requirements, deadlines, evaluation criteria automatically.</li>
+        <li><strong>AI finds your best past work</strong> — Searches 10 years of proposals in 3 seconds. "Here are 5 similar projects we won."</li>
+        <li><strong>AI assembles the dream team</strong> — "Sarah led 3 similar projects. Mike's available. This combination wins 80% of the time."</li>
+        <li><strong>AI writes the first complete draft</strong> — All 5 sections written in your company's voice, with consistent terminology, in 10 minutes.</li>
+        <li><strong>Experts review, don't write</strong> — Tech lead checks technical approach. Commercial checks pricing. 1 round of light edits.</li>
+        <li><strong>Submit with confidence</strong> — Same quality every time. Fully cited. Fully compliant. Zero stress.</li>
+      </ul>
+      <div class="time-badge">
+        ⚡ <strong>2-4 hours</strong> · 2 people · ₹4,000 per proposal
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE DIAGRAM -->
+<section class="diagram-section" id="diagram">
+  <div class="diagram-container">
+    <div class="diagram-header">
+      <h2>🎬 Watch Data Flow Through the System</h2>
+      <p>Click any step below to see exactly what happens, where, and how data transforms</p>
+    </div>
+    
+    <div class="controls">
+      <button class="step-btn active" onclick="showStep(0)">🏠 Overview</button>
+      <button class="step-btn" onclick="showStep(1)">1️⃣ Upload</button>
+      <button class="step-btn" onclick="showStep(2)">2️⃣ Parse</button>
+      <button class="step-btn" onclick="showStep(3)">3️⃣ Search</button>
+      <button class="step-btn" onclick="showStep(4)">4️⃣ Assemble</button>
+      <button class="step-btn" onclick="showStep(5)">5️⃣ Write</button>
+      <button class="step-btn" onclick="showStep(6)">6️⃣ Review</button>
+      <button class="step-btn" onclick="showStep(7)">7️⃣ Deliver</button>
+      <button class="step-btn play-btn" onclick="playAnimation()">▶ Play All</button>
+    </div>
+    
+    <div class="svg-wrapper">
+      <svg id="dataflow-svg" viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Gradients -->
+          <linearGradient id="gBlazor" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#00B2ED"/>
+            <stop offset="100%" style="stop-color:#0099cc"/>
+          </linearGradient>
+          <linearGradient id="gFoundry" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#16A34A"/>
+            <stop offset="100%" style="stop-color:#0E7A36"/>
+          </linearGradient>
+          <linearGradient id="gSQL" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#E8960A"/>
+            <stop offset="100%" style="stop-color:#B87208"/>
+          </linearGradient>
+          <linearGradient id="gAI" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#6B46C1"/>
+            <stop offset="100%" style="stop-color:#553593"/>
+          </linearGradient>
+          <linearGradient id="gBlob" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#9333ea"/>
+            <stop offset="100%" style="stop-color:#7c3aed"/>
+          </linearGradient>
+          
+          <!-- Markers -->
+          <marker id="mBlazor" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L0,10 L9,5 z" fill="#00B2ED"/>
+          </marker>
+          <marker id="mFoundry" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L0,10 L9,5 z" fill="#16A34A"/>
+          </marker>
+          <marker id="mSQL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L0,10 L9,5 z" fill="#E8960A"/>
+          </marker>
+          <marker id="mAI" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L0,10 L9,5 z" fill="#6B46C1"/>
+          </marker>
+        </defs>
+        
+        <!-- Background Pattern -->
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <circle cx="20" cy="20" r="1" fill="rgba(0,178,237,0.2)"/>
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#grid)"/>
+        
+        <!-- ========== NODES ========== -->
+        
+        <!-- BLOB STORAGE (Top) -->
+        <g class="node" id="n-blob" transform="translate(400, 40)">
+          <rect class="node-rect" x="0" y="0" width="200" height="90" rx="16" fill="url(#gBlob)"/>
+          <text x="100" y="30" class="node-label">☁️ Azure Blob Storage</text>
+          <text x="100" y="50" class="node-sublabel">RFP PDFs & Final Proposals</text>
+          <text x="100" y="70" class="node-sublabel">Like a filing cabinet in the cloud</text>
+        </g>
+        
+        <!-- BLAZOR FRONTEND (Left) -->
+        <g class="node" id="n-blazor" transform="translate(40, 250)">
+          <rect class="node-rect" x="0" y="0" width="220" height="140" rx="16" fill="url(#gBlazor)"/>
+          <text x="110" y="35" class="node-label">💻 Blazor Web App</text>
+          <text x="110" y="55" class="node-sublabel">Where humans interact</text>
+          <text x="110" y="72" class="node-sublabel">• Upload RFP</text>
+          <text x="110" y="87" class="node-sublabel">• Review AI draft</text>
+          <text x="110" y="102" class="node-sublabel">• Approve & Download</text>
+          <text x="110" y="122" class="node-sublabel">Real-time updates ✓</text>
+        </g>
+        
+        <!-- FOUNDRY AGENT (Center) -->
+        <g class="node" id="n-foundry" transform="translate(350, 280)">
+          <rect class="node-rect" x="0" y="0" width="300" height="180" rx="20" fill="url(#gFoundry)"/>
+          <text x="150" y="35" class="node-label" font-size="14">🤖 Microsoft Foundry Agent</text>
+          <text x="150" y="55" class="node-sublabel">The AI Project Manager</text>
+          
+          <rect x="20" y="70" width="260" height="90" rx="10" fill="rgba(255,255,255,0.15)"/>
+          <text x="150" y="90" class="node-sublabel" font-weight="700">What It Does:</text>
+          <text x="35" y="108" class="node-sublabel">• Orchestrates all tools</text>
+          <text x="35" y="123" class="node-sublabel">• Remembers everything</text>
+          <text x="35" y="138" class="node-sublabel">• Makes decisions</text>
+          <text x="35" y="153" class="node-sublabel">• Tracks every action</text>
+        </g>
+        
+        <!-- MS SQL DATABASE (Left-Bottom) -->
+        <g class="node" id="n-sql" transform="translate(40, 480)">
+          <rect class="node-rect" x="0" y="0" width="220" height="140" rx="16" fill="url(#gSQL)"/>
+          <text x="110" y="30" class="node-label">🗄️ MS SQL Database</text>
+          <text x="110" y="50" class="node-sublabel">The Knowledge Library</text>
+          <text x="110" y="70" class="node-sublabel">• Past Projects (with AI vectors)</text>
+          <text x="110" y="85" class="node-sublabel">• Team Profiles & Skills</text>
+          <text x="110" y="100" class="node-sublabel">• Pricing Templates</text>
+          <text x="110" y="115" class="node-sublabel">• Proposal History</text>
+          <text x="110" y="132" class="node-sublabel">Can search by meaning, not just words</text>
+        </g>
+        
+        <!-- AZURE AI SERVICES (Right) -->
+        <g class="node" id="n-ai" transform="translate(720, 200)">
+          <rect class="node-rect" x="0" y="0" width="240" height="200" rx="16" fill="url(#gAI)"/>
+          <text x="120" y="30" class="node-label">🧠 Azure AI Services</text>
+          <text x="120" y="50" class="node-sublabel">The AI Workers</text>
+          
+          <rect x="15" y="65" width="210" height="40" rx="8" fill="rgba(255,255,255,0.15)"/>
+          <text x="120" y="85" class="node-sublabel" font-weight="700">Document Intelligence</text>
+          <text x="120" y="98" class="node-sublabel">Reads & understands RFPs</text>
+          
+          <rect x="15" y="115" width="210" height="40" rx="8" fill="rgba(255,255,255,0.15)"/>
+          <text x="120" y="135" class="node-sublabel" font-weight="700">Azure AI Search</text>
+          <text x="120" y="148" class="node-sublabel">Finds relevant past work</text>
+          
+          <rect x="15" y="165" width="210" height="25" rx="8" fill="rgba(255,255,255,0.15)"/>
+          <text x="120" y="182" class="node-sublabel" font-weight="700">GPT-4o — Writes the proposal</text>
+        </g>
+        
+        <!-- CONTROL PLANE (Bottom) -->
+        <g class="node" id="n-control" transform="translate(350, 520)">
+          <rect class="node-rect" x="0" y="0" width="300" height="80" rx="16" fill="#0D133E"/>
+          <text x="150" y="30" class="node-label" fill="#00B2ED">📊 Foundry Control Plane</text>
+          <text x="150" y="55" class="node-sublabel">Security camera for AI — sees everything</text>
+        </g>
+        
+        <!-- ========== CONNECTIONS ========== -->
+        
+        <!-- Step 1: Upload -->
+        <path id="c-1a" class="connection step-1" d="M 260 320 Q 330 320 400 130" 
+              stroke="#00B2ED" marker-end="url(#mBlazor)" stroke-dasharray="8,4"/>
+        <path id="c-1b" class="connection step-1" d="M 260 350 L 350 350" 
+              stroke="#00B2ED" marker-end="url(#mBlazor)"/>
+        
+        <!-- Step 2: Parse -->
+        <path id="c-2" class="connection step-2" d="M 650 360 L 720 280" 
+              stroke="#16A34A" marker-end="url(#mFoundry)"/>
+        
+        <!-- Step 3: Search (Parallel) -->
+        <path id="c-3a" class="connection step-3" d="M 500 400 Q 350 480 260 520" 
+              stroke="#16A34A" marker-end="url(#mFoundry)" stroke-dasharray="8,4"/>
+        <path id="c-3b" class="connection step-3" d="M 650 400 L 720 320" 
+              stroke="#16A34A" marker-end="url(#mFoundry)"/>
+        
+        <!-- Step 4: Assemble (internal) -->
+        <path id="c-4" class="connection step-4" d="M 500 370 Q 600 300 500 280 Q 400 300 500 370" 
+              stroke="#16A34A" stroke-dasharray="4,4" fill="none"/>
+        
+        <!-- Step 5: Generate -->
+        <path id="c-5" class="connection step-5" d="M 650 450 L 720 420" 
+              stroke="#16A34A" marker-end="url(#mFoundry)"/>
+        
+        <!-- Step 6: Save & Notify -->
+        <path id="c-6a" class="connection step-6" d="M 500 460 Q 350 550 260 550" 
+              stroke="#16A34A" marker-end="url(#mFoundry)"/>
+        <path id="c-6b" class="connection step-6" d="M 150 480 L 150 390" 
+              stroke="#E8960A" marker-end="url(#mSQL)" stroke-dasharray="8,4"/>
+        
+        <!-- Step 7: Review Loop -->
+        <path id="c-7" class="connection step-7" d="M 260 380 L 350 380" 
+              stroke="#00B2ED" marker-end="url(#mBlazor)"/>
+        
+        <!-- Control Plane (always monitoring) -->
+        <path id="c-ctl" class="connection" d="M 500 460 L 500 520" 
+              stroke="#0D133E" stroke-dasharray="4,4" opacity=".3"/>
+        
+        <!-- Data Packets -->
+        <circle id="pkt-1" class="packet" cx="0" cy="0" stroke="#00B2ED"/>
+        <circle id="pkt-2" class="packet" cx="0" cy="0" stroke="#16A34A"/>
+        <circle id="pkt-3" class="packet" cx="0" cy="0" stroke="#6B46C1"/>
+        
+      </svg>
+    </div>
+    
+    <!-- Step Detail Panel -->
+    <div class="step-panel" id="detail-panel">
+      <div class="step-number" id="step-num" style="background:#00B2ED;">🏠</div>
+      <h3 id="step-title">System Overview</h3>
+      <p id="step-desc">This diagram shows how 5 systems work together to automate your proposal process. Click the numbered steps above to see exactly what happens at each stage, with real examples.</p>
+      
+      <div class="example-box" id="step-example" style="display:none;">
+        <div class="example-label">Real-World Example</div>
+        <div class="example-title" id="ex-title"></div>
+        <div class="example-desc" id="ex-desc"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA TRANSFORMATIONS -->
+<section class="transform-section" id="transformations">
+  <div class="section-title">Watch Data <em>Transform</em> at Each Step</section>
+  <p class="section-sub">See exactly how information changes as it flows through the system — with real examples from an actual RFP.</p>
+  
+  <div class="transform-grid">
+    <!-- Step 1 -->
+    <div class="transform-card">
+      <div class="transform-header">
+        <div class="transform-icon input">📧</div>
+        <div>
+          <div class="transform-title">Step 1: What Arrives</div>
+          <div class="transform-sub">The RFP Email</div>
+        </div>
+      </div>
+      <div class="data-box">Subject: RFP for Enterprise CRM Implementation
+From: procurement@bigclient.com
+Attachment: RFP_CRM_2024.pdf (42 pages)</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="process-tag">🤖 AI Action: Document Intelligence reads PDF</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="data-box" style="background:#dcfce7;">Extracted Data:
+• Client: BigClient Corp
+• Project: Enterprise CRM Implementation  
+• Budget: $500K-$750K
+• Deadline: March 15, 2024
+• Requirements: 47 technical items identified
+• Evaluation Criteria: 60% technical, 40% cost</div>
+    </div>
+    
+    <!-- Step 2 -->
+    <div class="transform-card">
+      <div class="transform-header">
+        <div class="transform-icon input">🔍</div>
+        <div>
+          <div class="transform-title">Step 2: What AI Finds</div>
+          <div class="transform-sub">Similar Past Projects</div>
+        </div>
+      </div>
+      <div class="data-box">AI Search Query: "Enterprise CRM implementation $500K+ manufacturing client"</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="process-tag">🤖 AI Action: Vector similarity search across 10 years</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="data-box" style="background:#dcfce7;">Top Matches Found:
+1. Acme Manufacturing CRM (2022) - 94% similar
+   Won: $620K, Team: Sarah (lead), Mike (tech)
+2. GlobalTech ERP + CRM (2023) - 87% similar  
+   Won: $580K, Team: Sarah (lead), Priya (integration)
+3. MetroCorp Sales Platform (2021) - 81% similar
+   Won: $495K, Team: David (lead), Mike (tech)</div>
+    </div>
+    
+    <!-- Step 3 -->
+    <div class="transform-card">
+      <div class="transform-header">
+        <div class="transform-icon input">👥</div>
+        <div>
+          <div class="transform-title">Step 3: Team Assembly</div>
+          <div class="transform-sub">Who Should Work on This</div>
+        </div>
+      </div>
+      <div class="data-box">Project Requirements:
+• Salesforce integration (expert needed)
+• Manufacturing workflows (domain knowledge)
+• $500K+ budget (senior lead required)
+• 3-month timeline (availability critical)</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="process-tag">🤖 AI Action: Match skills + check availability</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="data-box" style="background:#dcfce7;">Recommended Team:
+👩‍💼 Sarah Chen (Project Lead)
+   Skills: CRM, Manufacturing, 3 similar wins
+   Availability: ✅ Free next 3 months
+   
+👨‍💻 Mike Ross (Technical Architect)  
+   Skills: Salesforce, Integration, ERP
+   Availability: ✅ 80% available
+   
+👩‍💻 Priya Patel (Integration Specialist)
+   Skills: API development, Data migration
+   Availability: ✅ Available</div>
+    </div>
+    
+    <!-- Step 4 -->
+    <div class="transform-card">
+      <div class="transform-header">
+        <div class="transform-icon input">✍️</div>
+        <div>
+          <div class="transform-title">Step 4: First Draft</div>
+          <div class="transform-sub">AI-Generated Proposal</div>
+        </div>
+      </div>
+      <div class="data-box">AI Context Assembled:
+• RFP requirements (47 items)
+• 3 similar past projects (winning approaches)
+• Recommended team (bios + experience)
+• Pricing model ($500K-$750K range)
+• Company methodology (agile implementation)</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="process-tag">🤖 AI Action: GPT-4o writes 5 sections</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="data-box" style="background:#dcfce7;">Generated Content:
+✓ Executive Summary (2 pages)
+✓ Technical Approach (8 pages)  
+✓ Team Profiles (3 pages)
+✓ Project Timeline (1 page)
+✓ Pricing & Commercial (2 pages)
+
+Quality Score: 94/100
+Citations: 12 references to past work</div>
+    </div>
+    
+    <!-- Step 5 -->
+    <div class="transform-card">
+      <div class="transform-header">
+        <div class="transform-icon input">👁️</div>
+        <div>
+          <div class="transform-title">Step 5: Human Review</div>
+          <div class="transform-sub">Expert Validation</div>
+        </div>
+      </div>
+      <div class="data-box">AI Draft Submitted for Review:
+• Tech Lead: Mike (technical accuracy)
+• Commercial: Jennifer (pricing strategy)  
+• Project Lead: Sarah (approach feasibility)</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="process-tag">👥 Human Action: Review & Approve</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="data-box" style="background:#dcfce7;">Review Feedback:
+✅ Mike: "Technical approach solid. One clarification on API limits."
+✅ Jennifer: "Pricing competitive. Suggest 5% contingency."
+✅ Sarah: "Timeline realistic. Add risk mitigation section."
+
+Changes Made: 3 minor edits
+Time Spent: 45 minutes total</div>
+    </div>
+    
+    <!-- Step 6 -->
+    <div class="transform-card">
+      <div class="transform-header">
+        <div class="transform-icon input">📤</div>
+        <div>
+          <div class="transform-title">Step 6: Final Delivery</div>
+          <div class="transform-sub">Proposal Submitted</div>
+        </div>
+      </div>
+      <div class="data-box">Final Package:
+• Technical Proposal (16 pages, PDF)
+• Commercial Proposal (separate, password-protected)
+• Team CVs (3 profiles)
+• Company credentials (standard)
+• Compliance checklist (completed)</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="process-tag">✅ Final Action: Submit & Archive</div>
+      <div class="arrow-down">⬇️</div>
+      <div class="data-box" style="background:#dcfce7;">Submitted to BigClient Corp
+Portal: procurement@bigclient.com/rfp-upload
+Confirmation: #RFP-2024-0892
+Deadline: 2 days early
+
+Archived: Full trace saved for audit
+Learning: Added to knowledge base for future RFPs</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLETE JOURNEY TIMELINE -->
+<section class="journey-section" id="journey">
+  <div class="section-title">The Complete <em>Step-by-Step</em> Journey</div>
+  <p class="section-sub">Every single action that happens from "RFP received" to "Proposal submitted" — explained in plain English.</p>
+  
+  <div class="journey-timeline">
+    
+    <div class="journey-step">
+      <div class="journey-dot">1</div>
+      <div class="journey-content">
+        <div class="journey-step-title">📤 RFP Arrives & Gets Uploaded</div>
+        <div class="journey-desc">Someone on your team receives an RFP email. Instead of forwarding to 6 people, they open the Proposal Intelligence web app, drag the PDF into the upload zone, and click "Start." The file goes straight to secure cloud storage. A unique tracking ID is created.</div>
+        <div class="journey-example">
+          <div class="journey-example-label">What Just Happened (Technical)</div>
+          <div class="journey-example-text">Blazor web app → Azure Blob Storage upload (encrypted) → MS SQL creates proposal record with status "Received" → SignalR notifies all connected users that new RFP arrived</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="journey-step">
+      <div class="journey-dot">2</div>
+      <div class="journey-content">
+        <div class="journey-step-title">🤖 AI Project Manager Wakes Up</div>
+        <div class="journey-desc">The Microsoft Foundry Agent (think of it as an AI project manager) gets notified. It creates a "durable session" — basically a notebook that remembers everything about this proposal forever. It reads the blob URL and says "Got it, I'll handle this."</div>
+        <div class="journey-example">
+          <div class="journey-example-label">What Just Happened (Technical)</div>
+          <div class="journey-example-text">Foundry Agent Service creates persistent thread → Stores blob URL + proposal ID in memory → Initializes MCP tool connections (Blob, SQL, AI Search, OpenAI, Email)</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="journey-step">
+      <div class="journey-dot">3</div>
+      <div class="journey-content">
+        <div class="journey-step-title">📄 AI Reads & Understands the RFP</div>
+        <div class="journey-desc">No human reads the RFP first. The AI uses "Document Intelligence" — a service that reads PDFs like a person, but faster. It extracts: Who's the client? What's the project? What's the budget? When's it due? What are the technical requirements? What are they evaluating us on?</div>
+        <div class="journey-example">
+          <div class="journey-example-label">What Just Happened (Technical)</div>
+          <div class="journey-example-text">Foundry calls Document Intelligence MCP tool → Async processing (AI reads 42 pages in 15 seconds) → Returns structured JSON: {client, scope, requirements[], budget, deadline, evaluationCriteria, complianceItems[]}</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="journey-step">
+      <div class="journey-dot">4</div>
+      <div class="journey-content">
+        <div class="journey-step-title">🔍 AI Searches Your Company's Brain</div>
+        <div class="journey-desc">The AI now searches through your entire company's history — every past proposal, every team member's skills, every pricing template. But it's not just keyword search. It uses "vector search" — finding things by meaning. "CRM for manufacturing" finds projects about "customer systems for factories" even if those exact words weren't used.</div>
+        <div class="journey-example">
+          <div class="journey-example-label">What Just Happened (Technical)</div>
+          <div class="journey-example-text">Generate embedding vector from RFP → Parallel queries: MS SQL vector similarity search (cosine distance) on PastProjects + TeamProfiles + Pricing tables + Azure AI Search semantic search on unstructured documents → Hybrid ranking combines results</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="journey-step">
+      <div class="journey-dot">5</div>
+      <div class="journey-content">
+        <div class="journey-step-title">🎯 AI Assembles the Perfect Context</div>
+        <div class="journey-desc">The AI doesn't just dump search results. It thinks: "These 3 past projects are most relevant. This team combination has won similar work. These pricing templates fit the budget range. This reference section addresses their compliance concern." It builds a "briefing packet" for the writer AI.</div>
+        <div class="journey-example">
+          <div class="journey-example-label">What Just Happened (Technical)</div>
+          <div class="journey-example-text">Foundry IQ applies iterative reflection → Evaluates retrieval confidence → Re-queries if gaps detected → Ranks by relevance + recency + win rate → Assembles context package with provenance tracking (every fact linked to source)</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="journey-step">
+      <div class="journey-dot">6</div>
+      <div class="journey-content">
+        <div class="journey-step-title">✍️ AI Writes the Complete First Draft</div>
+        <div class="journey-desc">GPT-4o (the same AI behind ChatGPT, but enterprise-grade) receives the briefing packet and writes all 5 sections of your proposal. It writes in your company's voice because it has learned from your past winning proposals. Every claim is backed by citations to real past work.</div>
+        <div class="journey-example">
+          <div class="journey-example-label">What Just Happened (Technical)</div>
+          <div class="journey-example-text">Foundry Model Catalogue invokes GPT-4o with structured output schema → System prompt: "You are a senior proposal writer at [Company]. Write in this voice: [samples]. Cite sources." → Returns JSON matching exact schema: {executiveSummary, technicalApproach, teamProfiles, pricingNarrative, projectTimeline, citations[]}</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="journey-step">
+      <div class="journey-dot">7</div>
+      <div class="journey-content">
+        <div class="journey-step-title">💾 Draft Saved & Team Notified Instantly</div>
+        <div class="journey-desc">The moment the AI finishes writing, the proposal appears in the web app — no refresh needed. The tech lead gets a notification: "Technical section ready for your review." The commercial lead sees pricing. Everyone sees only what they need to see.</div>
+        <div class="journey-example">
+          <div class="journey-example-label">What Just Happened (Technical)</div>
+          <div class="journey-example-text">Foundry Agent writes to MS SQL via EF Core MCP tool → SQL Query Notification triggers → SignalR pushes to Blazor clients → Role-based filtering shows relevant sections to each reviewer</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="journey-step">
+      <div class="journey-dot">8</div>
+      <div class="journey-content">
+        <div class="journey-step-title">👥 Experts Review (Don't Write, Just Validate)</div>
+        <div class="journey-desc">Your experts log into the web app. They see a clean, professional proposal. They make comments like "Add more detail on API rate limiting" — not "Write the whole technical approach from scratch." The AI can even respond to follow-up questions: "Why did you recommend Sarah as lead?" → "She led 3 similar CRM projects, all delivered on time."</div>
+        <div class="journey-example">
+          <div class="journey-example-label">What Just Happened (Technical)</div>
+          <div class="journey-example-text">Reviewers interact with Blazor app → Comments stored in MS SQL → If changes requested, Foundry Agent re-invokes with revision instructions → Can also chat with agent via thread memory: "Why this team?" → Agent queries its memory and responds with citations</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="journey-step">
+      <div class="journey-dot">9</div>
+      <div class="journey-content">
+        <div class="journey-step-title">📤 Final Export, Submit & Learn</div>
+        <div class="journey-desc">Once approved, the system generates a polished PDF and Word document — properly formatted, with your branding, page numbers, table of contents. It emails the final package to your bid manager. The entire process — every decision, every search, every edit — is recorded for audit and learning.</div>
+        <div class="journey-example">
+          <div class="journey-example-label">What Just Happened (Technical)</div>
+          <div class="journey-example-text">Foundry Agent calls: (1) OpenXML SDK generates PDF/DOCX via MCP, (2) Blob MCP uploads to final location with SAS token, (3) SQL MCP updates status to "Submitted", (4) Email MCP sends notification with download link, (5) Full trace written to Foundry Control Plane for audit</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<!-- SUMMARY -->
+<section class="summary-section">
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-number">30 sec</div>
+      <div class="summary-label">To Start</div>
+      <div class="summary-desc">Upload RFP and AI begins. No meetings, no scheduling, no "who's handling this?"</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-number">10 min</div>
+      <div class="summary-label">First Draft Ready</div>
+      <div class="summary-desc">Complete 16-page proposal written, with citations, in your company voice.</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-number">45 min</div>
+      <div class="summary-label">Expert Review</div>
+      <div class="summary-desc">Light validation, not heavy writing. 1 round of edits, not 5.</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-number">2-4 hrs</div>
+      <div class="summary-label">Total Time</div>
+      <div class="summary-desc">From RFP upload to client submission. 10x faster than manual process.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">Ready to see this work with your RFPs?</h2>
+  <a href="#" class="cta-button">
+    📅 Schedule Live Demo
+    <span style="font-size:12px;opacity:.8;">See your actual RFP processed in real-time</span>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Proposal Intelligence Platform · Built with Blazor + Microsoft Foundry + MS SQL</p>
+  <p style="margin-top:.5rem;opacity:.7;">No Power Platform required. Full source code control. Enterprise-grade observability.</p>
+</footer>
+
+<script>
+// Step definitions with detailed explanations
+const stepDetails = {
+  0: {
+    title: "System Overview",
+    desc: "Five systems work together: Blazor (where humans interact), Foundry Agent (AI project manager), MS SQL (knowledge library), Azure AI (reading/writing brain), and Blob Storage (files). Click numbered steps to see the journey.",
+    color: "#00B2ED",
+    icon: "🏠",
+    example: null
+  },
+  1: {
+    title: "Step 1: Upload & Trigger",
+    desc: "A team member uploads the RFP PDF through the Blazor web interface. The file streams directly to Azure Blob Storage (cloud filing cabinet). Simultaneously, the system creates a proposal record in MS SQL database and wakes up the Foundry Agent.",
+    color: "#00B2ED",
+    icon: "1",
+    example: {
+      title: "Acme Corp RFP Upload",
+      desc: "Sarah from Business Development receives a 42-page RFP for CRM implementation. She drags it to the upload zone. The system immediately shows: 'RFP received. AI analysis starting...' The file is encrypted and stored. A unique tracking number #PROP-2024-0892 is assigned."
+    }
+  },
+  2: {
+    title: "Step 2: AI Reads the RFP",
+    desc: "The Foundry Agent calls Azure Document Intelligence — an AI service that reads PDFs like a human but in 15 seconds. It extracts structured data: client name, project scope, budget range, deadline, technical requirements, evaluation criteria, and compliance mandates.",
+    color: "#16A34A",
+    icon: "2",
+    example: {
+      title: "Document Understanding",
+      desc: "The AI reads the 42-page PDF and extracts: Client = 'BigClient Corp', Project = 'Enterprise CRM Implementation', Budget = '$500,000 - $750,000', Deadline = 'March 15, 2024', Key Requirements = 47 items identified including 'Salesforce integration', 'Manufacturing workflows', 'Mobile app support'."
+    }
+  },
+  3: {
+    title: "Step 3: Search Company Knowledge",
+    desc: "Using the extracted requirements, the AI performs hybrid search: (1) MS SQL vector similarity search finds similar past projects and team skills, (2) Azure AI Search finds relevant reference documents and pricing templates. This happens in parallel in under 3 seconds.",
+    color: "#16A34A",
+    icon: "3",
+    example: {
+      title: "Finding Your Best Work",
+      desc: "AI searches and finds: 3 similar CRM projects (Acme Manufacturing 2022 - 94% match, GlobalTech 2023 - 87% match), Recommended team (Sarah led 2 of these wins, Mike has Salesforce expertise), Relevant pricing template ($500K-$750K enterprise CRM), Compliance checklist (SOX, GDPR items identified)."
+    }
+  },
+  4: {
+    title: "Step 4: Assemble Context",
+    desc: "Foundry IQ (the intelligent retrieval layer) doesn't just dump search results. It evaluates quality, removes duplicates, ranks by relevance + recency + win rate, and assembles an optimal 'briefing packet' for the writing AI. If quality is low, it automatically re-searches.",
+    color: "#16A34A",
+    icon: "4",
+    example: {
+      title: "Smart Context Building",
+      desc: "The AI thinks: 'Acme Manufacturing is most similar — same industry, same budget range. Sarah led that win. Mike was technical architect. I'll lead with that approach. But GlobalTech had better integration methodology — I'll blend that in. Pricing should use 2023 template with inflation adjustment.'"
+    }
+  },
+  5: {
+    title: "Step 5: AI Writes the Proposal",
+    desc: "GPT-4o receives the briefing packet and writes all 5 sections: Executive Summary, Technical Approach, Team Profiles, Pricing Narrative, and Project Timeline. It uses 'structured output mode' — meaning the response is guaranteed to match your exact format requirements, with citations linked to real past work.",
+    color: "#6B46C1",
+    icon: "5",
+    example: {
+      title: "First Draft Generation",
+      desc: "In 8 minutes, AI generates: Executive Summary highlighting 3 relevant past wins, Technical Approach blending Salesforce best practices with manufacturing expertise, Team Profiles showing Sarah's 90% win rate and Mike's certifications, Timeline based on actual past project durations, Pricing at $625K with detailed breakdown."
+    }
+  },
+  6: {
+    title: "Step 6: Save & Notify Team",
+    desc: "The Foundry Agent writes the sections to MS SQL via Entity Framework Core. SQL Server's query notification feature triggers SignalR, which instantly pushes the new content to all connected Blazor clients. Reviewers see the proposal appear in real-time — no refresh needed.",
+    color: "#E8960A",
+    icon: "6",
+    example: {
+      title: "Real-Time Collaboration",
+      desc: "Mike (Tech Lead) sees a notification: 'Technical section ready for review.' He opens the Blazor app and sees a complete 8-page technical approach. Jennifer (Commercial) sees pricing. Sarah (Project Lead) sees the full draft. Each sees only sections relevant to their role."
+    }
+  },
+  7: {
+    title: "Step 7: Review & Refine",
+    desc: "Human experts review in the Blazor interface. They can approve, request changes, or ask the AI questions. The Foundry Agent maintains full conversation history in thread memory, so it understands context: 'Why did you suggest 3 months?' → 'Based on Acme (2.5 months) and GlobalTech (3.5 months), average is 3 months with 20% buffer.'",
+    color: "#00B2ED",
+    icon: "7",
+    example: {
+      title: "Light-Touch Review",
+      desc: "Mike comments: 'Add API rate limiting detail.' AI revises technical section in 30 seconds. Jennifer: 'Suggest 5% contingency.' AI updates pricing. Sarah: 'Approved.' Total review time: 45 minutes across 3 people. Compare to: 3 days of writing + 2 days of email reviews in old process."
+    }
+  }
+};
+
+let currentStep = 0;
+let animationInterval = null;
+
+function showStep(stepNum) {
+  currentStep = stepNum;
+  
+  // Update buttons
+  document.querySelectorAll('.step-btn').forEach((btn, idx) => {
+    if (idx === stepNum) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  
+  // Update panel
+  const detail = stepDetails[stepNum] || stepDetails[0];
+  document.getElementById('step-num').textContent = detail.icon;
+  document.getElementById('step-num').style.background = detail.color;
+  document.getElementById('step-title').textContent = detail.title;
+  document.getElementById('step-desc').textContent = detail.desc;
+  
+  const exBox = document.getElementById('step-example');
+  if (detail.example) {
+    document.getElementById('ex-title').textContent = detail.example.title;
+    document.getElementById('ex-desc').textContent = detail.example.desc;
+    exBox.style.display = 'block';
+  } else {
+    exBox.style.display = 'none';
+  }
+  
+  // Highlight connections in SVG
+  document.querySelectorAll('.connection').forEach(conn => {
+    conn.classList.remove('active', 'dimmed');
+    
+    if (stepNum === 0) {
+      // Overview - show all lightly
+      conn.style.opacity = '0.6';
+    } else {
+      // Check if this connection belongs to current step
+      const stepClass = `step-${stepNum}`;
+      if (conn.classList.contains(stepClass)) {
+        conn.classList.add('active');
+        conn.style.opacity = '1';
+      } else {
+        conn.classList.add('dimmed');
+        conn.style.opacity = '0.15';
+      }
+    }
+  });
+  
+  // Stop animation if running
+  stopAnimation();
+}
+
+function playAnimation() {
+  stopAnimation();
+  let step = 1;
+  showStep(step);
+  
+  animationInterval = setInterval(() => {
+    step++;
+    if (step > 7) {
+      step = 1;
+    }
+    showStep(step);
+  }, 3000);
+}
+
+function stopAnimation() {
+  if (animationInterval) {
+    clearInterval(animationInterval);
+    animationInterval = null;
+  }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  showStep(0);
+});
+</script>
+
+</body>
+</html>

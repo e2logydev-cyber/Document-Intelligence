@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RFP to Document · Flow Design Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#00B2ED;--dark:#0D133E;--navy:#f5fafd;
+  --blazor:#00B2ED;--sql:#E8960A;--foundry:#16A34A;--ai:#6B46C1;--blob:#9333ea;
+  --old:#E8960A;--new:#16A34A;
+  --border:rgba(0,178,237,0.18);--fh:'Mulish',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#f8fafc;color:#0D133E;font-family:var(--fh);font-size:16px;line-height:1.7;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;width:100%;z-index:200;padding:0.9rem 4%;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.98);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,178,237,0.15);box-shadow:0 1px 20px rgba(13,19,62,0.07);}
+.nav-logo{font-family:var(--fh);font-size:17px;font-weight:800;color:#0D133E;text-decoration:none;}
+.nav-links{display:flex;gap:1.6rem;list-style:none;}
+.nav-links a{color:#5a6a8a;text-decoration:none;font-size:13.5px;font-weight:600;transition:color .2s;}
+.nav-links a:hover{color:#00B2ED;}
+
+/* HERO */
+.hero{padding:8rem 4% 4rem;background:linear-gradient(135deg,#0D133E 0%,#1a2260 100%);position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,178,237,0.15) 1px,transparent 1px);background-size:30px 30px;opacity:.3;}
+.hero-inner{position:relative;z-index:1;max-width:900px;margin:0 auto;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,178,237,0.2);border:1px solid rgba(0,178,237,0.4);border-radius:30px;padding:0.5rem 1.2rem;font-size:12px;color:#00B2ED;font-weight:700;margin-bottom:1.5rem;}
+.hero-title{font-family:var(--fh);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-.02em;margin-bottom:1rem;}
+.hero-title em{font-style:normal;color:#00B2ED;}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.85);max-width:700px;margin:0 auto 2rem;line-height:1.8;font-weight:400;}
+.hero-stats{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;margin-top:2rem;}
+.stat-number{font-family:var(--fh);font-size:2.5rem;font-weight:900;color:#00B2ED;}
+.stat-label{font-size:13px;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+
+/* KEYWORD BANNER */
+.keyword-banner{background:#00B2ED;padding:1.5rem 4%;text-align:center;}
+.keyword-text{font-family:var(--fh);font-size:clamp(1.2rem,3vw,1.8rem);font-weight:800;color:#fff;}
+.keyword-text em{background:rgba(255,255,255,0.2);padding:.2rem .8rem;border-radius:20px;font-style:normal;}
+
+/* FLOW COMPARISON SECTION */
+.flow-compare-section{padding:4rem 4%;max-width:1400px;margin:0 auto;}
+.flow-compare-title{font-family:var(--fh);font-size:clamp(1.5rem,3vw,2.2rem);font-weight:900;color:#0D133E;text-align:center;margin-bottom:1rem;}
+.flow-compare-title em{color:#00B2ED;font-style:normal;}
+.flow-compare-sub{text-align:center;font-size:16px;color:#5a6a8a;max-width:700px;margin:0 auto 3rem;}
+
+/* Side-by-Side Flow Container */
+.flow-container{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-bottom:3rem;}
+@media(max-width:900px){.flow-container{grid-template-columns:1fr;}}
+
+/* Flow Column */
+.flow-column{background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 20px rgba(0,0,0,0.08);position:relative;overflow:hidden;}
+.flow-column.old{border-top:5px solid var(--old);}
+.flow-column.new{border-top:5px solid var(--new);}
+
+.flow-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1rem;border-bottom:2px solid #f1f5f9;}
+.flow-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.flow-column.old .flow-icon{background:#fff7ed;}
+.flow-column.new .flow-icon{background:#f0fdf4;}
+.flow-title{font-family:var(--fh);font-size:1.3rem;font-weight:800;color:#0D133E;}
+.flow-subtitle{font-size:13px;color:#5a6a8a;margin-top:.2rem;}
+
+/* Flow Steps */
+.flow-steps{position:relative;padding-left:20px;}
+.flow-steps::before{content:'';position:absolute;left:20px;top:0;bottom:0;width:3px;border-radius:3px;}
+.flow-column.old .flow-steps::before{background:linear-gradient(180deg,#fbbf24,#f59e0b);}
+.flow-column.new .flow-steps::before{background:linear-gradient(180deg,#4ade80,#16a34a);}
+
+.flow-step{position:relative;margin-bottom:1.5rem;padding-left:40px;}
+.flow-step:last-child{margin-bottom:0;}
+
+/* Step Number */
+.step-badge{position:absolute;left:0;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:14px;font-weight:900;color:#fff;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
+.flow-column.old .step-badge{background:var(--old);}
+.flow-column.new .step-badge{background:var(--new);}
+
+/* Step Content */
+.step-content-box{background:#f8fafc;border-radius:12px;padding:1rem;border-left:3px solid;}
+.flow-column.old .step-content-box{border-left-color:var(--old);}
+.flow-column.new .step-content-box{border-left-color:var(--new);}
+
+.step-action{font-family:var(--fh);font-size:15px;font-weight:700;color:#0D133E;margin-bottom:.5rem;}
+.step-detail{font-size:13px;color:#5a6a8a;line-height:1.6;margin-bottom:.5rem;}
+.step-meta{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.8rem;}
+.meta-tag{display:inline-flex;align-items:center;gap:.4rem;font-size:11px;padding:.3rem .8rem;border-radius:20px;font-weight:600;}
+.flow-column.old .meta-tag{background:#fef3c7;color:#92400e;}
+.flow-column.new .meta-tag{background:#dcfce7;color:#166534;}
+
+/* Pain Points for Old */
+.pain-point{display:flex;align-items:flex-start;gap:.5rem;margin-top:.5rem;font-size:12px;color:#dc2626;}
+.pain-point::before{content:'⚠️';font-size:14px;}
+
+/* Benefits for New */
+.benefit-point{display:flex;align-items:flex-start;gap:.5rem;margin-top:.5rem;font-size:12px;color:#16a34a;}
+.benefit-point::before{content:'✓';font-size:14px;font-weight:900;color:#16a34a;}
+
+/* Connector Lines Between Steps */
+.step-connector{position:absolute;left:20px;top:40px;width:2px;height:calc(100% - 40px);background:currentColor;opacity:.3;}
+
+/* Summary Box */
+.flow-summary{background:#f8fafc;border-radius:12px;padding:1.5rem;margin-top:2rem;text-align:center;}
+.flow-summary-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:#5a6a8a;margin-bottom:.5rem;}
+.flow-summary-value{font-family:var(--fh);font-size:2rem;font-weight:900;color:#0D133E;}
+.flow-column.old .flow-summary-value{color:var(--old);}
+.flow-column.new .flow-summary-value{color:var(--new);}
+.flow-summary-detail{font-size:13px;color:#5a6a8a;margin-top:.5rem;}
+
+/* VS Badge */
+.vs-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:60px;background:#0D133E;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:18px;font-weight:900;color:#fff;z-index:10;box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+@media(max-width:900px){.vs-badge{display:none;}}
+
+/* Horizontal Flow Alternative (for mobile) */
+.horizontal-flow{display:none;}
+@media(max-width:900px){
+  .horizontal-flow{display:block;margin-top:2rem;}
+  .h-flow-step{display:flex;gap:1rem;margin-bottom:1.5rem;}
+  .h-flow-number{flex-shrink:0;width:35px;height:35px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:14px;font-weight:900;color:#fff;}
+  .h-flow-content{flex:1;}
+}
+
+/* COMPARISON METRICS */
+.metrics-section{background:#0D133E;padding:3rem 4%;color:#fff;}
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;max-width:1000px;margin:0 auto;}
+.metric-card{text-align:center;}
+.metric-number{font-family:var(--fh);font-size:3rem;font-weight:900;color:#00B2ED;}
+.metric-label{font-size:14px;font-weight:600;color:#fff;margin-top:.5rem;}
+.metric-change{font-size:13px;color:#4ade80;margin-top:.3rem;}
+
+/* CTA */
+.cta-section{padding:4rem 4%;text-align:center;background:#fff;}
+.cta-title{font-family:var(--fh);font-size:1.8rem;font-weight:800;color:#0D133E;margin-bottom:1rem;}
+.cta-button{display:inline-flex;flex-direction:column;align-items:center;gap:.3rem;background:#00B2ED;color:#fff;padding:1rem 2.5rem;border-radius:30px;font-family:var(--fh);font-size:16px;font-weight:700;text-decoration:none;transition:all .2s;box-shadow:0 4px 15px rgba(0,178,237,0.3);}
+.cta-button:hover{background:#0099cc;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,178,237,0.4);}
+.cta-button small{font-size:12px;font-weight:500;opacity:.9;}
+
+/* Footer */
+footer{padding:2rem 4%;background:#0D133E;color:rgba(255,255,255,0.6);text-align:center;font-size:13px;}
+
+/* Animation */
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+.step-badge{animation:pulse 2s infinite;}
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <a href="#" class="nav-logo">📄 RFP → Document AI Platform</a>
+  <ul class="nav-links">
+    <li><a href="#compare">Compare</a></li>
+    <li><a href="#flow">Live Flow</a></li>
+    <li><a href="#metrics">Results</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">🤖 AI-Powered Document Generation</div>
+    <h1 class="hero-title">From RFP to Winning Document<br/><em>10x Faster, 84% Cheaper</em></h1>
+    <p class="hero-sub">See exactly how your proposal team goes from "We just got an RFP" to "Document submitted" — with AI doing the heavy lifting.</p>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-number">2-4 hrs</div>
+        <div class="stat-label">Total Time</div>
+      </div>
+      <div>
+        <div class="stat-number">₹4,000</div>
+        <div class="stat-label">vs. ₹26,000</div>
+      </div>
+      <div>
+        <div class="stat-number">95%</div>
+        <div class="stat-label">Win Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEYWORD BANNER -->
+<section class="keyword-banner">
+  <div class="keyword-text"><em>RFP</em> → <em>Research</em> → <em>Write</em> → <em>Review</em> → <em>Document</em></div>
+</section>
+
+<!-- FLOW COMPARISON SECTION -->
+<section class="flow-compare-section" id="compare">
+  <h2 class="flow-compare-title">The Manual Chaos vs. <em>The AI Flow</em></h2>
+  <p class="flow-compare-sub">Follow the journey step-by-step. Same RFP, completely different path to the final document.</p>
+  
+  <div class="flow-container">
+    
+    <!-- OLD PROCESS (LEFT) -->
+    <div class="flow-column old">
+      <div class="flow-header">
+        <div class="flow-icon">😰</div>
+        <div>
+          <div class="flow-title">The Old Manual Way</div>
+          <div class="flow-subtitle">"Everyone panic and start writing"</div>
+        </div>
+      </div>
+      
+      <div class="flow-steps">
+        
+        <!-- Step 1 -->
+        <div class="flow-step">
+          <div class="step-badge">1</div>
+          <div class="step-content-box">
+            <div class="step-action">📧 RFP Arrives via Email</div>
+            <div class="step-detail">Someone gets an email with PDF attachment. No tracking, no assignment. Might sit unread for hours.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ Unknown delay</span>
+              <span class="meta-tag">👤 Single point of failure</span>
+            </div>
+            <div class="pain-point">Risk: Email buried, deadline missed</div>
+          </div>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="flow-step">
+          <div class="step-badge">2</div>
+          <div class="step-content-box">
+            <div class="step-action">📞 Emergency Scoping Meeting</div>
+            <div class="step-detail">6 people block calendars. 90 minutes to decide who writes what. Often rescheduled 2-3 times.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 90 min × 6 people = 9 hours</span>
+              <span class="meta-tag">📅 Scheduling nightmare</span>
+            </div>
+            <div class="pain-point">Waste: 9 hours before any writing starts</div>
+          </div>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="flow-step">
+          <div class="step-badge">3</div>
+          <div class="step-content-box">
+            <div class="step-action">🔍 Manual File Hunting</div>
+            <div class="step-detail">Everyone digs through shared drives, emails, personal folders. "Didn't we write something like this for Acme?"</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 2-3 hours each</span>
+              <span class="meta-tag">🔁 Duplicated effort</span>
+            </div>
+            <div class="pain-point">Chaos: Same search × 6 people, different results</div>
+          </div>
+        </div>
+        
+        <!-- Step 4 -->
+        <div class="flow-step">
+          <div class="step-badge">4</div>
+          <div class="step-content-box">
+            <div class="step-action">✍️ Writing in Isolation</div>
+            <div class="step-detail">6 people write separately. Different tones, formats, terminology. No shared context.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 4-6 hours each</span>
+              <span class="meta-tag">🎭 6 different voices</span>
+            </div>
+            <div class="pain-point">Quality: Inconsistent, unprofessional final document</div>
+          </div>
+        </div>
+        
+        <!-- Step 5 -->
+        <div class="flow-step">
+          <div class="step-badge">5</div>
+          <div class="step-content-box">
+            <div class="step-action">🔄 Email Review Ping-Pong</div>
+            <div class="step-detail">v1 → v2_FINAL → v2_FINAL_v3 → v2_ACTUAL_FINAL → v2_ACTUAL_FINAL_v2. Version chaos.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 3-5 rounds</span>
+              <span class="meta-tag">📧 50+ email threads</span>
+            </div>
+            <div class="pain-point">Confusion: Which version is current? Who approved what?</div>
+          </div>
+        </div>
+        
+        <!-- Step 6 -->
+        <div class="flow-step">
+          <div class="step-badge">6</div>
+          <div class="step-content-box">
+            <div class="step-action">🌙 Late-Night Formatting</div>
+            <div class="step-detail">Someone copy-pastes everything into Word. Fixes formatting, headers, page numbers. Usually the night before deadline.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 3-4 hours</span>
+              <span class="meta-tag">😰 Stress peak</span>
+            </div>
+            <div class="pain-point">Error-prone: Formatting mistakes, missing sections</div>
+          </div>
+        </div>
+        
+        <!-- Step 7 -->
+        <div class="flow-step">
+          <div class="step-badge">7</div>
+          <div class="step-content-box">
+            <div class="step-action">📤 Submit and Hope</div>
+            <div class="step-detail">Document uploaded. Team exhausted. Quality unknown. No learning captured for next time.</div>
+            <div class="step-meta">
+              <span class="meta-tag">🎲 Quality: Coin flip</span>
+              <span class="meta-tag">🗑️ Knowledge lost</span>
+            </div>
+            <div class="pain-point">Result: Burnout, inconsistent wins, no improvement</div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <div class="flow-summary">
+        <div class="flow-summary-label">Total Journey</div>
+        <div class="flow-summary-value">3-5 Days</div>
+        <div class="flow-summary-detail">6 people · ₹26,000 · 240 hours · Stressful · Inconsistent</div>
+      </div>
+    </div>
+    
+    <!-- VS BADGE -->
+    <div class="vs-badge">VS</div>
+    
+    <!-- NEW PROCESS (RIGHT) -->
+    <div class="flow-column new">
+      <div class="flow-header">
+        <div class="flow-icon">⚡</div>
+        <div>
+          <div class="flow-title">The New AI-Powered Way</div>
+          <div class="flow-subtitle">"Upload, Review, Submit"</div>
+        </div>
+      </div>
+      
+      <div class="flow-steps">
+        
+        <!-- Step 1 -->
+        <div class="flow-step">
+          <div class="step-badge">1</div>
+          <div class="step-content-box">
+            <div class="step-action">📤 Upload RFP to One Place</div>
+            <div class="step-detail">Drag PDF into web app. 30 seconds. Encrypted, tracked, assigned. Everyone knows immediately.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 30 seconds</span>
+              <span class="meta-tag">🔒 Secure & tracked</span>
+            </div>
+            <div class="benefit-point">Single source of truth from second one</div>
+          </div>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="flow-step">
+          <div class="step-badge">2</div>
+          <div class="step-content-box">
+            <div class="step-action">🤖 AI Reads & Understands</div>
+            <div class="step-detail">AI analyzes 42-page RFP in 15 seconds. Extracts client, budget, requirements, deadlines, evaluation criteria.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 15 seconds</span>
+              <span class="meta-tag">📋 47 requirements identified</span>
+            </div>
+            <div class="benefit-point">No human reads first. Structured data instantly.</div>
+          </div>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="flow-step">
+          <div class="step-badge">3</div>
+          <div class="step-content-box">
+            <div class="step-action">🔍 AI Searches Company History</div>
+            <div class="step-detail">AI finds similar past projects, dream team combinations, winning approaches. By meaning, not just keywords.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 3 seconds</span>
+              <span class="meta-tag">🎯 94% match found</span>
+            </div>
+            <div class="benefit-point">"Acme project 94% similar — reuse that approach"</div>
+          </div>
+        </div>
+        
+        <!-- Step 4 -->
+        <div class="flow-step">
+          <div class="step-badge">4</div>
+          <div class="step-content-box">
+            <div class="step-action">✍️ AI Writes Complete First Draft</div>
+            <div class="step-detail">GPT-4o writes all 5 sections in your company voice. 16 pages in 8 minutes. Every claim cited to real past work.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 8 minutes</span>
+              <span class="meta-tag">📄 16 pages generated</span>
+            </div>
+            <div class="benefit-point">Consistent voice, professional structure, fully cited</div>
+          </div>
+        </div>
+        
+        <!-- Step 5 -->
+        <div class="flow-step">
+          <div class="step-badge">5</div>
+          <div class="step-content-box">
+            <div class="step-action">👥 Experts Review, Don't Write</div>
+            <div class="step-detail">Tech lead validates approach. Commercial checks pricing. Project lead confirms timeline. Light edits only.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 45 minutes total</span>
+              <span class="meta-tag">✅ 1 round of edits</span>
+            </div>
+            <div class="benefit-point">Humans validate AI work, not create from scratch</div>
+          </div>
+        </div>
+        
+        <!-- Step 6 -->
+        <div class="flow-step">
+          <div class="step-badge">6</div>
+          <div class="step-content-box">
+            <div class="step-action">📄 Auto-Formatted Document</div>
+            <div class="step-detail">System generates professional PDF and Word. Branded, TOC, page numbers, headers. Ready to submit.</div>
+            <div class="step-meta">
+              <span class="meta-tag">⏱️ 30 seconds</span>
+              <span class="meta-tag">🎨 Perfect formatting</span>
+            </div>
+            <div class="benefit-point">No late-night formatting. No errors. Professional.</div>
+          </div>
+        </div>
+        
+        <!-- Step 7 -->
+        <div class="flow-step">
+          <div class="step-badge">7</div>
+          <div class="step-content-box">
+            <div class="step-action">📤 Submit with Confidence</div>
+            <div class="step-detail">Document uploaded. Team fresh. Quality consistent. Full audit trail captured for learning.</div>
+            <div class="step-meta">
+              <span class="meta-tag">🎯 95% quality score</span>
+              <span class="meta-tag">📊 Full traceability</span>
+            </div>
+            <div class="benefit-point">Every proposal improves the system. Knowledge grows.</div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <div class="flow-summary">
+        <div class="flow-summary-label">Total Journey</div>
+        <div class="flow-summary-value">2-4 Hours</div>
+        <div class="flow-summary-detail">2 people · ₹4,000 · 6.5 hours · Calm · Consistent · Improving</div>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<!-- METRICS COMPARISON -->
+<section class="metrics-section" id="metrics">
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-number">10x</div>
+      <div class="metric-label">Faster</div>
+      <div class="metric-change">3-5 days → 2-4 hours</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-number">84%</div>
+      <div class="metric-label">Cost Savings</div>
+      <div class="metric-change">₹26,000 → ₹4,000</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-number">97%</div>
+      <div class="metric-label">Less Human Time</div>
+      <div class="metric-change">240 hours → 6.5 hours</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-number">∞</div>
+      <div class="metric-label">Knowledge Growth</div>
+      <div class="metric-change">Every proposal improves AI</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">Ready to transform your RFP process?</h2>
+  <a href="#" class="cta-button">
+    📅 Schedule Live Demo
+    <small>See your actual RFP become a document in real-time</small>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 RFP → Document AI Platform · From Chaos to Confidence</p>
+</footer>
+
+</body>
+</html>

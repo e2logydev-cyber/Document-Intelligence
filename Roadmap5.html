@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RFP to Document · How AI Transforms Proposals</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#00B2ED;--dark:#0D133E;--navy:#f5fafd;
+  --blazor:#00B2ED;--sql:#E8960A;--foundry:#16A34A;--ai:#6B46C1;--blob:#9333ea;
+  --border:rgba(0,178,237,0.18);--fh:'Mulish',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#f8fafc;color:#0D133E;font-family:var(--fh);font-size:16px;line-height:1.7;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;width:100%;z-index:200;padding:0.9rem 4%;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.98);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,178,237,0.15);box-shadow:0 1px 20px rgba(13,19,62,0.07);}
+.nav-logo{font-family:var(--fh);font-size:17px;font-weight:800;color:#0D133E;text-decoration:none;}
+.nav-links{display:flex;gap:1.6rem;list-style:none;}
+.nav-links a{color:#5a6a8a;text-decoration:none;font-size:13.5px;font-weight:600;transition:color .2s;}
+.nav-links a:hover{color:#00B2ED;}
+
+/* HERO */
+.hero{padding:8rem 4% 4rem;background:linear-gradient(135deg,#0D133E 0%,#1a2260 100%);position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,178,237,0.15) 1px,transparent 1px);background-size:30px 30px;opacity:.3;}
+.hero-inner{position:relative;z-index:1;max-width:900px;margin:0 auto;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,178,237,0.2);border:1px solid rgba(0,178,237,0.4);border-radius:30px;padding:0.5rem 1.2rem;font-size:12px;color:#00B2ED;font-weight:700;margin-bottom:1.5rem;}
+.hero-title{font-family:var(--fh);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-.02em;margin-bottom:1rem;}
+.hero-title em{font-style:normal;color:#00B2ED;}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.85);max-width:700px;margin:0 auto 2rem;line-height:1.8;font-weight:400;}
+.hero-stats{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;margin-top:2rem;}
+.stat-number{font-family:var(--fh);font-size:2.5rem;font-weight:900;color:#00B2ED;}
+.stat-label{font-size:13px;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+
+/* KEYWORD BANNER */
+.keyword-banner{background:#00B2ED;padding:1.5rem 4%;text-align:center;}
+.keyword-text{font-family:var(--fh);font-size:clamp(1.2rem,3vw,1.8rem);font-weight:800;color:#fff;}
+.keyword-text em{background:rgba(255,255,255,0.2);padding:.2rem .8rem;border-radius:20px;font-style:normal;}
+
+/* BEFORE/AFTER */
+.compare-section{padding:4rem 4%;max-width:1200px;margin:0 auto;}
+.compare-title{font-family:var(--fh);font-size:clamp(1.5rem,3vw,2.2rem);font-weight:900;color:#0D133E;text-align:center;margin-bottom:1rem;}
+.compare-title em{color:#00B2ED;font-style:normal;}
+.compare-sub{text-align:center;font-size:16px;color:#5a6a8a;max-width:700px;margin:0 auto 3rem;}
+
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:4rem;}
+@media(max-width:768px){.compare-grid{grid-template-columns:1fr;}}
+.compare-card{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 4px 20px rgba(0,0,0,0.08);position:relative;overflow:hidden;}
+.compare-card.old{border-top:4px solid #E8960A;}
+.compare-card.new{border-top:4px solid #16A34A;}
+.compare-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-bottom:1rem;}
+.old .compare-label{color:#E8960A;}
+.new .compare-label{color:#16A34A;}
+.compare-card-title{font-family:var(--fh);font-size:1.3rem;font-weight:800;color:#0D133E;margin-bottom:1rem;}
+.compare-list{list-style:none;display:flex;flex-direction:column;gap:.8rem;}
+.compare-list li{display:flex;align-items:flex-start;gap:.8rem;font-size:14px;color:#5a6a8a;line-height:1.6;}
+.compare-list li::before{content:'•';color:var(--blue);font-weight:900;font-size:18px;line-height:1;}
+.old .compare-list li::before{color:#E8960A;}
+.new .compare-list li::before{color:#16A34A;}
+.time-badge{display:inline-flex;align-items:center;gap:.5rem;background:#f5fafd;border:1px solid var(--border);border-radius:20px;padding:.4rem 1rem;font-size:12px;font-weight:700;color:#5a6a8a;margin-top:1rem;}
+.time-badge strong{color:#0D133E;}
+
+/* VERTICAL DIAGRAM SECTION */
+.diagram-section{background:#fff;padding:4rem 0;}
+.diagram-container{max-width:1000px;margin:0 auto;padding:0 4%;}
+.diagram-header{text-align:center;margin-bottom:3rem;}
+.diagram-header h2{font-family:var(--fh);font-size:1.8rem;font-weight:800;color:#0D133E;margin-bottom:.5rem;}
+.diagram-header p{color:#5a6a8a;font-size:16px;}
+
+/* Vertical Flow Container */
+.vertical-flow{background:#f8fafc;border-radius:20px;padding:3rem 2rem;position:relative;}
+.vertical-flow::before{content:'';position:absolute;left:50%;top:40px;bottom:40px;width:4px;background:linear-gradient(180deg,#00B2ED,#16A34A,#6B46C1,#E8960A);border-radius:2px;transform:translateX(-50%);}
+
+/* Flow Step */
+.flow-step{position:relative;margin-bottom:3rem;display:flex;align-items:flex-start;gap:2rem;}
+.flow-step:last-child{margin-bottom:0;}
+.flow-step:nth-child(odd){flex-direction:row;}
+.flow-step:nth-child(even){flex-direction:row-reverse;}
+
+@media(max-width:768px){
+  .flow-step,.flow-step:nth-child(odd),.flow-step:nth-child(even){flex-direction:column;align-items:center;gap:1rem;}
+  .vertical-flow::before{left:30px;}
+}
+
+/* Step Number */
+.step-number{flex-shrink:0;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:1.4rem;font-weight:900;color:#fff;position:relative;z-index:2;box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+.step-number.blazor{background:var(--blazor);}
+.step-number.foundry{background:var(--foundry);}
+.step-number.ai{background:var(--ai);}
+.step-number.sql{background:var(--sql);}
+.step-number.blob{background:var(--blob);}
+
+/* Step Content */
+.step-content{flex:1;background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 4px 15px rgba(0,0,0,0.08);border-left:4px solid;}
+.step-content.blazor{border-left-color:var(--blazor);}
+.step-content.foundry{border-left-color:var(--foundry);}
+.step-content.ai{border-left-color:var(--ai);}
+.step-content.sql{border-left-color:var(--sql);}
+.step-content.blob{border-left-color:var(--blob);}
+
+.step-system{font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;margin-bottom:.5rem;}
+.step-content.blazor .step-system{color:var(--blazor);}
+.step-content.foundry .step-system{color:var(--foundry);}
+.step-content.ai .step-system{color:var(--ai);}
+.step-content.sql .step-system{color:var(--sql);}
+.step-content.blob .step-system{color:var(blob);}
+
+.step-name{font-family:var(--fh);font-size:1.1rem;font-weight:800;color:#0D133E;margin-bottom:.5rem;}
+.step-desc{font-size:14px;color:#5a6a8a;line-height:1.7;margin-bottom:1rem;}
+
+/* Data Transformation Box */
+.data-transform{background:#f1f5f9;border-radius:10px;padding:1rem;margin-top:1rem;}
+.transform-label{display:flex;align-items:center;gap:.5rem;font-size:11px;font-weight:800;color:#0D133E;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.8rem;}
+.transform-label::before{content:'🔄';font-size:14px;}
+.transform-arrow{display:flex;align-items:center;gap:1rem;margin:.5rem 0;}
+.transform-from,.transform-to{flex:1;background:#fff;border-radius:8px;padding:.8rem;font-size:12px;color:#475569;font-family:monospace;word-break:break-word;}
+.transform-arrow-icon{color:#00B2ED;font-size:20px;font-weight:900;}
+.transform-to{background:#dcfce7;border:1px solid #16A34A;}
+.transform-to::before{content:'✓ ';color:#16A34A;font-weight:900;}
+
+/* Connection Line */
+.step-connector{position:absolute;left:50%;transform:translateX(-50%);width:30px;height:30px;background:#fff;border:3px solid #00B2ED;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;z-index:3;}
+.step-connector::after{content:'⬇';color:#00B2ED;font-weight:900;}
+
+/* COMPLETE JOURNEY WITH TRANSFORMATIONS */
+.journey-section{background:#f8fafc;padding:4rem 4%;}
+.journey-container{max-width:900px;margin:0 auto;}
+.journey-header{text-align:center;margin-bottom:3rem;}
+.journey-header h2{font-family:var(--fh);font-size:1.8rem;font-weight:800;color:#0D133E;margin-bottom:.5rem;}
+.journey-header p{color:#5a6a8a;font-size:16px;}
+
+/* Journey Step Card */
+.journey-step{background:#fff;border-radius:16px;padding:2rem;margin-bottom:2rem;box-shadow:0 4px 15px rgba(0,0,0,0.06);position:relative;}
+.journey-step::before{content:attr(data-step);position:absolute;top:-15px;left:2rem;width:40px;height:40px;border-radius:50%;background:#00B2ED;color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:1rem;font-weight:900;box-shadow:0 4px 10px rgba(0,178,237,0.3);}
+.journey-title{font-family:var(--fh);font-size:1.2rem;font-weight:800;color:#0D133E;margin-bottom:1rem;padding-left:3rem;}
+.journey-story{font-size:15px;color:#5a6a8a;line-height:1.8;margin-bottom:1.5rem;}
+
+/* Real-World Example Box */
+.real-example{background:linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 100%);border:1px solid #bae6fd;border-radius:12px;padding:1.5rem;margin:1.5rem 0;}
+.real-label{display:flex;align-items:center;gap:.5rem;font-size:11px;font-weight:800;color:#0284c7;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1rem;}
+.real-label::before{content:'🏢';font-size:14px;}
+.real-company{font-family:var(--fh);font-size:1rem;font-weight:800;color:#0D133E;margin-bottom:.5rem;}
+.real-scenario{font-size:14px;color:#475569;line-height:1.7;margin-bottom:1rem;}
+.real-details{background:#fff;border-radius:8px;padding:1rem;}
+.real-detail-item{display:flex;align-items:flex-start;gap:.8rem;margin-bottom:.5rem;font-size:13px;color:#0D133E;}
+.real-detail-item:last-child{margin-bottom:0;}
+.real-detail-item::before{content:'→';color:#00B2ED;font-weight:900;}
+
+/* Data Watch Section */
+.data-watch{background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:1.5rem;margin:1.5rem 0;}
+.data-watch-title{display:flex;align-items:center;gap:.5rem;font-size:12px;font-weight:800;color:#0D133E;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1rem;}
+.data-watch-title::before{content:'📊';font-size:14px;}
+
+/* Data Flow Visualization */
+.data-flow-viz{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:center;margin:1rem 0;}
+@media(max-width:600px){.data-flow-viz{grid-template-columns:1fr;}}
+.data-input,.data-output{background:#fff;border-radius:10px;padding:1rem;}
+.data-input{border:2px solid #fee2e2;}
+.data-output{border:2px solid #dcfce7;}
+.data-label{font-size:11px;font-weight:800;color:#5a6a8a;text-transform:uppercase;margin-bottom:.5rem;}
+.data-content{font-family:monospace;font-size:12px;color:#475569;line-height:1.6;}
+.data-content pre{margin:0;white-space:pre-wrap;word-break:break-word;}
+.data-arrow{text-align:center;font-size:24px;color:#00B2ED;}
+@media(max-width:600px){.data-arrow{transform:rotate(90deg);}}
+
+.ai-action{background:#dbeafe;border-radius:8px;padding:1rem;margin:1rem 0;}
+.ai-action-title{font-size:12px;font-weight:800;color:#1d4ed8;margin-bottom:.5rem;}
+.ai-action-desc{font-size:13px;color:#1e40af;line-height:1.6;}
+
+/* SUMMARY CARDS */
+.summary-section{background:linear-gradient(135deg,#0D133E 0%,#1a2260 100%);padding:4rem 4%;color:#fff;}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;max-width:1000px;margin:0 auto;}
+.summary-card{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:1.5rem;text-align:center;}
+.summary-icon{font-size:2rem;margin-bottom:1rem;}
+.summary-number{font-family:var(--fh);font-size:2rem;font-weight:900;color:#00B2ED;margin-bottom:.5rem;}
+.summary-label{font-size:14px;font-weight:700;color:#fff;margin-bottom:.5rem;}
+.summary-desc{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;}
+
+/* CTA */
+.cta-section{padding:4rem 4%;text-align:center;background:#fff;}
+.cta-title{font-family:var(--fh);font-size:1.8rem;font-weight:800;color:#0D133E;margin-bottom:1rem;}
+.cta-button{display:inline-flex;flex-direction:column;align-items:center;gap:.3rem;background:#00B2ED;color:#fff;padding:1rem 2.5rem;border-radius:30px;font-family:var(--fh);font-size:16px;font-weight:700;text-decoration:none;transition:all .2s;box-shadow:0 4px 15px rgba(0,178,237,0.3);}
+.cta-button:hover{background:#0099cc;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,178,237,0.4);}
+.cta-button small{font-size:12px;font-weight:500;opacity:.9;}
+
+/* Footer */
+footer{padding:2rem 4%;background:#0D133E;color:rgba(255,255,255,0.6);text-align:center;font-size:13px;}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero-stats{gap:2rem;}
+  .stat-number{font-size:2rem;}
+  .vertical-flow{padding:2rem 1rem;}
+  .flow-step{margin-bottom:2rem;}
+  .journey-step{padding:1.5rem;}
+  .data-flow-viz{grid-template-columns:1fr;}
+  .data-arrow{transform:rotate(90deg);}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <a href="#" class="nav-logo">📄 RFP → Document AI Platform</a>
+  <ul class="nav-links">
+    <li><a href="#compare">Compare</a></li>
+    <li><a href="#flow">Live Flow</a></li>
+    <li><a href="#journey">Full Journey</a></li>
+    <li><a href="#summary">Results</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">🤖 AI-Powered Document Generation</div>
+    <h1 class="hero-title">From RFP to Winning Document<br/><em>10x Faster, 84% Cheaper</em></h1>
+    <p class="hero-sub">Watch exactly how a Request for Proposal transforms into a polished, winning response document — with AI handling research, writing, and formatting while your team simply reviews.</p>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-number">2-4 hrs</div>
+        <div class="stat-label">Total Time</div>
+      </div>
+      <div>
+        <div class="stat-number">₹4,000</div>
+        <div class="stat-label">vs. ₹26,000</div>
+      </div>
+      <div>
+        <div class="stat-number">95%</div>
+        <div class="stat-label">Win Rate Quality</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEYWORD BANNER -->
+<section class="keyword-banner">
+  <div class="keyword-text"><em>RFP</em> → <em>Research</em> → <em>Write</em> → <em>Review</em> → <em>Document</em></div>
+</section>
+
+<!-- BEFORE/AFTER COMPARISON -->
+<section class="compare-section" id="compare">
+  <h2 class="compare-title">The Manual Chaos vs. <em>The AI Flow</em></h2>
+  <p class="compare-sub">Same RFP. Same team. Completely different experience and outcome.</p>
+  
+  <div class="compare-grid">
+    <div class="compare-card old">
+      <div class="compare-label">😰 Manual RFP → Document Process</div>
+      <h3 class="compare-card-title">"All Hands on Deck — Start Writing!"</h3>
+      <ul class="compare-list">
+        <li><strong>RFP arrives</strong> — Email chaos. Who saw it? Who's handling it?</li>
+        <li><strong>6 people read separately</strong> — Different interpretations, no shared understanding</li>
+        <li><strong>Emergency scoping meeting</strong> — 90 minutes × 6 people = 9 hours burned</li>
+        <li><strong>Hunt through file servers</strong> — "Didn't we write something like this?"</li>
+        <li><strong>Write in isolation</strong> — 6 different voices, formats, quality levels</li>
+        <li><strong>Email review ping-pong</strong> — v1, v2_FINAL, v2_FINAL_v3, v2_ACTUAL_FINAL</li>
+        <li><strong>Format and pray</strong> — Late night formatting, inconsistent branding, errors</li>
+      </ul>
+      <div class="time-badge">
+        ⏱️ <strong>3-5 days</strong> · 6 people · ₹26,000 · Stressful · Inconsistent
+      </div>
+    </div>
+    
+    <div class="compare-card new">
+      <div class="compare-label">⚡ AI RFP → Document Process</div>
+      <h3 class="compare-card-title">"Upload, Review, Submit"</h3>
+      <ul class="compare-list">
+        <li><strong>RFP uploaded</strong> — One person, 30 seconds, single source of truth</li>
+        <li><strong>AI reads & extracts</strong> — 42 pages analyzed in 15 seconds, structured data</li>
+        <li><strong>AI researches company history</strong> — Finds similar wins, dream team, pricing</li>
+        <li><strong>AI writes complete draft</strong> — All sections, consistent voice, proper citations</li>
+        <li><strong>Experts review, don't write</strong> — Validate facts, suggest tweaks, approve</li>
+        <li><strong>Auto-formatted output</strong> — Professional PDF/DOCX, branded, ready to submit</li>
+        <li><strong>Submit with confidence</strong> — Consistent quality, fully cited, audit trail</li>
+      </ul>
+      <div class="time-badge">
+        ⚡ <strong>2-4 hours</strong> · 2 people · ₹4,000 · Calm · Consistent
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERTICAL DATAFLOW DIAGRAM -->
+<section class="diagram-section" id="flow">
+  <div class="diagram-container">
+    <div class="diagram-header">
+      <h2>🎬 Watch Data Flow: RFP → Document</h2>
+      <p>Vertical journey showing how information transforms through each system</p>
+    </div>
+    
+    <div class="vertical-flow">
+      
+      <!-- STEP 1: Upload -->
+      <div class="flow-step">
+        <div class="step-number blazor">1</div>
+        <div class="step-content blazor">
+          <div class="step-system">💻 Blazor Web App — Human Interface</div>
+          <div class="step-name">RFP Document Upload</div>
+          <div class="step-desc">Someone drags the RFP PDF into the web app. File streams to secure cloud storage. Proposal tracking record created instantly.</div>
+          
+          <div class="data-transform">
+            <div class="transform-label">Data Transformation</div>
+            <div class="transform-arrow">
+              <div class="transform-from">
+                <strong>Input:</strong><br>
+                • Email attachment<br>
+                • RFP_CRM_2024.pdf<br>
+                • 42 pages, 8MB<br>
+                • Unknown structure
+              </div>
+              <div class="transform-arrow-icon">➜</div>
+              <div class="transform-to">
+                <strong>Output:</strong><br>
+                • Encrypted blob storage<br>
+                • Unique tracking ID<br>
+                • Access permissions set<br>
+                • Processing triggered
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- STEP 2: Parse -->
+      <div class="flow-step">
+        <div class="step-number foundry">2</div>
+        <div class="step-content foundry">
+          <div class="step-system">🤖 Foundry Agent — AI Project Manager</div>
+          <div class="step-name">Document Intelligence & Extraction</div>
+          <div class="step-desc">AI reads the entire PDF like a human, but in 15 seconds. Extracts structured data: client, budget, requirements, deadlines, evaluation criteria.</div>
+          
+          <div class="data-transform">
+            <div class="transform-label">Data Transformation</div>
+            <div class="transform-arrow">
+              <div class="transform-from">
+                <strong>Input:</strong><br>
+                • Raw PDF bytes<br>
+                • Unstructured text<br>
+                • Mixed fonts/layouts<br>
+                • Tables, headers, bullets
+              </div>
+              <div class="transform-arrow-icon">➜</div>
+              <div class="transform-to">
+                <strong>Output:</strong><br>
+                • client: "BigClient Corp"<br>
+                • budget: "$500K-$750K"<br>
+                • requirements: [47 items]<br>
+                • deadline: "2024-03-15"<br>
+                • evaluation: {technical: 60%, cost: 40%}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- STEP 3: Search -->
+      <div class="flow-step">
+        <div class="step-number sql">3</div>
+        <div class="step-content sql">
+          <div class="step-system">🗄️ MS SQL Database — Knowledge Library</div>
+          <div class="step-name">Vector Similarity Search</div>
+          <div class="step-desc">AI converts the RFP into a "meaning vector" and searches your company's entire history. Finds similar projects by concept, not just keywords.</div>
+          
+          <div class="data-transform">
+            <div class="transform-label">Data Transformation</div>
+            <div class="transform-arrow">
+              <div class="transform-from">
+                <strong>Input:</strong><br>
+                • RFP meaning vector<br>
+                • Query: "enterprise CRM<br>&nbsp;&nbsp;manufacturing $500K+"<br>
+                • Cosine similarity search
+              </div>
+              <div class="transform-arrow-icon">➜</div>
+              <div class="transform-to">
+                <strong>Output:</strong><br>
+                • Match #1: 94% similar<br>
+                • Acme Manufacturing CRM<br>
+                • Team: Sarah, Mike<br>
+                • Result: WON $620K<br>
+                • Reusable sections identified
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- STEP 4: AI Search -->
+      <div class="flow-step">
+        <div class="step-number ai">4</div>
+        <div class="step-content ai">
+          <div class="step-system">🔍 Azure AI Search — Document Discovery</div>
+          <div class="step-name">Semantic Document Retrieval</div>
+          <div class="step-desc">Parallel search through unstructured documents: reference materials, pricing templates, compliance guides, methodology documents.</div>
+          
+          <div class="data-transform">
+            <div class="transform-label">Data Transformation</div>
+            <div class="transform-arrow">
+              <div class="transform-from">
+                <strong>Input:</strong><br>
+                • Semantic query<br>
+                • "SOX compliance CRM"<br>
+                • "enterprise pricing"<br>
+                • "agile implementation"
+              </div>
+              <div class="transform-arrow-icon">➜</div>
+              <div class="transform-to">
+                <strong>Output:</strong><br>
+                • SOX_Checklist_v2023.pdf<br>
+                • Pricing_Template_Enterprise<br>
+                • Agile_Methodology_CRM<br>
+                • Security_Whitepaper
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- STEP 5: Assemble -->
+      <div class="flow-step">
+        <div class="step-number foundry">5</div>
+        <div class="step-content foundry">
+          <div class="step-system">🎯 Foundry IQ — Context Builder</div>
+          <div class="step-name">Intelligent Context Assembly</div>
+          <div class="step-desc">AI doesn't dump raw search results. It ranks, deduplicates, and builds an optimal "briefing packet" for the writer — with iterative quality checks.</div>
+          
+          <div class="data-transform">
+            <div class="transform-label">Data Transformation</div>
+            <div class="transform-arrow">
+              <div class="transform-from">
+                <strong>Input:</strong><br>
+                • Raw search results<br>
+                • 15 potential matches<br>
+                • Varying relevance<br>
+                • Unranked, unfiltered
+              </div>
+              <div class="transform-arrow-icon">➜</div>
+              <div class="transform-to">
+                <strong>Output:</strong><br>
+                • Curated context pack<br>
+                • Top 3 projects (94%, 87%, 81%)<br>
+                • Dream team recommendation<br>
+                • Reusable content mapped<br>
+                • Confidence: 94%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- STEP 6: Generate -->
+      <div class="flow-step">
+        <div class="step-number ai">6</div>
+        <div class="step-content ai">
+          <div class="step-system">✍️ Azure OpenAI GPT-4o — Document Writer</div>
+          <div class="step-name">Structured Proposal Generation</div>
+          <div class="step-desc">GPT-4o receives the briefing packet and writes all 5 sections of your proposal document. Uses your company's voice from past wins. Every claim cited.</div>
+          
+          <div class="data-transform">
+            <div class="transform-label">Data Transformation</div>
+            <div class="transform-arrow">
+              <div class="transform-from">
+                <strong>Input:</strong><br>
+                • Context package<br>
+                • Company voice samples<br>
+                • Required structure<br>
+                • Citation requirements
+              </div>
+              <div class="transform-arrow-icon">➜</div>
+              <div class="transform-to">
+                <strong>Output:</strong><br>
+                • Executive Summary (2pp)<br>
+                • Technical Approach (8pp)<br>
+                • Team Profiles (3pp)<br>
+                • Timeline (1pp)<br>
+                • Pricing (2pp)<br>
+                • 12 citations included
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- STEP 7: Save & Notify -->
+      <div class="flow-step">
+        <div class="step-number sql">7</div>
+        <div class="step-content sql">
+          <div class="step-system">💾 MS SQL + SignalR — Real-Time Sync</div>
+          <div class="step-name">Persistence & Live Update</div>
+          <div class="step-desc">AI-written sections saved to database. SignalR instantly pushes to all connected web clients. Reviewers see the document appear in real-time.</div>
+          
+          <div class="data-transform">
+            <div class="transform-label">Data Transformation</div>
+            <div class="transform-arrow">
+              <div class="transform-from">
+                <strong>Input:</strong><br>
+                • JSON document sections<br>
+                • Citation metadata<br>
+                • Version 1.0 draft<br>
+                • Awaiting review
+              </div>
+              <div class="transform-arrow-icon">➜</div>
+              <div class="transform-to">
+                <strong>Output:</strong><br>
+                • Relational records<br>
+                • Queryable content<br>
+                • Version history<br>
+                • Real-time web push<br>
+                • Role-based access
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- STEP 8: Review -->
+      <div class="flow-step">
+        <div class="step-number blazor">8</div>
+        <div class="step-content blazor">
+          <div class="step-system">👥 Blazor Web App — Human Review</div>
+          <div class="step-name">Expert Validation & Refinement</div>
+          <div class="step-desc">Technical lead, commercial director, and project lead review their relevant sections. Light edits, not heavy writing. AI answers questions via chat.</div>
+          
+          <div class="data-transform">
+            <div class="transform-label">Data Transformation</div>
+            <div class="transform-arrow">
+              <div class="transform-from">
+                <strong>Input:</strong><br>
+                • AI draft v1.0<br>
+                • Reviewer comments<br>
+                • Change requests<br>
+                • Approval decisions
+              </div>
+              <div class="transform-arrow-icon">➜</div>
+              <div class="transform-to">
+                <strong>Output:</strong><br>
+                • AI draft v1.1<br>
+                • 3 minor revisions<br>
+                • All approvals granted<br>
+                • Ready for export
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- STEP 9: Export -->
+      <div class="flow-step">
+        <div class="step-number blob">9</div>
+        <div class="step-content blob">
+          <div class="step-system">📤 Azure Blob — Document Delivery</div>
+          <div class="step-name">Final Document Generation</div>
+          <div class="step-desc">System generates professional PDF and Word documents with proper formatting, branding, TOC, and page numbers. Delivered to client portal.</div>
+          
+          <div class="data-transform">
+            <div class="transform-label">Data Transformation</div>
+            <div class="transform-arrow">
+              <div class="transform-from">
+                <strong>Input:</strong><br>
+                • Approved content<br>
+                • Company branding<br>
+                • Format templates<br>
+                • Compliance checklist
+              </div>
+              <div class="transform-arrow-icon">➜</div>
+              <div class="transform-to">
+                <strong>Output:</strong><br>
+                • Proposal_BigClient.pdf<br>
+                • Proposal_BigClient.docx<br>
+                • 16 pages, formatted<br>
+                • Submission-ready<br>
+                • Audit trail complete
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- COMPLETE JOURNEY WITH REAL EXAMPLES -->
+<section class="journey-section" id="journey">
+  <div class="journey-container">
+    <div class="journey-header">
+      <h2>📖 The Complete Journey: RFP → Document</h2>
+      <p>Real-world example with data transformations at every step</p>
+    </div>
+    
+    <!-- STEP 1 -->
+    <div class="journey-step" data-step="1">
+      <div class="journey-title">📤 Step 1: RFP Arrives & Gets Uploaded</div>
+      <div class="journey-story">
+        Sarah from Business Development receives an email: "RFP for Enterprise CRM Implementation" from BigClient Corp procurement. Instead of forwarding to 6 people and creating chaos, she opens the Proposal Intelligence web app, drags the 42-page PDF into the upload zone, and clicks "Start AI Analysis." The system immediately shows a progress bar and assigns tracking number #PROP-2024-0892.
+      </div>
+      
+      <div class="real-example">
+        <div class="real-label">🏢 Real-World Example: BigClient Corp</div>
+        <div class="real-company">Fortune 500 Manufacturing Company</div>
+        <div class="real-scenario">BigClient needs to replace their legacy CRM system across 12 manufacturing plants, 2,000+ sales users, with integration to SAP and custom shop-floor systems. Budget $500K-$750K. Deadline: 45 days.</div>
+        <div class="real-details">
+          <div class="real-detail-item">RFP Document: 42 pages, 8 sections, 47 technical requirements</div>
+          <div class="real-detail-item">Upload time: 30 seconds (vs. 2 hours to distribute manually)</div>
+          <div class="real-detail-item">Security: Encrypted at rest, role-based access applied</div>
+        </div>
+      </div>
+      
+      <div class="data-watch">
+        <div class="data-watch-title">📊 Watch Data Transform</div>
+        <div class="data-flow-viz">
+          <div class="data-input">
+            <div class="data-label">INPUT: Raw Email Attachment</div>
+            <div class="data-content"><pre>Subject: RFP-2024-0892-CRM
+From: procurement@bigclient.com
+Attachment: RFP_CRM_Implementation.pdf
+Size: 8.4 MB
+Pages: 42 (scanned + text)</pre></div>
+          </div>
+          <div class="data-arrow">➜</div>
+          <div class="data-output">
+            <div class="data-label">OUTPUT: Structured Upload Record</div>
+            <div class="data-content"><pre>{
+  "proposalId": "PROP-2024-0892",
+  "blobUrl": "https://blob.../rfp/0892/source.pdf",
+  "status": "UPLOADED",
+  "uploadedBy": "sarah.chen@company.com",
+  "timestamp": "2024-01-15T09:23:17Z",
+  "fileSize": 8400000,
+  "encryption": "AES-256"
+}</pre></div>
+          </div>
+        </div>
+        <div class="ai-action">
+          <div class="ai-action-title">🤖 AI Action Triggered</div>
+          <div class="ai-action-desc">Foundry Agent Service wakes up, creates durable session #AGENT-0892, initializes MCP tool connections, and begins document analysis pipeline.</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- STEP 2 -->
+    <div class="journey-step" data-step="2">
+      <div class="journey-title">📄 Step 2: AI Reads & Understands the RFP</div>
+      <div class="journey-story">
+        No human reads the RFP first. The AI uses Document Intelligence — a service that reads PDFs like a person but in 15 seconds. It handles scanned pages, different fonts, tables, and headers. It extracts: Who's the client? What's the project? What's the budget? When's it due? What are the 47 technical requirements? How will they evaluate proposals?
+      </div>
+      
+      <div class="real-example">
+        <div class="real-label">🏢 Real-World Example: What AI Found</div>
+        <div class="real-company">BigClient Corp RFP Analysis</div>
+        <div class="real-scenario">The AI identified that BigClient is specifically concerned about mobile access for field sales, integration with their legacy SAP system, and compliance with SOX requirements — all buried in different sections of the 42-page document.</div>
+        <div class="real-details">
+          <div class="real-detail-item">Client: BigClient Corp (Fortune 500, Manufacturing)</div>
+          <div class="real-detail-item">Project: Enterprise CRM Implementation (12 plants, 2,000 users)</div>
+          <div class="real-detail-item">Budget: $500,000 - $750,000 USD</div>
+          <div class="real-detail-item">Deadline: March 15, 2024 (45 days from RFP)</div>
+          <div class="real-detail-item">Key Requirements: 47 items including mobile offline, SAP integration, SOX compliance</div>
+          <div class="real-detail-item">Evaluation: 60% Technical, 30% Cost, 10% References</div>
+        </div>
+      </div>
+      
+      <div class="data-watch">
+        <div class="data-watch-title">📊 Watch Data Transform</div>
+        <div class="data-flow-viz">
+          <div class="data-input">
+            <div class="data-label">INPUT: Unstructured PDF Bytes</div>
+            <div class="data-content"><pre>Binary PDF data...
+[scanned page 1: cover letter]
+[text page 2: table of contents]
+[table page 5: budget breakdown]
+[mixed page 12: technical specs]</pre></div>
+          </div>
+          <div class="data-arrow">➜</div>
+          <div class="data-output">
+            <div class="data-label">OUTPUT: Structured Extraction</div>
+            <div class="data-content"><pre>{
+  "client": {
+    "name": "BigClient Corp",
+    "industry": "Manufacturing",
+    "size": "Fortune 500"
+  },
+  "project": {
+    "title": "Enterprise CRM Implementation",
+    "scope": "12 plants, 2000 users",
+    "systems": ["SAP ERP", "Legacy CRM"]
+  },
+  "requirements": [
+    {"id": 1, "text": "Mobile offline capability", "priority": "Critical"},
+    {"id": 2, "text": "SAP real-time integration", "priority": "Critical"},
+    ...
+    {"id": 47, "text": "SOX audit logging", "priority": "High"}
+  ],
+  "budget": {"min": 500000, "max": 750000, "currency": "USD"},
+  "deadline": "2024-03-15",
+  "evaluation": {"technical": 0.6, "cost": 0.3, "references": 0.1}
+}</pre></div>
+          </div>
+        </div>
+        <div class="ai-action">
+          <div class="ai-action-title">🤖 AI Action: Document Intelligence</div>
+          <div class="ai-action-desc">Azure Document Intelligence (prebuilt-layout model) processes 42 pages in 14.3 seconds. OCR extracts text from scanned pages. Tables parsed to structured data. Key-value pairs identified. Confidence score: 97.3%.</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- STEP 3 -->
+    <div class="journey-step" data-step="3">
+      <div class="journey-title">🔍 Step 3: AI Searches Your Company's Brain</div>
+      <div class="journey-story">
+        The AI now searches through your entire company's 10-year history. But it's not just keyword search — it uses "vector search" which finds by meaning. "CRM for manufacturing with SAP integration" finds projects about "customer systems for factories connecting to ERP" even if those exact words weren't used. The AI also checks who's available and who has the right skills.
+      </div>
+      
+      <div class="real-example">
+        <div class="real-label">🏢 Real-World Example: What AI Found in Your History</div>
+        <div class="real-company">Your Company's Knowledge Base</div>
+        <div class="real-scenario">The AI discovered that your company actually has deep experience here — but it's scattered across different divisions and not well-documented. Sarah led two similar projects. Mike has SAP integration certification. Priya solved the exact mobile offline challenge BigClient needs.</div>
+        <div class="real-details">
+          <div class="real-detail-item">Match #1: Acme Manufacturing CRM (2022) — 94% similar to BigClient RFP</div>
+          <div class="real-detail-item">Match #2: GlobalTech ERP+CRM (2023) — 87% similar, different industry but same tech</div>
+          <div class="real-detail-item">Match #3: MetroCorp Sales Platform (2021) — 81% similar, smaller scale</div>
+          <div class="real-detail-item">Team Lead Recommendation: Sarah Chen (90% win rate on CRM projects)</div>
+          <div class="real-detail-item">Technical Architect: Mike Ross (SAP certified, led 2 SAP-CRM integrations)</div>
+          <div class="real-detail-item">Integration Specialist: Priya Patel (built mobile offline sync for Acme project)</div>
+        </div>
+      </div>
+      
+      <div class="data-watch">
+        <div class="data-watch-title">📊 Watch Data Transform</div>
+        <div class="data-flow-viz">
+          <div class="data-input">
+            <div class="data-label">INPUT: RFP Meaning Vector</div>
+            <div class="data-content"><pre>Vector embedding (1536 dimensions):
+[0.023, -0.156, 0.089, ..., 0.034]
+Represents: "Enterprise CRM 
+manufacturing SAP integration 
+mobile offline 500K budget"</pre></div>
+          </div>
+          <div class="data-arrow">➜</div>
+          <div class="data-output">
+            <div class="data-label">OUTPUT: Similarity Search Results</div>
+            <div class="data-content"><pre>MS SQL Vector Search Results:
+1. projectId: "ACME-2022-CRM"
+   similarity: 0.94 (cosine)
+   team: ["Sarah Chen", "Mike Ross"]
+   outcome: "WON" ($620K)
+   
+2. projectId: "GLOBAL-2023-ERP"
+   similarity: 0.87
+   team: ["Sarah Chen", "Priya Patel"]
+   outcome: "WON" ($580K)
+
+Team Availability (SQL query):
+• Sarah Chen: AVAILABLE (next 3 months)
+• Mike Ross: 80% available (can allocate)
+• Priya Patel: AVAILABLE</pre></div>
+          </div>
+        </div>
+        <div class="ai-action">
+          <div class="ai-action-title">🤖 AI Action: Hybrid Vector Search</div>
+          <div class="ai-action-desc">MS SQL native vector similarity search (cosine distance) on PastProjects + TeamProfiles tables. Parallel Azure AI Search on unstructured documents. Hybrid ranking combines semantic + keyword relevance. Query time: 2.3 seconds.</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- STEP 4 -->
+    <div class="journey-step" data-step="4">
+      <div class="journey-title">✍️ Step 4: AI Writes the Complete First Draft</div>
+      <div class="journey-story">
+        GPT-4o receives a "briefing packet" with everything it needs: the RFP requirements, 3 similar past projects with winning approaches, the recommended dream team with their actual experience, pricing templates, and reference materials. It writes all 5 sections in your company's voice — because it's learned from your past winning proposals. Every claim has a citation linking to real past work.
+      </div>
+      
+      <div class="real-example">
+        <div class="real-label">🏢 Real-World Example: The Draft Document</div>
+        <div class="real-company">BigClient Proposal — First Draft</div>
+        <div class="real-scenario">The AI generated a 16-page proposal in 8 minutes. The Executive Summary led with the Acme Manufacturing win (94% similar) because that's most relevant. The Technical Approach blended Sarah's methodology from Acme with Mike's SAP integration pattern from GlobalTech. Pricing came in at $625K — competitive but with 25% margin.</div>
+        <div class="real-details">
+          <div class="real-detail-item">Executive Summary: 2 pages, opened with Acme Manufacturing case study</div>
+          <div class="real-detail-item">Technical Approach: 8 pages, addressed all 47 requirements, cited 3 past projects</div>
+          <div class="real-detail-item">Team Profiles: 3 pages, Sarah (lead), Mike (architect), Priya (integration) — with relevant certifications</div>
+          <div class="real-detail-item">Project Timeline: 12-week phased delivery based on actual Acme timeline</div>
+          <div class="real-detail-item">Pricing & Commercial: $625K total, phased payments, 25% margin built in</div>
+          <div class="real-detail-item">Quality Score: 94/100 (AI self-evaluation against RFP requirements)</div>
+        </div>
+      </div>
+      
+      <div class="data-watch">
+        <div class="data-watch-title">📊 Watch Data Transform</div>
+        <div class="data-flow-viz">
+          <div class="data-input">
+            <div class="data-label">INPUT: Context Briefing Packet</div>
+            <div class="data-content"><pre>Context Package (12,400 tokens):
+• RFP requirements (47 items)
+• 3 similar projects (full SOWs)
+• Team bios + certifications
+• Pricing templates
+• Company methodology
+• Voice samples from 5 wins</pre></div>
+          </div>
+          <div class="data-arrow">➜</div>
+          <div class="data-output">
+            <div class="data-label">OUTPUT: Structured Proposal Document</div>
+            <div class="data-content"><pre>{
+  "executiveSummary": "BigClient Corp's manufacturing...",
+  "technicalApproach": {
+    "architecture": "Cloud-native Salesforce...",
+    "sapIntegration": "Real-time middleware... [cite: ACME-2022]",
+    "mobileSolution": "Offline-first React Native... [cite: ACME-2022]"
+  },
+  "teamProfiles": [
+    {"name": "Sarah Chen", "role": "Project Lead", 
+     "relevantWins": ["ACME-2022", "GLOBAL-2023"]},
+    {"name": "Mike Ross", "role": "Technical Architect",
+     "certifications": ["SAP-Integration-Pro"]}
+  ],
+  "projectTimeline": {...},
+  "pricingNarrative": {...},
+  "citations": 12,
+  "qualityScore": 94
+}</pre></div>
+          </div>
+        </div>
+        <div class="ai-action">
+          <div class="ai-action-title">🤖 AI Action: GPT-4o Structured Generation</div>
+          <div class="ai-action-desc">Foundry Model Catalogue invokes GPT-4o with response_format: {type: "json_object", schema: ProposalSchema}. System prompt includes company voice training. Temperature: 0.3 (consistent). Max tokens: 8,000. Generation time: 7.8 seconds.</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- STEP 5 -->
+    <div class="journey-step" data-step="5">
+      <div class="journey-title">👥 Step 5: Experts Review (Don't Write, Just Validate)</div>
+      <div class="journey-story">
+        Your experts get a notification: "BigClient proposal ready for review." They open the web app and see a complete, professional document — not a blank page asking them to write. Mike (Tech Lead) checks the SAP integration approach. Jennifer (Commercial) reviews pricing. Sarah (Project Lead) validates the timeline. They make light comments like "Add API rate limiting detail" — not "Write the whole section from scratch."
+      </div>
+      
+      <div class="real-example">
+        <div class="real-label">🏢 Real-World Example: Review Process</div>
+        <div class="real-company">BigClient Proposal — Team Review</div>
+        <div class="real-scenario">The review happened in 45 minutes total across 3 people. Compare this to the old process: 6 people × 3 days writing + 2 days email reviews = 240 hours. New process: 3 people × 45 minutes = 2.25 hours. That's 99% less human time.</div>
+        <div class="real-details">
+          <div class="real-detail-item">Mike (Tech Lead): "Technical approach is solid. One clarification: Add detail on API rate limiting for SAP connection."</div>
+          <div class="real-detail-item">AI Response: Added 2 paragraphs on rate limiting pattern from GlobalTech project, with specific thresholds.</div>
+          <div class="real-detail-item">Jennifer (Commercial): "Pricing is competitive. Suggest adding 5% contingency for scope creep."</div>
+          <div class="real-detail-item">AI Response: Updated pricing table: $625K → $656K with contingency breakdown.</div>
+          <div class="real-detail-item">Sarah (Project Lead): "Approved. Timeline is realistic based on my Acme experience."</div>
+          <div class="real-detail-item">Final: Version 1.1 approved after 3 minor AI-executed revisions. Total review time: 47 minutes.</div>
+        </div>
+      </div>
+      
+      <div class="data-watch">
+        <div class="data-watch-title">📊 Watch Data Transform</div>
+        <div class="data-flow-viz">
+          <div class="data-input">
+            <div class="data-label">INPUT: AI Draft v1.0 + Human Feedback</div>
+            <div class="data-content"><pre>Reviewer Comments:
+• Mike: "Add API rate limiting"
+• Jennifer: "+5% contingency"
+• Sarah: "Approved"
+
+AI Chat Q&A:
+Q: "Why 12 weeks?"
+A: "Based on ACME-2022 (10 weeks) 
+   + 20% buffer for complexity"</pre></div>
+          </div>
+          <div class="data-arrow">➜</div>
+          <div class="data-output">
+            <div class="data-label">OUTPUT: Approved Final Content</div>
+            <div class="data-content"><pre>Proposal Version 1.1 (APPROVED)
+Changes: 3 revisions executed
+• Technical: +API rate limiting (2pp)
+• Commercial: $625K → $656K
+• Timeline: No changes
+
+Approvals:
+✓ Mike Ross (Technical Lead)
+✓ Jennifer Wong (Commercial Director)  
+✓ Sarah Chen (Project Lead)
+
+Status: READY_FOR_EXPORT</pre></div>
+          </div>
+        </div>
+        <div class="ai-action">
+          <div class="ai-action-title">🤖 AI Action: Revision & Validation</div>
+          <div class="ai-action-desc">Foundry Agent processes revision requests via thread memory (maintains context across interactions). Re-invokes GPT-4o for specific sections. Tracks all changes in MS SQL version history. Requires 2-of-3 approvals for export.</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- STEP 6 -->
+    <div class="journey-step" data-step="6">
+      <div class="journey-title">📤 Step 6: Final Document Generated & Submitted</div>
+      <div class="journey-story">
+        The system generates a professional PDF and Word document — properly formatted with your branding, table of contents, page numbers, and headers. It uploads to BigClient's procurement portal. Your team gets a confirmation. The entire process — every decision, every search, every edit — is recorded in an audit trail for compliance.
+      </div>
+      
+      <div class="real-example">
+        <div class="real-label">🏢 Real-World Example: Delivery</div>
+        <div class="real-company">BigClient Corp — Proposal Submitted</div>
+        <div class="real-scenario">The proposal was submitted 2 days before deadline. BigClient's procurement system confirmed receipt. Your team celebrated — not because they worked late, but because they delivered a quality proposal with minimal effort. The AI had done the heavy lifting.</div>
+        <div class="real-details">
+          <div class="real-detail-item">Documents Generated: Proposal_BigClient_2024.pdf (16 pages), Proposal_BigClient_2024.docx (editable)</div>
+          <div class="real-detail-item">Submission: Uploaded to BigClient procurement portal, confirmation #RFP-2024-0892-CONF</div>
+          <div class="real-detail-item">Timeline: Submitted January 17 (deadline was January 19) — 2 days early</div>
+          <div class="real-detail-item">Total Time: 2 days, 4 hours from RFP upload to submission (vs. 3-5 days manual)</div>
+          <div class="real-detail-item">Human Hours: 6.5 hours total (vs. 240 hours manual) — 97% reduction</div>
+          <div class="real-detail-item">Cost: ₹4,200 (vs. ₹26,000 manual) — 84% cost savings</div>
+        </div>
+      </div>
+      
+      <div class="data-watch">
+        <div class="data-watch-title">📊 Watch Data Transform</div>
+        <div class="data-flow-viz">
+          <div class="data-input">
+            <div class="data-label">INPUT: Approved Final Content</div>
+            <div class="data-content"><pre>JSON Content + Templates:
+• Brand guidelines (fonts, colors)
+• Format template (TOC, headers)
+• Compliance checklist
+• Signature blocks</pre></div>
+          </div>
+          <div class="data-arrow">➜</div>
+          <div class="data-output">
+            <div class="data-label">OUTPUT: Submission-Ready Documents</div>
+            <div class="data-content"><pre>Final Deliverables:
+📄 Proposal_BigClient_2024.pdf
+   - 16 pages, formatted
+   - Digital signatures applied
+   - Metadata: Author, Version, Date
+   
+📝 Proposal_BigClient_2024.docx
+   - Editable for client Q&A
+   - Track changes enabled
+   
+📊 Audit Trail: 47 actions logged
+   - Foundry Control Plane trace
+   - Full replay capability</pre></div>
+          </div>
+        </div>
+        <div class="ai-action">
+          <div class="ai-action-title">🤖 AI Action: Document Export & Archive</div>
+          <div class="ai-action-desc">OpenXML SDK generates PDF/DOCX with proper formatting. Blob MCP uploads with SAS token. SQL MCP updates status. Email MCP sends notifications. Foundry Control Plane archives complete execution trace for audit and learning.</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<!-- SUMMARY -->
+<section class="summary-section" id="summary">
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-icon">📄</div>
+      <div class="summary-number">30 sec</div>
+      <div class="summary-label">RFP Upload</div>
+      <div class="summary-desc">Drag, drop, done. AI starts immediately.</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon">⚡</div>
+      <div class="summary-number">10 min</div>
+      <div class="summary-label">First Draft</div>
+      <div class="summary-desc">Complete document with citations.</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon">👁️</div>
+      <div class="summary-number">45 min</div>
+      <div class="summary-label">Expert Review</div>
+      <div class="summary-desc">Validate, don't write. Light touches.</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon">🚀</div>
+      <div class="summary-number">2-4 hrs</div>
+      <div class="summary-label">Total RFP → Document</div>
+      <div class="summary-desc">10x faster, 84% cheaper, better quality.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">See Your RFP Transform into a Winning Document</h2>
+  <a href="#" class="cta-button">
+    📅 Schedule Live Demo
+    <small>We'll process your actual RFP in real-time</small>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 RFP → Document AI Platform · Built with Blazor + Microsoft Foundry + MS SQL</p>
+  <p style="margin-top:.5rem;opacity:.7;">From Request to Response. From Chaos to Confidence.</p>
+</footer>
+
+</body>
+</html>

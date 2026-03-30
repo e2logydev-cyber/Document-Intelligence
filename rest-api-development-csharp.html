@@ -1,0 +1,252 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>REST API Development (C#) | E2logy Microsoft Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#00B2ED;--dark:#0D133E;--navy:#f5fafd;--slate:#e8f5fb;
+  --accent:#00B2ED;--cyan:#0D133E;--white:#0D133E;--muted:#5a6a8a;
+  --border:rgba(0,178,237,0.18);--fh:'Mulish',sans-serif;--fb:'Mulish',sans-serif;
+  --bg:#ffffff;--bg-alt:#f5fafd;--bg-card:#ffffff;--text:#0D133E;--text-light:#5a6a8a;
+  --nav-offset:112px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#ffffff;color:#0D133E;font-family:var(--fb);font-size:16px;line-height:1.7;overflow-x:hidden;padding-top:calc(var(--nav-offset) + env(safe-area-inset-top, 0px));}
+nav{position:fixed;top:0;left:0;width:100%;z-index:200;padding:0.9rem 4%;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.96);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,178,237,0.15);box-shadow:0 1px 20px rgba(13,19,62,0.07);}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-size:17px;font-weight:700;color:#0D133E;text-decoration:none;}
+.nav-links{display:flex;gap:1.6rem;list-style:none;}
+.nav-links a{color:#5a6a8a;text-decoration:none;font-size:13.5px;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:#00B2ED;}
+.nav-cta{background:#00B2ED;color:#fff;padding:0.5rem 1.3rem;border-radius:6px;font-size:13.5px;font-weight:500;text-decoration:none;transition:background .2s;}
+.nav-cta:hover{background:#0099cc;}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 4% 5rem;position:relative;overflow:hidden;background:#ffffff;}
+.hero-bg{position:absolute;inset:0;z-index:0;}
+.hgrid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,178,237,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(0,178,237,0.07) 1px,transparent 1px);background-size:60px 60px;opacity:0.7;}
+.hglow{position:absolute;top:18%;left:50%;transform:translateX(-50%);width:800px;height:440px;background:radial-gradient(ellipse,rgba(0,178,237,0.10) 0%,transparent 68%);}
+.hglow2{position:absolute;bottom:8%;right:8%;width:380px;height:280px;background:radial-gradient(ellipse,rgba(0,178,237,0.06) 0%,transparent 70%);}
+.hero-inner{position:relative;z-index:1;max-width:920px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.30);border-radius:30px;padding:0.38rem 1.1rem;font-size:12.5px;color:#00B2ED;font-weight:500;margin-bottom:1.8rem;letter-spacing:.03em;}
+.hero-badge span{width:6px;height:6px;border-radius:50%;background:#00B2ED;display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.hero h1{font-family:var(--fh);font-size:clamp(2.2rem,5vw,4rem);font-weight:900;line-height:1.1;color:#0D133E;margin-bottom:1.4rem;letter-spacing:-.03em;}
+.hero h1 em{font-style:normal;color:#00B2ED;}
+.hero-sub{font-size:clamp(.95rem,1.8vw,1.15rem);color:#5a6a8a;max-width:680px;margin:0 auto 2.5rem;font-weight:300;line-height:1.85;}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:4rem;}
+.btn-p{background:#00B2ED;color:#fff;padding:.8rem 1.9rem;border-radius:8px;font-size:14.5px;font-weight:500;text-decoration:none;transition:all .2s;}
+.btn-p:hover{background:#0099cc;transform:translateY(-1px);}
+.btn-o{background:transparent;color:#0D133E;padding:.8rem 1.9rem;border-radius:8px;font-size:14.5px;font-weight:500;text-decoration:none;border:1.5px solid rgba(13,19,62,0.20);transition:all .2s;}
+.btn-o:hover{border-color:#00B2ED;color:#00B2ED;}
+.hero-stats{display:flex;gap:3rem;justify-content:center;flex-wrap:wrap;}
+.hs-val{font-family:var(--fh);font-size:1.95rem;font-weight:800;color:#00B2ED;}
+.hs-lbl{font-size:11.5px;color:#5a6a8a;margin-top:2px;text-transform:uppercase;letter-spacing:.06em;}
+.ms-strip{display:flex;align-items:center;justify-content:center;gap:.6rem;margin-top:3.5rem;}
+.ms-strip span{font-size:11.5px;color:#5a6a8a;letter-spacing:.04em;}
+.sec-lbl{font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;color:#00B2ED;font-weight:600;margin-bottom:.7rem;}
+.sec-title{font-family:var(--fh);font-size:clamp(1.55rem,3.2vw,2.4rem);font-weight:800;color:#0D133E;line-height:1.2;letter-spacing:-.02em;}
+.sec-title em{font-style:normal;color:#00B2ED;}
+.sec-sub{font-size:14.5px;color:#5a6a8a;max-width:620px;margin-top:.7rem;line-height:1.8;}
+.inner{max-width:1200px;margin:0 auto;}
+.taglines{padding:5rem 4%;background:#f5fafd;border-top:1px solid rgba(0,178,237,0.12);border-bottom:1px solid rgba(0,178,237,0.12);}
+.tl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.75rem;margin-top:2.8rem;}
+.tl-item{padding:1.4rem 1.4rem 1.4rem 1.6rem;border-left:2px solid #00B2ED;}
+.tl-cat{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:#00B2ED;font-weight:600;margin-bottom:.4rem;}
+.tl-text{font-family:var(--fh);font-size:1rem;font-weight:600;color:#0D133E;line-height:1.4;}
+.tl-sub{font-size:12.5px;color:#5a6a8a;margin-top:.45rem;line-height:1.6;}
+.services{padding:5.5rem 4%;background:#ffffff;}
+.services.alt{background:#f5fafd;}
+.srv-head{margin-bottom:2.8rem;}
+.srv-group{margin-bottom:3rem;}
+.srv-group-label{display:flex;align-items:center;gap:9px;font-family:var(--fh);font-size:.93rem;font-weight:700;color:#00B2ED;margin-bottom:1.1rem;padding-bottom:.65rem;border-bottom:1px solid rgba(0,178,237,0.15);}
+.srv-group-label svg{width:15px;height:15px;flex-shrink:0;}
+.scard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:1.1rem;}
+.scard{background:#ffffff;border:1px solid rgba(0,178,237,0.18);border-radius:12px;padding:1.5rem;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;overflow:hidden;}
+.scard-link{display:block;color:inherit;text-decoration:none;}
+.scard-link:focus-visible{outline:2px solid #00B2ED;outline-offset:3px;}
+.services.alt .scard{background:#ffffff;}
+.scard::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#00B2ED,#0D133E);}
+.scard:hover{border-color:rgba(0,178,237,.5);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,178,237,0.12);}
+.scard-tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#00B2ED;font-weight:600;margin-bottom:.42rem;}
+.scard h3{font-family:var(--fh);font-size:.97rem;font-weight:700;color:#0D133E;margin-bottom:.5rem;}
+.scard p{font-size:12.5px;color:#5a6a8a;line-height:1.65;}
+.scard ul{list-style:none;margin-top:.85rem;}
+.scard ul li{font-size:12px;color:#5a6a8a;padding:.25rem 0 .25rem 1rem;position:relative;}
+.scard ul li::before{content:'â€º';position:absolute;left:0;color:#00B2ED;}
+.scard-foot{margin-top:1rem;padding-top:.85rem;border-top:1px solid rgba(0,178,237,0.12);font-size:11px;color:#00B2ED;font-weight:500;font-style:italic;}
+.foundry-info{background:#f0f8fe;border:1px solid rgba(0,178,237,.25);border-radius:12px;padding:1.6rem 1.8rem;margin-bottom:1.4rem;position:relative;overflow:hidden;}
+.foundry-info::before{content:'AI-powered applications';position:absolute;top:14px;right:16px;font-size:10px;font-weight:700;color:#00B2ED;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,178,237,.10);border:1px solid rgba(0,178,237,.25);padding:3px 10px;border-radius:20px;}
+.foundry-info h4{font-family:var(--fh);font-size:1rem;font-weight:700;color:#0D133E;margin-bottom:.65rem;}
+.foundry-info p{font-size:13px;color:#5a6a8a;line-height:1.75;margin-bottom:.5rem;}
+.foundry-info p:last-of-type{font-style:italic;color:#6a8aaa;margin-bottom:.9rem;}
+.fi-badges{display:flex;flex-wrap:wrap;gap:.45rem;}
+.fi-badge{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(0,178,237,.08);border:1px solid rgba(0,178,237,.22);color:#00B2ED;font-weight:500;}
+.features{padding:6rem 4%;background:#f5fafd;}
+.feat-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-top:3rem;}
+.feat-list{display:flex;flex-direction:column;gap:.85rem;}
+.feat-item{display:flex;gap:.95rem;padding:1rem;border-radius:10px;border:1px solid transparent;transition:all .2s;}
+.feat-item:hover{background:rgba(0,178,237,.05);border-color:rgba(0,178,237,.2);}
+.feat-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.fi-b{background:rgba(0,178,237,.12);}
+.fi-c{background:rgba(0,178,237,.08);}
+.fi-g{background:rgba(13,19,62,.07);}
+.fi-a{background:rgba(255,185,0,.10);}
+.feat-item h4{font-family:var(--fh);font-size:.9rem;font-weight:600;color:#0D133E;margin-bottom:3px;}
+.feat-item p{font-size:12px;color:#5a6a8a;line-height:1.6;}
+.feat-panel{background:#ffffff;border-radius:14px;border:1px solid rgba(0,178,237,.18);padding:1.7rem;position:sticky;top:90px;box-shadow:0 4px 24px rgba(0,178,237,0.08);}
+.fp-title{font-family:var(--fh);font-size:.93rem;font-weight:700;color:#0D133E;margin-bottom:1.3rem;padding-bottom:.85rem;border-bottom:1px solid rgba(0,178,237,.15);}
+.fp-metric{display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid rgba(0,178,237,.10);}
+.fp-metric:last-of-type{border-bottom:none;}
+.fp-lbl{font-size:12px;color:#5a6a8a;}
+.fp-val{font-family:var(--fh);font-size:1rem;font-weight:700;color:#00B2ED;}
+.fp-bar{height:3px;border-radius:2px;background:rgba(0,178,237,.10);margin-top:4px;}
+.fp-fill{height:3px;border-radius:2px;background:linear-gradient(90deg,#00B2ED,#0D133E);}
+.fp-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:1.3rem;}
+.fp-tag{font-size:10.5px;padding:3px 9px;border-radius:20px;background:rgba(0,178,237,.08);border:1px solid rgba(0,178,237,.20);color:#00B2ED;}
+.cta-sec{padding:5rem 4%;background:linear-gradient(135deg,#0D133E 0%,#00B2ED 100%);border-top:none;}
+.cta-inner{max-width:760px;margin:0 auto;text-align:center;}
+.cta-inner h2{font-family:var(--fh);font-size:clamp(1.7rem,3.8vw,2.7rem);font-weight:900;color:#fff;margin-bottom:1rem;letter-spacing:-.02em;}
+.cta-inner p{font-size:15px;color:rgba(255,255,255,0.80);margin-bottom:2rem;line-height:1.8;}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+.cta-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:1rem;margin-top:2.5rem;}
+.cta-card{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);border-radius:10px;padding:1.1rem;text-align:center;}
+.cta-card-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.65);font-weight:600;margin-bottom:.35rem;}
+.cta-card-val{font-size:13.5px;color:#fff;font-weight:500;}
+footer{padding:1.8rem 4%;border-top:1px solid rgba(0,178,237,.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;background:#ffffff;}
+.foot-logo{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-size:14px;font-weight:700;color:#0D133E;}
+.foot-copy{font-size:11.5px;color:#5a6a8a;}
+.foot-links{display:flex;gap:1.3rem;}
+.foot-links a{font-size:11.5px;color:#5a6a8a;text-decoration:none;}
+.foot-links a:hover{color:#00B2ED;}
+@media(max-width:900px){.feat-layout{grid-template-columns:1fr;}.feat-panel{position:static;}nav .nav-links{display:none;}}
+\n.detail-hero{padding:calc(2.5rem + var(--nav-offset)) 4% 3.5rem;background:#f5fafd;border-bottom:1px solid rgba(0,178,237,0.12);position:relative;z-index:1;}
+.detail-hero .hero-inner{display:flex;flex-direction:column;gap:.9rem;max-width:920px;margin:0 auto;text-align:center;}
+.breadcrumb{font-size:12px;color:#5a6a8a;display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;}
+.breadcrumb a{color:#00B2ED;text-decoration:none;}
+.breadcrumb a:hover{text-decoration:underline;}
+.detail-title{font-family:var(--fh);font-size:clamp(1.9rem,4vw,2.7rem);font-weight:800;color:#0D133E;letter-spacing:-.02em;}
+.detail-desc{font-size:15px;color:#5a6a8a;max-width:760px;line-height:1.8;}
+.detail-content{padding:4.5rem 4% 5.5rem;background:#ffffff;}
+.detail-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:2.5rem;align-items:start;}
+.detail-card{background:#ffffff;border:1px solid rgba(0,178,237,0.18);border-radius:12px;padding:1.6rem;box-shadow:0 4px 20px rgba(0,178,237,0.08);}
+.detail-card h3{font-family:var(--fh);font-size:1rem;font-weight:700;color:#0D133E;margin-bottom:.8rem;}
+.detail-card p{font-size:13px;color:#5a6a8a;line-height:1.75;}
+.detail-card ul{list-style:none;margin-top:.8rem;}
+.detail-card ul li{font-size:12.5px;color:#5a6a8a;padding:.28rem 0 .28rem 1.1rem;position:relative;line-height:1.65;}
+.detail-card ul li::before{content:'›';position:absolute;left:0;color:#00B2ED;}
+.detail-meta{display:flex;flex-direction:column;gap:1.1rem;}
+.cta-mini{background:linear-gradient(135deg,#0D133E 0%,#00B2ED 100%);color:#fff;border-radius:12px;padding:1.4rem 1.6rem;}
+.cta-mini h4{font-family:var(--fh);font-size:1rem;font-weight:700;margin-bottom:.5rem;}
+.cta-mini p{font-size:13px;color:rgba(255,255,255,0.82);line-height:1.7;margin-bottom:.9rem;}
+.cta-mini a{display:inline-block;background:#ffffff;color:#0D133E;text-decoration:none;padding:.55rem 1.1rem;border-radius:6px;font-size:12.5px;font-weight:600;}
+.key-list{display:flex;flex-direction:column;gap:.6rem;}
+.key-item{display:flex;gap:.6rem;align-items:flex-start;font-size:12.5px;color:#5a6a8a;line-height:1.6;}
+.key-dot{width:7px;height:7px;border-radius:50%;background:#00B2ED;margin-top:.35rem;flex-shrink:0;}
+em{font-style:normal;color:#00B2ED;}
+@media(max-width:900px){.detail-grid{grid-template-columns:1fr;}}\n</style>
+</head>
+<body>
+<nav>
+  <a href="microsoft_e2logy_v2.html" class="nav-logo">
+    <svg width="120" height="22" viewBox="0 0 223 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_nav)">
+<path d="M48.1752 26.7534V31.0041H29.1777V29.7925C41.3177 16.5906 42.7908 14.3321 42.7908 11.1448C42.7908 8.71877 41.1167 7.08126 38.6143 7.08126C35.9983 7.08126 34.2765 8.76031 34.2765 11.1983V11.8156H29.7676V11.1746C29.7676 6.21053 33.2988 2.84277 38.5781 2.84277C43.7444 2.84277 47.3416 6.26328 47.3416 11.1211C47.3416 14.7612 45.8882 17.7153 37.8216 26.7534H48.1752Z" fill="#00B2ED"/>
+<path d="M52.6162 0.37207H57.3039V31.0036H52.6162V0.37207Z" fill="#0D133E"/>
+<path d="M73.3409 31.4976C66.4259 31.4976 61.2515 26.4892 61.2515 19.7639C61.2515 12.9973 66.4259 8.03027 73.3409 8.03027C80.2439 8.03027 85.4302 13.027 85.4302 19.7644C85.4302 26.4895 80.2439 31.498 73.3409 31.498V31.4976ZM80.6991 19.7639C80.6991 15.4808 77.6207 12.4225 73.3409 12.4225C69.0611 12.4225 65.9832 15.4808 65.9832 19.7639C65.9832 24.0469 69.0613 27.1054 73.3409 27.1054C77.6205 27.1054 80.6991 24.0472 80.6991 19.7639Z" fill="#0D133E"/>
+<path d="M110.842 8.58131V28.2631C110.842 35.4876 106.511 39.897 99.4493 39.897C93.6009 39.897 89.4499 36.8888 88.2847 31.9156H92.9658C93.841 34.3999 96.5281 35.7703 99.4131 35.7703C103.36 35.7703 106.246 33.1909 106.246 28.8995V27.8547C104.267 29.5553 101.645 30.5631 98.6878 30.5631C92.3332 30.5631 87.4039 25.6623 87.4039 19.3176C87.4039 12.9851 92.3332 8.03027 98.6878 8.03027C102.037 8.03027 104.969 9.34661 107.017 11.504L107.764 8.5821L110.842 8.58131ZM99.2207 26.244C103.282 26.244 106.228 23.3105 106.228 19.3168C106.228 15.3054 103.295 12.372 99.2207 12.372C95.1582 12.372 92.1823 15.3356 92.1823 19.3172C92.1823 23.2808 95.1459 26.2444 99.22 26.2444L99.2207 26.244Z" fill="#0D133E"/>
+<path d="M137.489 8.52441L127.1 31.4816C124.545 37.1504 122.295 39.156 117.687 39.156H115.389V34.9808H117.328C120.319 34.9808 121.239 34.1103 122.895 30.5024L123.403 29.4398L113.557 8.52441H118.612L125.798 24.247L132.541 8.52441H137.489Z" fill="#0D133E"/>
+<path d="M17.0325 27.3299C14.8671 27.3299 13.0661 26.5576 11.8287 25.1854H6.58582C8.44178 29.1137 12.3338 31.6972 17.0325 31.6972C22.0836 31.6972 26.2145 28.7961 28.0156 24.0171H23.1212C21.923 26.0793 19.7343 27.3299 17.0325 27.3299Z" fill="#00B2ED"/>
+<path d="M17.0325 7.94727C12.5687 7.94727 8.84894 10.2603 6.89117 13.8397H12.3534C13.5515 12.7576 15.1568 12.15 17.0325 12.15C20.4781 12.15 23.0702 14.1807 23.9042 17.6228H2.27389L0.0645752 21.4061H28.4698C28.5245 20.8964 28.5637 20.3867 28.5637 19.8771H28.5677C28.5677 13.2869 23.959 7.94727 17.0325 7.94727Z" fill="#00B2ED"/>
+
+</g>
+<defs><clipPath id="clip0_nav"><rect width="223" height="40" fill="white"/></clipPath></defs>
+</svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="microsoft_e2logy_v2.html#services">Services</a></li>
+    <li><a href="microsoft_e2logy_v2.html#custom-dev">Custom Dev</a></li>
+    <li><a href="microsoft_e2logy_v2.html#power-platform">Power Platform</a></li>
+    <li><a href="microsoft_e2logy_v2.html#foundry">MS Foundry</a></li>
+    <li><a href="microsoft_e2logy_v2.html#features">Why Us</a></li>
+    <li><a href="microsoft_e2logy_v2.html#contact">Contact</a></li>
+  </ul>
+  <a href="microsoft_e2logy_v2.html#contact" class="nav-cta">Free Consultation</a>
+</nav>
+<section class="detail-hero">
+  <div class="hero-inner">
+    <div class="breadcrumb"><a href="microsoft_e2logy_v2.html#services">Back to Services</a> / Power Platform</div>
+    <div class="detail-title">REST API<em> Development (C#)</em></div>
+    <p class="detail-desc">Design secure, well-documented REST APIs with ASP.NET Core Web API for web, mobile, and partner integrations.</p>
+    <!-- Microsoft capability claims will be verified before finalizing the content. -->
+  </div>
+</section>
+<section class="detail-content">
+  <div class="inner detail-grid">
+    <div class="detail-meta">
+      <div class="detail-card">
+        <h3>Real-World Use Case</h3>
+        <p>A fintech platform needs a stable API for mobile apps and partners. We build versioned REST endpoints with OAuth, rate limits, and monitoring for consistent, secure access.</p>
+      </div>
+      <div class="detail-card">
+        <h3>How to Use</h3>
+        <ul>
+          <li>Define API contracts and versioning strategy.</li>
+          <li>Implement REST endpoints with validation and error handling.</li>
+          <li>Secure APIs with OAuth 2.0 and JWT tokens.</li>
+          <li>Add rate limiting, logging, and observability.</li>
+          <li>Document endpoints with OpenAPI/Swagger.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="detail-meta">
+      <div class="detail-card">
+        <h3>Key Capabilities</h3>
+        <div class="key-list">
+          <div class="key-item"><span class="key-dot"></span>API-first design and versioning.</div>
+          <div class="key-item"><span class="key-dot"></span>Security with OAuth and JWT.</div>
+          <div class="key-item"><span class="key-dot"></span>Rate limiting and request validation.</div>
+          <div class="key-item"><span class="key-dot"></span>Swagger documentation and testability.</div>
+          <div class="key-item"><span class="key-dot"></span>Integration with API gateways and monitoring.</div>
+        
+          <div class="key-item"><span class="key-dot"></span>Dataverse data model with role-based security and auditing.</div>
+          <div class="key-item"><span class="key-dot"></span>Broad set of standard connectors plus custom connector support.</div>
+          <div class="key-item"><span class="key-dot"></span>Built-in mobile support, responsive layouts, and Teams embedding.</div>
+          <div class="key-item"><span class="key-dot"></span>Solution packaging for environment promotion and lifecycle management.</div>
+        </div></div>
+      </div>
+      <div class="cta-mini">
+        <h4>Ship Reliable APIs</h4>
+        <p>We deliver robust .NET APIs that power your products and integrations.</p>
+        <a href="microsoft_e2logy_v2.html#contact">Book a Free Consultation</a>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="foot-logo">
+    <svg width="100" height="18" viewBox="0 0 223 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_foot)">
+<path d="M48.1752 26.7534V31.0041H29.1777V29.7925C41.3177 16.5906 42.7908 14.3321 42.7908 11.1448C42.7908 8.71877 41.1167 7.08126 38.6143 7.08126C35.9983 7.08126 34.2765 8.76031 34.2765 11.1983V11.8156H29.7676V11.1746C29.7676 6.21053 33.2988 2.84277 38.5781 2.84277C43.7444 2.84277 47.3416 6.26328 47.3416 11.1211C47.3416 14.7612 45.8882 17.7153 37.8216 26.7534H48.1752Z" fill="#00B2ED"></path>
+<path d="M52.6162 0.37207H57.3039V31.0036H52.6162V0.37207Z" fill="#0D133E"></path>
+<path d="M73.3409 31.4976C66.4259 31.4976 61.2515 26.4892 61.2515 19.7639C61.2515 12.9973 66.4259 8.03027 73.3409 8.03027C80.2439 8.03027 85.4302 13.027 85.4302 19.7644C85.4302 26.4895 80.2439 31.498 73.3409 31.498V31.4976ZM80.6991 19.7639C80.6991 15.4808 77.6207 12.4225 73.3409 12.4225C69.0611 12.4225 65.9832 15.4808 65.9832 19.7639C65.9832 24.0469 69.0613 27.1054 73.3409 27.1054C77.6205 27.1054 80.6991 24.0472 80.6991 19.7639Z" fill="#0D133E"></path>
+<path d="M110.842 8.58131V28.2631C110.842 35.4876 106.511 39.897 99.4493 39.897C93.6009 39.897 89.4499 36.8888 88.2847 31.9156H92.9658C93.841 34.3999 96.5281 35.7703 99.4131 35.7703C103.36 35.7703 106.246 33.1909 106.246 28.8995V27.8547C104.267 29.5553 101.645 30.5631 98.6878 30.5631C92.3332 30.5631 87.4039 25.6623 87.4039 19.3176C87.4039 12.9851 92.3332 8.03027 98.6878 8.03027C102.037 8.03027 104.969 9.34661 107.017 11.504L107.764 8.5821L110.842 8.58131ZM99.2207 26.244C103.282 26.244 106.228 23.3105 106.228 19.3168C106.228 15.3054 103.295 12.372 99.2207 12.372C95.1582 12.372 92.1823 15.3356 92.1823 19.3172C92.1823 23.2808 95.1459 26.2444 99.22 26.2444L99.2207 26.244Z" fill="#0D133E"></path>
+<path d="M137.489 8.52441L127.1 31.4816C124.545 37.1504 122.295 39.156 117.687 39.156H115.389V34.9808H117.328C120.319 34.9808 121.239 34.1103 122.895 30.5024L123.403 29.4398L113.557 8.52441H118.612L125.798 24.247L132.541 8.52441H137.489Z" fill="#0D133E"></path>
+<path d="M17.0325 27.3299C14.8671 27.3299 13.0661 26.5576 11.8287 25.1854H6.58582C8.44178 29.1137 12.3338 31.6972 17.0325 31.6972C22.0836 31.6972 26.2145 28.7961 28.0156 24.0171H23.1212C21.923 26.0793 19.7343 27.3299 17.0325 27.3299Z" fill="#00B2ED"></path>
+<path d="M17.0325 7.94727C12.5687 7.94727 8.84894 10.2603 6.89117 13.8397H12.3534C13.5515 12.7576 15.1568 12.15 17.0325 12.15C20.4781 12.15 23.0702 14.1807 23.9042 17.6228H2.27389L0.0645752 21.4061H28.4698C28.5245 20.8964 28.5637 20.3867 28.5637 19.8771H28.5677C28.5677 13.2869 23.959 7.94727 17.0325 7.94727Z" fill="#00B2ED"></path>
+
+</g>
+<defs><clipPath id="clip0_foot"><rect width="223" height="40" fill="white"></rect></clipPath></defs>
+</svg>
+  </div>
+  <div class="foot-copy">© 2026 E2logy Software Solutions · Microsoft Gold Partner
+</div></footer>
+</body>
+</html>
+
+
+
+
+
+
