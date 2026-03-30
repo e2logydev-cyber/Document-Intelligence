@@ -416,7 +416,7 @@ footer{padding:1.6rem 4%;border-top:1px solid rgba(0,178,237,0.15);display:flex;
 .step{animation:fadeUp .48s ease both;}
 .step:nth-child(1){animation-delay:.04s;}.step:nth-child(2){animation-delay:.09s;}.step:nth-child(3){animation-delay:.14s;}.step:nth-child(4){animation-delay:.19s;}.step:nth-child(5){animation-delay:.24s;}.step:nth-child(6){animation-delay:.29s;}.step:nth-child(7){animation-delay:.34s;}.step:nth-child(8){animation-delay:.39s;}.step:nth-child(9){animation-delay:.44s;}
 
-@media(max-width:900px){.foundry-diagram{grid-template-columns:1fr;}.compare-grid{grid-template-columns:1fr;}.compare-arrow{display:none;}.nav-links{display:none;}}
+@media(max-width:900px){.foundry-diagram{grid-template-columns:1fr;}.compare-grid{grid-template-columns:1fr;}.compare-arrow{display:none;}}
 @media(max-width:700px){.vs-grid,.fd-mcp-row,.fd-row{grid-template-columns:1fr 1fr;}.output-grid{grid-template-columns:1fr 1fr;}.flow-steps::before{left:24px;}.step-num{width:36px;height:36px;font-size:.85rem;}.step-card{padding:1.1rem 1.2rem;}.tradeoff-table{font-size:12px;}}
 
 
@@ -685,6 +685,118 @@ footer{padding:1.5rem 4%;border-top:1px solid rgba(0,178,237,0.15);display:flex;
 
 /* SMOOTH SCROLL */
 html{scroll-behavior:smooth;}
+
+
+.nav-hamburger{
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:6px;
+  background:none;
+  border:2px solid rgba(0,178,237,0.35);
+  cursor:pointer;
+  padding:10px 12px;
+  border-radius:8px;
+  transition:background .2s,border-color .2s;
+  z-index:300;
+  position:relative;
+}
+.nav-hamburger:hover{background:rgba(0,178,237,0.08);border-color:#00B2ED;}
+.nav-hamburger span{
+  display:block;
+  width:24px;
+  height:2.5px;
+  border-radius:2px;
+  background:#0D133E;
+  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .25s;
+}
+.nav-hamburger.open{background:rgba(0,178,237,0.10);border-color:#00B2ED;}
+.nav-hamburger.open span:nth-child(1){transform:translateY(8.5px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-8.5px) rotate(-45deg);}
+
+/* Mobile overlay backdrop */
+.nav-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(13,19,62,0.45);
+  z-index:195;
+  opacity:0;
+  transition:opacity .3s;
+}
+.nav-overlay.show{opacity:1;}
+
+@media(max-width:900px){
+  .feat-layout{grid-template-columns:1fr;}
+  .feat-panel{position:static;}
+  .nav-hamburger{display:flex;}
+  .nav-cta{display:none;}
+  .nav-overlay{display:none !important;}
+
+  /* Full-screen mobile menu */
+  .nav-links{
+    display:flex !important;
+    flex-direction:column;
+    gap:0;
+    list-style:none;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    width:100vw;
+    height:100vh;
+    background:#ffffff;
+    z-index:200;
+    padding:90px 0 3rem;
+    transform:translateY(-100%);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+    overflow-y:auto;
+  }
+  .nav-links.mobile-open{transform:translateY(0);}
+
+  .nav-links li{
+    border-bottom:1px solid rgba(0,178,237,0.10);
+  }
+  .nav-links a{
+    display:flex;
+    align-items:center;
+    padding:1.3rem 2rem;
+    font-size:18px;
+    font-weight:600;
+    color:#0D133E;
+    text-decoration:none;
+    transition:background .15s,color .15s;
+  }
+  .nav-links a:hover{
+    background:rgba(0,178,237,0.07);
+    color:#00B2ED;
+  }
+  /* CTA inside menu */
+  .nav-links .mobile-cta-item{
+    border-bottom:none;
+    padding:2rem 2rem 0;
+  }
+  .nav-links .mobile-cta-item a{
+    background:#00B2ED;
+    color:#fff !important;
+    border-radius:10px;
+    text-align:center;
+    padding:1rem;
+    font-size:16px;
+    font-weight:600;
+    justify-content:center;
+    display:flex;
+  }
+  .nav-links .mobile-cta-item a:hover{
+    background:#0099cc !important;
+  }
+}
+
+
+
 </style>
 </head>
 <body>
@@ -860,10 +972,13 @@ Platform<br/>using <em>Microsoft Foundry</em></div>
     <li><a href="#section-subs">Subscriptions &amp; Skills</a></li>
      <li><a href="Roadmap.html">Proposal Intelligence Platform · POC</a></li>
   </ul>
-   <a href="#contact" class="nav-cta">Free Consultation</a> 
+    <a href="#contact" class="nav-cta">Free Consultation</a>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
   
 </nav>
-
+<div class="nav-overlay" id="navOverlay"></div>
 
 <!-- TRADEOFFS -->
 <section class="doc-section alt" id="tradeoffs">
@@ -2364,5 +2479,39 @@ window.addEventListener('load', () => {
 .sb-chips{display:flex;gap:.5rem;flex-wrap:wrap;}
 .sb-chip{background:rgba(0,178,237,0.16);border:1px solid rgba(0,178,237,0.32);color:#00B2ED;font-size:11.5px;font-weight:700;padding:.28rem .85rem;border-radius:20px;}
 </style>
+<div class="nav-overlay" id="navOverlay"></div>
+<script>
+(function(){
+  var btn = document.getElementById('navHamburger');
+  var menu = document.querySelector('.nav-links');
+  var overlay = document.getElementById('navOverlay');
+
+  // Add mobile CTA inside the menu (once)
+ 
+
+  function openMenu(){
+    menu.classList.add('mobile-open');
+    overlay.classList.add('show');
+    btn.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
+    document.body.style.overflow='hidden';
+  }
+  function closeMenu(){
+    menu.classList.remove('mobile-open');
+    overlay.classList.remove('show');
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+    document.body.style.overflow='';
+  }
+
+  btn.addEventListener('click', function(){
+    menu.classList.contains('mobile-open') ? closeMenu() : openMenu();
+  });
+  overlay.addEventListener('click', closeMenu);
+  menu.addEventListener('click', function(e){
+    if(e.target.tagName==='A') closeMenu();
+  });
+})();
+</script>
 </body>
 </html>
