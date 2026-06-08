@@ -424,7 +424,8 @@
 <nav>
   <a class="nav-logo" href="#">Document Intelligence <em>Proposal</em></a>
   <ul class="nav-links">
-    <li><a href="#overview">Overview</a></li>
+  <li><a href="microsoft_e2logy_v2.html">Home</a></li>    
+  <li><a href="#overview">Overview</a></li>
     <li><a href="#how-it-works">How It Works</a></li>
     <li><a href="#teams">Teams</a></li>
     <li><a href="#architecture">Architecture</a></li>
@@ -432,12 +433,28 @@
     <li><a href="#endpoints">API</a></li>
     <li><a href="#database">Database</a></li>
     <li><a href="#project-structure">Structure</a></li>
-    <li><a href="#migrations">Migrations</a></li>
-    <li><a href="#testing">Testing</a></li>
+    <!-- <li><a href="#migrations">Migrations</a></li> -->
+    <!-- <li><a href="#testing">Testing</a></li> -->
     <li><a href="#integrations">Integrations</a></li>
   </ul>
-  <a class="nav-cta" href="#deployment">Deployment</a>
+  <a class="nav-cta" href="#Demo">Demo</a>
 </nav>
+
+<!-- 
+<div class="flow">
+    <span class="flow-box fb-blue">Lead Submitted</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-purple">AI Scoping (GPT-4o)</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Parallel Team Review</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Revisions &amp; Chat</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">All Teams Approve</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">SOW Document Export</span>
+  </div> -->
+
 
 <!-- ═══════════════════════════ HERO ══════════════════════════ -->
 <section class="page-hero">
@@ -451,26 +468,23 @@
       from capturing a client lead to generating a fully signed-off Statement of Work.
     </p>
     <div class="ph-meta">
-      <div class="ph-stat">
+      <div class="flow-box fb-blue">
         <div class="ph-stat-lbl">Platform</div>
         <div class="ph-stat-val">.NET 9 / Blazor Server</div>
       </div>
-      <div class="ph-stat">
+      <div class="flow-box fb-blue">
         <div class="ph-stat-lbl">Database</div>
         <div class="ph-stat-val">MS SQL Server + EF Core</div>
       </div>
-      <div class="ph-stat">
+      <div class="flow-box fb-blue">
         <div class="ph-stat-lbl">AI Engine</div>
         <div class="ph-stat-val">OpenAI GPT-4o</div>
       </div>
-      <div class="ph-stat">
+      <div class="flow-box fb-blue">
         <div class="ph-stat-lbl">Real-time</div>
-        <div class="ph-stat-val">SignalR + Zoho Cliq</div>
+        <div class="ph-stat-val">SignalR</div>
       </div>
-      <div class="ph-stat">
-        <div class="ph-stat-lbl">Generated</div>
-        <div class="ph-stat-val">2026-06-08</div>
-      </div>
+     
     </div>
   </div>
 </section>
@@ -571,7 +585,7 @@
       <div class="step-num sn-amber">4</div>
       <div class="step-card sc-amber">
         <strong>Four teams are notified simultaneously</strong>
-        <p>Sales, Tech, Finance, and Management each receive a Zoho Cliq message and an in-app notification to review their section. Reviews happen in parallel — no waiting for the previous team to finish.</p>
+        <p>Sales, Tech, Finance, and Management each receive an in-app notification to review their section. Reviews happen in parallel — no waiting for the previous team to finish.</p>
       </div>
     </div>
 
@@ -611,7 +625,7 @@
       <div class="step-num sn-amber">9</div>
       <div class="step-card sc-amber">
         <strong>Approval reminders run automatically</strong>
-        <p>A background job checks every 2 hours for pending approvals that are overdue and sends reminders via Zoho Cliq and email — no one needs to manually chase reviewers.</p>
+        <p>A background job checks every 2 hours for pending approvals that are overdue and sends reminders via email — no one needs to manually chase reviewers.</p>
       </div>
     </div>
 
@@ -684,8 +698,8 @@
         <tr><td>Manage users</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td></tr>
         <tr><td>Manage teams</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td></tr>
         <tr><td>Configure OpenAI settings</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td></tr>
-        <tr><td>Historical projects CRUD</td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
-        <tr><td>Rate cards CRUD</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Historical projects </td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Rate cards </td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
       </tbody>
     </table>
   </div>
@@ -718,8 +732,6 @@
       <div class="layer-title">Data &amp; External Services</div>
       <div class="item">SQL Server (EF Core 9)</div>
       <div class="item">OpenAI GPT-4o</div>
-      <div class="item">Zoho Cliq (Notifications)</div>
-      <div class="item">Zoho Writer (Documents)</div>
     </div>
   </div>
 
@@ -761,10 +773,7 @@
       <div class="scard-tag">SignalR — Chat Hub</div>
       <p>Each proposal has a group chat room. All team members connected to a proposal receive messages instantly.</p>
     </div>
-    <div class="scard">
-      <div class="scard-tag">Zoho Cliq</div>
-      <p>External webhook-based notifications sent to team Cliq channels when a proposal is ready for review or has been approved.</p>
-    </div>
+   
   </div>
 </section>
 
@@ -788,13 +797,13 @@
         <tr><td>Authentication</td><td>JWT Bearer</td><td>9.0.0</td><td>Stateless API auth</td></tr>
         <tr><td>Real-time</td><td>ASP.NET Core SignalR</td><td>9.0.0</td><td>Chat + live notifications</td></tr>
         <tr><td>AI</td><td>Azure.AI.OpenAI</td><td>2.0.0</td><td>GPT-4o proposal generation</td></tr>
-        <tr><td>Secrets</td><td>Azure Key Vault</td><td>4.6.0</td><td>API keys &amp; credentials storage</td></tr>
-        <tr><td>API Docs</td><td>Swashbuckle / Swagger</td><td>6.6.2</td><td>Interactive API documentation</td></tr>
+        
+        <tr><td>API Docs</td><td>Swagger</td><td>6.6.2</td><td>Interactive API documentation</td></tr>
         <tr><td>Testing</td><td>xUnit</td><td>2.9.2</td><td>Unit &amp; integration tests</td></tr>
-        <tr><td>Notifications</td><td>Zoho Cliq Webhooks</td><td>REST</td><td>Team channel alerts</td></tr>
-        <tr><td>Documents</td><td>Zoho Writer API</td><td>REST</td><td>PDF/Word generation</td></tr>
-        <tr><td>Email</td><td>SMTP (System.Net.Mail)</td><td>–</td><td>Approval email notifications</td></tr>
-        <tr><td>Word Generation</td><td>Open XML (OOXML)</td><td>–</td><td>Server-side .docx creation</td></tr>
+        
+        
+        <tr><td>Email</td><td>SMTP </td><td>–</td><td>Approval email notifications</td></tr>
+        <tr><td>Word Generation</td><td>Open XML </td><td>–</td><td>Server-side .docx creation</td></tr>
       </tbody>
     </table>
   </div>
@@ -831,7 +840,7 @@
     <div class="endpoint">
       <span class="method method-post">POST</span>
       <span class="ep-path">/api/auth/login</span>
-      <span class="ep-desc">Submit email + password, receive a signed JWT. No auth required.</span>
+      <span class="ep-desc">Submit email + password, receive a signed JWT.</span>
     </div>
   </div>
 
@@ -951,7 +960,7 @@
         <tr><td><code>ApprovalService</code></td><td>Persists approval decisions; checks if all four teams have approved to unlock management sign-off</td></tr>
         <tr><td><code>ProposalDocumentGenerator</code></td><td>Fills the SOW.docx template with approved proposal content using Open XML manipulation</td></tr>
         <tr><td><code>ZohoService</code></td><td>Calls Zoho Writer API to render the final PDF/Word; handles the webhook callback when rendering completes</td></tr>
-        <tr><td><code>ZohoCliqService</code></td><td>Sends formatted notification cards to four Zoho Cliq channels simultaneously via webhook URLs</td></tr>
+        
         <tr><td><code>EmailService</code></td><td>Sends SMTP emails with SOW attachments for approval notifications</td></tr>
         <tr><td><code>AuthService</code></td><td>Validates credentials, generates signed JWTs with multi-team claims, 8-hour expiry</td></tr>
         <tr><td><code>UserManagementService</code></td><td>CRUD for users; password hashing; super-admin flag management</td></tr>
@@ -988,142 +997,9 @@
 </section>
 
 <!-- ─── MIGRATIONS ─────────────────────────────────────────── -->
-<section id="migrations" class="content-sec">
-  <div class="sec-lbl">🔄 Migrations</div>
-  <h2 class="sec-title">Database <em>Migration History</em></h2>
-  <p class="sec-sub">Entity Framework Core code-first migrations track every schema change. Migrations run automatically on startup in Development; in Production they must be applied via SQL script.</p>
 
-  <div class="mig-steps">
 
-    <div class="mig-item">
-      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
-      <div class="mig-body">
-        <div class="mig-date">2026-04-06</div>
-        <div class="mig-name">InitialCreate</div>
-        <div class="mig-desc">Created all core tables: Leads, Users, Teams, UserTeams, GeneratedSows, ProposalSections, ProposalApprovals, HistoricalProjects, RateCards, AuditLogs</div>
-      </div>
-    </div>
 
-    <div class="mig-item">
-      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
-      <div class="mig-body">
-        <div class="mig-date">2026-04-07</div>
-        <div class="mig-name">AddIsSuperAdmin</div>
-        <div class="mig-desc">Added <code>IsSuperAdmin</code> boolean column to Users table for privileged admin access</div>
-      </div>
-    </div>
-
-    <div class="mig-item">
-      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
-      <div class="mig-body">
-        <div class="mig-date">2026-04-09</div>
-        <div class="mig-name">UpdateChanges</div>
-        <div class="mig-desc">Schema refinements following initial design review — column type corrections and nullable adjustments</div>
-      </div>
-    </div>
-
-    <div class="mig-item">
-      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
-      <div class="mig-body">
-        <div class="mig-date">2026-04-09</div>
-        <div class="mig-name">FixTeamMembersTable</div>
-        <div class="mig-desc">Fixed UserTeams table unique constraint on (UserId, TeamId) to prevent duplicate memberships</div>
-      </div>
-    </div>
-
-    <div class="mig-item">
-      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
-      <div class="mig-body">
-        <div class="mig-date">2026-04-09</div>
-        <div class="mig-name">AddLeadScopingPipeline</div>
-        <div class="mig-desc">Added LeadScopingJobs and LeadScopingResults tables for the asynchronous AI scoping job queue and result cache</div>
-      </div>
-    </div>
-
-    <div class="mig-item">
-      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
-      <div class="mig-body">
-        <div class="mig-date">2026-04-16</div>
-        <div class="mig-name">AddOpenAISettingsStorage</div>
-        <div class="mig-desc">Added OpenAISettings table so admins can configure the GPT model and API key from within the app at runtime</div>
-      </div>
-    </div>
-
-    <div class="mig-item">
-      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
-      <div class="mig-body">
-        <div class="mig-date">2026-04-17</div>
-        <div class="mig-name">AddLeadOwningTeam</div>
-        <div class="mig-desc">Added <code>OwningTeamId</code> FK on Leads so proposals are associated with the submitting team</div>
-      </div>
-    </div>
-
-    <div class="mig-item">
-      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
-      <div class="mig-body">
-        <div class="mig-date">2026-04-17</div>
-        <div class="mig-name">AddLeadTechStackFix</div>
-        <div class="mig-desc">Changed Leads.TechStack from a short varchar to nvarchar(max) to accommodate lengthy technology lists</div>
-      </div>
-    </div>
-
-    <div class="mig-item">
-      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
-      <div class="mig-body">
-        <div class="mig-date">2026-04-20</div>
-        <div class="mig-name">AddGeneratedSowDocumentHtml</div>
-        <div class="mig-desc">Added <code>DocumentHtml</code> column to GeneratedSows so the merged document HTML is persisted for the inline editor</div>
-      </div>
-    </div>
-
-    <div class="mig-item">
-      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
-      <div class="mig-body">
-        <div class="mig-date">2026-04-22</div>
-        <div class="mig-name">AddProposalChatMessages</div>
-        <div class="mig-desc">Added ProposalChatMessages table for per-proposal real-time team discussion thread</div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="callout" style="margin-top:1.5rem;">
-    <p>
-      <strong>Auto-migration toggle:</strong> Controlled by <code>Database:ApplyMigrationsAtStartup</code> in appsettings. Enabled only in Development and Staging environments. Production uses idempotent SQL scripts generated via <code>dotnet ef migrations script --idempotent</code>.
-    </p>
-  </div>
-</section>
-
-<!-- ─── TESTING ───────────────────────────────────────────── -->
-<section id="testing" class="content-sec alt">
-  <div class="sec-lbl">🧪 Testing</div>
-  <h2 class="sec-title">Testing</h2>
-  <p class="sec-sub">Unit tests use xUnit and cover critical business logic. The test suite runs without requiring a live database or OpenAI API key.</p>
-
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Test File</th><th>What it tests</th></tr></thead>
-      <tbody>
-        <tr><td><code>OpenAIProposalSchemaV2Tests</code></td><td>Verifies that the GPT-4o JSON response is correctly deserialized into the OpenAIProposalSchema model. Tests v2 field population and schema evolution.</td></tr>
-        <tr><td><code>EstimationServiceTests</code></td><td>Validates cost calculation and team composition logic using known rate cards. Ensures totals add up correctly across all roles.</td></tr>
-        <tr><td><code>RoleRouterTests</code></td><td>Checks that the role-based routing service redirects each team to the correct dashboard page on login.</td></tr>
-        <tr><td><code>ProposalChatAccessRulesTests</code></td><td>Asserts that only team members assigned to a proposal may send or receive chat messages for that proposal.</td></tr>
-        <tr><td><code>ProposalDocumentGenerationTests</code></td><td>End-to-end test of Word document XML generation from a mock proposal object — verifies all merge fields are populated.</td></tr>
-        <tr><td><code>HtmlSanitizerTests</code></td><td>Confirms that XSS payloads are stripped from rich-text section content before storage and render.</td></tr>
-        <tr><td><code>ProjectBriefRepairTests</code></td><td>Validates the brief repair/clean-up logic that normalises AI-generated project briefs before display.</td></tr>
-        <tr><td><code>BriefDetailsRepairTests</code></td><td>Tests field-level repair for detail sections that may contain malformed AI output.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="highlight-box green" style="margin-top:.5rem;">
-    <p>
-      Run all tests: <code>dotnet test</code> from the solution root.&nbsp;&nbsp;
-      Run with coverage: <code>dotnet test --collect:"XPlat Code Coverage"</code>&nbsp;&nbsp;
-      Coverage reports collected via <strong>coverlet</strong> in Cobertura format.
-    </p>
-  </div>
-</section>
 
 <!-- ─── INTEGRATIONS ──────────────────────────────────────── -->
 <section id="integrations" class="content-sec">
@@ -1135,17 +1011,14 @@
       <div class="scard-tag" style="color:#7c3aed">OpenAI (GPT-4o)</div>
       <p>The core AI engine. Sends a structured prompt containing the client brief, similar historical projects, and rate card data. Receives a JSON response with executive summary, technical architecture, effort breakdown, team composition, and pricing. Model, temperature, and API key are user-adjustable at runtime.</p>
     </div>
-    <div class="scard">
-      <div class="scard-tag" style="color:#ea580c">Zoho Cliq</div>
-      <p>Sends instant notifications to four team channels when a proposal is ready for review. Uses incoming webhook URLs per channel. Messages include a direct deep link to the proposal review page. Credentials stored in Azure Key Vault.</p>
-    </div>
+    
     <div class="scard">
       <div class="scard-tag" style="color:#0284c7">Zoho Writer</div>
       <p>Used for advanced PDF/Word document generation from a Zoho template. A webhook callback (<code>/api/zoho/webhook/doc-ready</code>) signals when the document is ready for download. HMAC signature verified for security.</p>
     </div>
     <div class="scard left-success">
       <div class="scard-tag">Azure Key Vault</div>
-      <p>Stores sensitive configuration at runtime: OpenAI API key, Zoho credentials, SMTP password, JWT secret. Application identity uses Azure Managed Identity for passwordless vault access.</p>
+      <p>Stores sensitive configuration at runtime: OpenAI API key, SMTP password, JWT secret. Application identity uses Azure Managed Identity for passwordless vault access.</p>
     </div>
     <div class="scard">
       <div class="scard-tag">SMTP Email</div>
@@ -1176,12 +1049,12 @@
       </div>
       <div>
         <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Database</div>
-        <span class="fp-tag gray">AHMDSK33\MSSQLSERVER2014 / Document-Intelligence-Proposal</span>
+        <span class="fp-tag gray">Document-Intelligence-Proposal</span>
       </div>
-      <div>
+      <!-- <div>
         <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Migrations</div>
         <span class="fp-tag amber">Auto-applied on startup (Dev only)</span>
-      </div>
+      </div> -->
     </div>
   </div>
 
@@ -1215,7 +1088,6 @@
       <tbody>
         <tr><td>JWT Secret</td><td>appsettings.Development.json</td><td>Azure Key Vault</td></tr>
         <tr><td>OpenAI API Key</td><td>Database (OpenAISettings table)</td><td>Azure Key Vault</td></tr>
-        <tr><td>Zoho Credentials</td><td>appsettings.json (KEY_VAULT placeholder)</td><td>Azure Key Vault</td></tr>
         <tr><td>DB Connection String</td><td>appsettings.json</td><td>Azure App Service Connection Strings</td></tr>
         <tr><td>Migrations on startup</td><td>Enabled (<code>true</code>)</td><td>Disabled — use EF idempotent script</td></tr>
         <tr><td>SMTP</td><td>appsettings.json</td><td>Azure Key Vault / App Service env vars</td></tr>
@@ -1223,7 +1095,7 @@
     </table>
   </div>
 
-  <h3 class="sub-head">Default Credentials</h3>
+  <!-- <h3 class="sub-head">Default Credentials</h3>
   <div class="highlight-box">
     <p>
       On first startup, creates the four default teams (Sales, Tech, Finance, Management) and a super-admin user:<br/>
@@ -1231,15 +1103,50 @@
       <strong>Email:</strong> <code>superadmin@system.com</code> &nbsp;·&nbsp;
       <strong>Password:</strong> <code>Admin@123</code>
     </p>
-  </div>
+  </div> -->
 </section>
+<!-- ─── Demo ───────────────────────────────────────────── -->
+<section id="Demo" class="content-sec">
+  <div class="sec-lbl">🧪 Demo</div>
+  <h2 class="sec-title">Demo</h2>
+ 
+  <h3 class="sub-head">Default Credentials</h3>
+  <div class="highlight-box">
+    <p>
+    
+      <strong>Website:</strong> <code>http://demo-ahm.e2logy.org:5001/</code> &nbsp;·&nbsp;
+      <!-- <strong>Email:</strong> <code>superadmin@system.com</code> &nbsp;·&nbsp;
+      <strong>Password:</strong> <code>Admin@123</code> -->
+    </p>
+  </div>
 
+
+    <table>
+      <thead><tr><th>Role</th><th>Username</th><th>Password</th></tr></thead>
+      <tbody>
+        <tr><td><code>Super Admin </code></td><td>superadmin@system.com</td><td>Admin@123</td></tr>
+        <tr><td><code>Sales </code></td><td>sales@yopmail.com</td><td>Admin@1234</td></tr>
+        <tr><td><code>Tech </code></td><td>tech@yopmail.com</td><td>Admin@1234</td></tr>
+        <tr><td><code>Finance </code></td><td>fin@yopmail.com</td><td>Admin@1234</td></tr>
+        <tr><td><code>Management </code></td><td>management@yopmail.com</td><td>Admin@1234</td></tr>
+      </tbody>
+    </table>
+ 
+
+  <!-- <div class="highlight-box green" style="margin-top:.5rem;">
+    <p>
+      Run all tests: <code>dotnet test</code> from the solution root.&nbsp;&nbsp;
+      Run with coverage: <code>dotnet test --collect:"XPlat Code Coverage"</code>&nbsp;&nbsp;
+      Coverage reports collected via <strong>coverlet</strong> in Cobertura format.
+    </p>
+  </div> -->
+</section>
 </main>
 
 <!-- ═══════════════════════════ FOOTER ════════════════════════ -->
 <footer>
   <span class="foot-logo">Document Intelligence <em>Proposal</em></span>
-  <span class="foot-copy">Generated: 2026-06-08 &nbsp;·&nbsp; .NET 9 / Blazor Server / GPT-4o &nbsp;·&nbsp; e2logy</span>
+  <span class="foot-copy">.NET 9 / Blazor Server / GPT-4o &nbsp;·&nbsp; e2logy</span>
   <div class="foot-links">
     <a href="#">e2logy</a>
     <a href="#overview">Overview</a>
