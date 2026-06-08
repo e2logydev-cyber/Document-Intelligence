@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Power Platform &amp; Automation — Event Registration &amp; Management System</title>
+  <meta name="description" content="A seamless event registration and management system built on Microsoft Power Platform — Power Pages, Power Automate, Power BI, Copilot Studio, and Dataverse." />
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --blue:#00B2ED;
+      --dark:#0D133E;
+      --navy:#f5fafd;
+      --slate:#e8f5fb;
+      --accent:#00B2ED;
+      --muted:#5a6a8a;
+      --border:rgba(0,178,237,0.18);
+      --fh:'Mulish',sans-serif;
+      --fb:'Mulish',sans-serif;
+      --bg:#ffffff;
+      --bg-alt:#f5fafd;
+      --bg-card:#ffffff;
+      --text:#0D133E;
+      --text-light:#5a6a8a;
+      --nav-offset:62px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:var(--fb);
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.7;
+      font-size:15px;
+      padding-top:var(--nav-offset);
+    }
+
+    /* ── NAV ───────────────────────────────────────────── */
+    nav{
+      position:fixed;top:0;left:0;width:100%;z-index:200;
+      padding:0 4%;height:var(--nav-offset);
+      display:flex;align-items:center;justify-content:space-between;
+      background:rgba(255,255,255,0.96);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(0,178,237,0.15);
+      box-shadow:0 1px 20px rgba(13,19,62,0.07);
+    }
+    .nav-logo{font-size:16px;font-weight:800;color:var(--dark);text-decoration:none;white-space:nowrap;}
+    .nav-logo em{font-style:normal;color:var(--blue);}
+    .nav-links{display:flex;gap:0;list-style:none;overflow-x:auto;}
+    .nav-links a{
+      display:inline-block;padding:0 14px;
+      font-size:12.5px;font-weight:600;color:var(--muted);
+      text-decoration:none;white-space:nowrap;
+      transition:color .15s;
+    }
+    .nav-links a:hover{color:var(--blue);}
+    .nav-cta{
+      background:var(--blue);color:#fff;
+      padding:.4rem 1.1rem;border-radius:6px;
+      font-size:13px;font-weight:600;text-decoration:none;
+      transition:background .2s;white-space:nowrap;
+      flex-shrink:0;
+    }
+    .nav-cta:hover{background:#0099cc;}
+
+    /* ── PAGE HERO ─────────────────────────────────────── */
+    .page-hero{
+      padding:3.5rem 4% 3rem;
+      background:#ffffff;
+      border-bottom:1px solid rgba(0,178,237,0.12);
+      position:relative;overflow:hidden;
+    }
+    .ph-grid{
+      position:absolute;inset:0;
+      background-image:
+        linear-gradient(rgba(0,178,237,0.06) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,178,237,0.06) 1px,transparent 1px);
+      background-size:56px 56px;
+      pointer-events:none;
+    }
+    .ph-glow{
+      position:absolute;top:0;right:10%;
+      width:480px;height:320px;
+      background:radial-gradient(ellipse,rgba(0,178,237,0.10) 0%,transparent 68%);
+      pointer-events:none;
+    }
+    .ph-inner{position:relative;z-index:1;max-width:1120px;margin:0 auto;}
+    .ph-badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.30);
+      border-radius:30px;padding:.35rem 1rem;
+      font-size:12px;color:var(--blue);font-weight:600;
+      margin-bottom:1.2rem;letter-spacing:.03em;text-transform:uppercase;
+    }
+    .ph-badge span{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+    .ph-title{
+      font-size:clamp(2rem,4vw,3rem);font-weight:900;
+      line-height:1.1;color:var(--dark);margin-bottom:1rem;
+      letter-spacing:-.03em;
+    }
+    .ph-title em{font-style:normal;color:var(--blue);}
+    .ph-sub{
+      font-size:15px;color:var(--muted);max-width:680px;
+      line-height:1.8;margin-bottom:2rem;font-weight:400;
+    }
+    .ph-meta{display:flex;flex-wrap:wrap;gap:1.2rem 2.5rem;}
+    .ph-stat-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;margin-bottom:2px;}
+    .ph-stat-val{font-size:14px;font-weight:700;color:var(--dark);}
+
+    /* ── MAIN ───────────────────────────────────────────── */
+    main{max-width:1120px;margin:0 auto;padding:0 4% 80px;}
+
+    /* ── SECTIONS ───────────────────────────────────────── */
+    section.content-sec{
+      padding:3.5rem 0;
+      border-bottom:1px solid rgba(0,178,237,0.10);
+    }
+    section.content-sec:last-child{border-bottom:none;}
+    section.content-sec.alt{
+      margin:0 -4%;padding:3.5rem 4%;
+      background:var(--bg-alt);
+      border-top:1px solid rgba(0,178,237,0.10);
+      border-bottom:1px solid rgba(0,178,237,0.10);
+    }
+    section:target{scroll-margin-top:calc(var(--nav-offset) + 16px);}
+    .sec-lbl{
+      font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;
+      color:var(--blue);font-weight:700;margin-bottom:.6rem;
+    }
+    .sec-title{
+      font-size:clamp(1.45rem,3vw,2rem);font-weight:800;
+      color:var(--dark);line-height:1.2;letter-spacing:-.02em;
+      margin-bottom:1rem;
+    }
+    .sec-title em{font-style:normal;color:var(--blue);}
+    .sec-sub{font-size:14px;color:var(--muted);max-width:700px;line-height:1.8;margin-bottom:1.8rem;}
+    h3.sub-head{
+      font-size:1rem;font-weight:700;color:var(--dark);
+      margin:2rem 0 .8rem;
+    }
+    p{margin-bottom:.9rem;color:var(--muted);font-size:14px;}
+
+    /* ── SCARD GRID ─────────────────────────────────────── */
+    .scard-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+      gap:1rem;
+    }
+    .scard{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.4rem;
+      position:relative;overflow:hidden;
+      transition:border-color .2s,transform .2s,box-shadow .2s;
+    }
+    .scard::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+      background:linear-gradient(90deg,var(--blue),var(--dark));
+    }
+    .scard:hover{
+      border-color:rgba(0,178,237,.45);
+      transform:translateY(-2px);
+      box-shadow:0 8px 28px rgba(0,178,237,0.10);
+    }
+    .scard-tag{
+      font-size:10px;text-transform:uppercase;letter-spacing:.08em;
+      color:var(--blue);font-weight:700;margin-bottom:.4rem;
+    }
+    .scard h4{font-size:.93rem;font-weight:700;color:var(--dark);margin-bottom:.45rem;}
+    .scard p{font-size:12.5px;color:var(--muted);line-height:1.65;margin:0;}
+    .scard.left-success::before{background:linear-gradient(90deg,#16a34a,#0ea5e9);}
+    .scard.left-blue::before{background:linear-gradient(90deg,var(--blue),#0099cc);}
+    .scard.left-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+    .scard.left-danger::before{background:linear-gradient(90deg,#dc2626,#f97316);}
+    .scard.left-purple::before{background:linear-gradient(90deg,#6B46C1,#553593);}
+    .scard.left-teal::before{background:linear-gradient(90deg,#0D9E8A,#06766A);}
+
+    /* ── DETAIL CARD ────────────────────────────────────── */
+    .detail-card{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.5rem 1.6rem;
+      box-shadow:0 4px 20px rgba(0,178,237,0.06);
+      margin-bottom:1rem;
+    }
+    .detail-card h4{font-size:.93rem;font-weight:700;color:var(--dark);margin-bottom:.5rem;}
+    .detail-card p{font-size:13.5px;color:var(--muted);margin:0;line-height:1.75;}
+    .detail-card.blue-left{border-left:3px solid var(--blue);}
+    .detail-card.green-left{border-left:3px solid #16a34a;}
+    .detail-card.amber-left{border-left:3px solid #E8960A;}
+    .detail-card.purple-left{border-left:3px solid #6B46C1;}
+    .detail-card.teal-left{border-left:3px solid #0D9E8A;}
+
+    /* ── HIGHLIGHT BOXES ────────────────────────────────── */
+    .highlight-box{
+      background:rgba(0,178,237,0.06);
+      border:1px solid rgba(0,178,237,0.25);
+      border-radius:10px;padding:1.1rem 1.4rem;
+      margin-bottom:1rem;
+    }
+    .highlight-box p{font-size:13.5px;margin:0;color:var(--dark);}
+    .highlight-box.green{background:rgba(22,163,74,0.06);border-color:rgba(22,163,74,0.25);}
+    .highlight-box.amber{background:rgba(232,150,10,0.07);border-color:rgba(232,150,10,0.28);}
+
+    /* ── CALLOUT ────────────────────────────────────────── */
+    .callout{
+      border-left:3px solid var(--blue);
+      background:rgba(0,178,237,0.05);
+      padding:1rem 1.3rem;
+      border-radius:0 8px 8px 0;
+      margin:1rem 0;
+    }
+    .callout p{margin:0;font-size:13.5px;color:var(--muted);}
+    .callout strong{color:var(--dark);}
+    .callout.green{border-left-color:#16a34a;background:rgba(22,163,74,0.05);}
+    .callout.amber{border-left-color:#E8960A;background:rgba(232,150,10,0.05);}
+    .callout.purple{border-left-color:#6B46C1;background:rgba(107,70,193,0.05);}
+    .callout.teal{border-left-color:#0D9E8A;background:rgba(13,158,138,0.05);}
+
+    /* ── STEPS ──────────────────────────────────────────── */
+    .flow-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+    .flow-steps::before{
+      content:'';position:absolute;
+      left:25px;top:50px;bottom:30px;
+      width:2px;background:rgba(0,178,237,0.18);
+    }
+    .fstep{display:flex;gap:1.2rem;align-items:flex-start;margin-bottom:.5rem;}
+    .fstep:last-child{margin-bottom:0;}
+    .step-num{
+      width:52px;height:52px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:15px;color:#fff;
+      flex-shrink:0;z-index:1;
+    }
+    .step-num.sn-blue{background:var(--blue);box-shadow:0 4px 14px rgba(0,178,237,.35);}
+    .step-num.sn-teal{background:#0D9E8A;box-shadow:0 4px 14px rgba(13,158,138,.35);}
+    .step-num.sn-amber{background:#E8960A;box-shadow:0 4px 14px rgba(232,150,10,.35);}
+    .step-num.sn-purple{background:#6B46C1;box-shadow:0 4px 14px rgba(107,70,193,.35);}
+    .step-num.sn-green{background:#16A34A;box-shadow:0 4px 14px rgba(22,163,74,.35);}
+    .step-card{
+      flex:1;background:#fff;
+      border:1px solid var(--border);
+      border-radius:12px;padding:1.2rem 1.4rem;
+      margin-bottom:1rem;position:relative;overflow:hidden;
+    }
+    .step-card::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+    }
+    .step-card.sc-blue::before{background:linear-gradient(90deg,#00B2ED,#0099cc);}
+    .step-card.sc-teal::before{background:linear-gradient(90deg,#0D9E8A,#06766A);}
+    .step-card.sc-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+    .step-card.sc-purple::before{background:linear-gradient(90deg,#6B46C1,#553593);}
+    .step-card.sc-green::before{background:linear-gradient(90deg,#16A34A,#0E7A36);}
+    .step-card strong{display:block;font-size:.95rem;font-weight:700;color:var(--dark);margin-bottom:.35rem;}
+    .step-card p{font-size:13px;color:var(--muted);margin:0;line-height:1.65;}
+
+    /* ── TEAM CARDS ─────────────────────────────────────── */
+    .team-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:1rem;
+    }
+    .tcard{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.4rem;
+      position:relative;overflow:hidden;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .tcard::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+      background:linear-gradient(90deg,var(--blue),var(--dark));
+    }
+    .tcard:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,178,237,0.10);}
+    .tcard .tc-icon{font-size:24px;margin-bottom:.7rem;}
+    .tcard .tc-tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);font-weight:700;margin-bottom:.35rem;}
+    .tcard h4{font-size:.95rem;font-weight:700;color:var(--dark);margin-bottom:.45rem;}
+    .tcard p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.65;}
+
+    /* ── TABLES ─────────────────────────────────────────── */
+    .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid rgba(0,178,237,0.18);margin-bottom:1rem;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    thead th{
+      background:var(--bg-alt);padding:10px 14px;text-align:left;
+      font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+      color:var(--muted);border-bottom:1px solid rgba(0,178,237,0.18);
+      font-weight:700;
+    }
+    tbody td{
+      padding:10px 14px;border-bottom:1px solid rgba(0,178,237,0.08);
+      vertical-align:top;color:var(--muted);font-size:13px;
+    }
+    tbody tr:last-child td{border-bottom:none;}
+    tbody tr:hover td{background:rgba(0,178,237,0.03);}
+    code{
+      font-family:'Cascadia Code','Fira Code',monospace;
+      font-size:12px;background:rgba(0,178,237,0.08);
+      color:#0099cc;padding:2px 6px;border-radius:4px;
+    }
+
+    /* ── TAGS / PILLS ───────────────────────────────────── */
+    .fp-tag{
+      display:inline-block;font-size:11px;padding:3px 10px;
+      border-radius:20px;font-weight:600;margin:2px 3px 2px 0;
+      background:rgba(0,178,237,0.08);border:1px solid rgba(0,178,237,0.22);
+      color:var(--blue);
+    }
+    .fp-tag.teal{background:rgba(13,158,138,0.09);border-color:rgba(13,158,138,0.28);color:#0D9E8A;}
+    .fp-tag.amber{background:rgba(232,150,10,0.09);border-color:rgba(232,150,10,0.28);color:#B87208;}
+    .fp-tag.purple{background:rgba(107,70,193,0.09);border-color:rgba(107,70,193,0.22);color:#6B46C1;}
+    .fp-tag.green{background:rgba(22,163,74,0.09);border-color:rgba(22,163,74,0.22);color:#16a34a;}
+    .fp-tag.gray{background:rgba(90,106,138,0.09);border-color:rgba(90,106,138,0.22);color:var(--muted);}
+    .fp-tag.red{background:rgba(220,38,38,0.08);border-color:rgba(220,38,38,0.22);color:#dc2626;}
+
+    /* ── ARCH DIAGRAM ───────────────────────────────────── */
+    .arch{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;text-align:center;}
+    .arch-layer{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.2rem 1rem;
+      position:relative;overflow:hidden;
+    }
+    .arch-layer::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+      background:linear-gradient(90deg,var(--blue),var(--dark));
+    }
+    .arch-layer .layer-title{
+      font-size:10px;font-weight:700;text-transform:uppercase;
+      letter-spacing:.07em;color:var(--blue);margin-bottom:.8rem;
+    }
+    .arch-layer .item{
+      background:var(--bg-alt);border-radius:6px;
+      padding:7px 8px;margin-bottom:5px;
+      font-size:12px;font-weight:600;color:var(--dark);
+    }
+    .arch-layer .item:last-child{margin-bottom:0;}
+    .arch-layer.al-green::before{background:linear-gradient(90deg,#16a34a,#0ea5e9);}
+    .arch-layer.al-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+    .arch-layer.al-purple::before{background:linear-gradient(90deg,#6B46C1,#553593);}
+    .arch-layer.al-teal::before{background:linear-gradient(90deg,#0D9E8A,#06766A);}
+
+    /* ── FLOW DIAGRAM ───────────────────────────────────── */
+    .flow{
+      display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;
+      padding:1.2rem 1.4rem;
+      background:#fff;border:1px solid var(--border);border-radius:10px;
+    }
+    .flow-box{
+      background:var(--bg-alt);border:1px solid rgba(0,178,237,0.22);
+      border-radius:6px;padding:6px 13px;
+      font-size:12.5px;font-weight:600;color:var(--dark);white-space:nowrap;
+    }
+    .flow-box.fb-blue{background:rgba(0,178,237,0.10);border-color:rgba(0,178,237,0.35);color:#0099cc;}
+    .flow-box.fb-purple{background:rgba(107,70,193,0.10);border-color:rgba(107,70,193,0.30);color:#6B46C1;}
+    .flow-box.fb-green{background:rgba(22,163,74,0.10);border-color:rgba(22,163,74,0.28);color:#16a34a;}
+    .flow-box.fb-amber{background:rgba(232,150,10,0.10);border-color:rgba(232,150,10,0.30);color:#B87208;}
+    .flow-box.fb-teal{background:rgba(13,158,138,0.10);border-color:rgba(13,158,138,0.30);color:#0D9E8A;}
+    .flow-arr{font-size:16px;color:rgba(0,178,237,0.5);}
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    footer{
+      padding:1.6rem 4%;
+      border-top:1px solid rgba(0,178,237,.15);
+      display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:1rem;background:#fff;
+    }
+    .foot-logo{font-size:14px;font-weight:800;color:var(--dark);}
+    .foot-logo em{font-style:normal;color:var(--blue);}
+    .foot-copy{font-size:11.5px;color:var(--muted);}
+    .foot-links{display:flex;gap:1.3rem;}
+    .foot-links a{font-size:11.5px;color:var(--muted);text-decoration:none;}
+    .foot-links a:hover{color:var(--blue);}
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media(max-width:900px){
+      .arch{grid-template-columns:1fr;}
+      .nav-links{display:none;}
+    }
+    @media(max-width:640px){
+      main{padding:0 5% 60px;}
+      .ph-inner{padding:0;}
+      .scard-grid{grid-template-columns:1fr;}
+      .team-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+<nav>
+  <a class="nav-logo" href="#">Power Platform <em>&amp; Automation</em></a>
+  <ul class="nav-links">
+    <li><a href="microsoft_e2logy_v2.html">Home</a></li>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#components">Components</a></li>
+    <li><a href="#how-it-works">Workflow</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#tech-stack">Tech Stack</a></li>
+    <li><a href="#add-user">Add User</a></li>
+  </ul>
+  <a class="nav-cta" href="#demo">Live Demo</a>
+</nav>
+
+<!-- ═══════════════════════════ HERO ══════════════════════════ -->
+<section class="page-hero">
+  <div class="ph-grid"></div>
+  <div class="ph-glow"></div>
+  <div class="ph-inner">
+    <div class="ph-badge"><span></span> Microsoft Power Platform</div>
+    <h1 class="ph-title">Event Registration &amp; <em>Management System</em></h1>
+    <p class="ph-sub">
+      A seamless, end-to-end event management solution built on the Microsoft Power Platform —
+      combining Power Pages, Power Automate, Power BI, Copilot Studio, and Dataverse to deliver
+      a unified experience for both attendees and administrators.
+    </p>
+    <div class="ph-meta">
+      <div class="flow-box fb-blue">
+        <div class="ph-stat-lbl">Platform</div>
+        <div class="ph-stat-val">Microsoft Power Platform</div>
+      </div>
+      <div class="flow-box fb-blue">
+        <div class="ph-stat-lbl">Components</div>
+        <div class="ph-stat-val">5 Integrated Services</div>
+      </div>
+      <div class="flow-box fb-blue">
+        <div class="ph-stat-lbl">Analytics</div>
+        <div class="ph-stat-val">Real-time Power BI</div>
+      </div>
+      <div class="flow-box fb-blue">
+        <div class="ph-stat-lbl">AI Assistant</div>
+        <div class="ph-stat-val">Copilot Studio Chatbot</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ MAIN ══════════════════════════ -->
+<main>
+
+<!-- ─── OVERVIEW ─────────────────────────────────────────── -->
+<section id="overview" class="content-sec">
+  <div class="sec-lbl">🎯 Project Overview</div>
+  <h2 class="sec-title">Overview</h2>
+
+  <div class="highlight-box" style="margin-bottom:1.5rem;">
+    <p>
+      <strong>What it does in one sentence:</strong>
+      A Power Pages public website lets attendees browse and register for events, Power Automate handles automated confirmations and reminders, Power BI delivers real-time analytics, Copilot Studio answers attendee questions via AI chat, and all data is stored centrally in Dataverse.
+    </p>
+  </div>
+
+  <div class="scard-grid">
+    <div class="scard left-blue">
+      <div class="scard-tag">Power Pages</div>
+      <h4>Public-Facing Website</h4>
+      <p>Event listing, registration forms, feedback, and contact pages — all built with Power Pages. Custom coding supported via Visual Studio Code.</p>
+    </div>
+    <div class="scard left-success">
+      <div class="scard-tag">Power Automate</div>
+      <h4>Automated Workflows</h4>
+      <p>Three automated workflows: registration confirmation email, pre-event reminder, and post-event feedback request — all triggered without manual intervention.</p>
+    </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">Power BI</div>
+      <h4>Real-time Analytics</h4>
+      <p>Embedded dashboard providing live insights into registrations, ticket sales, and attendee trends. Directly integrated into the Power Pages website.</p>
+    </div>
+    <div class="scard left-purple">
+      <div class="scard-tag">Copilot Studio</div>
+      <h4>AI Chatbot</h4>
+      <p>Conversational AI assistant configured with event-specific topics to answer attendee questions — from event listings to registration support.</p>
+    </div>
+    <div class="scard left-teal">
+      <div class="scard-tag">Dataverse</div>
+      <h4>Central Data Store</h4>
+      <p>All event and registration data is stored in a structured, secure, and scalable Dataverse database with multiple tables and configurable views.</p>
+    </div>
+  </div>
+
+  <h3 class="sub-head">Business Value</h3>
+  <p>
+    Traditional event management requires separate tools for registration, communications, analytics, and support — leading to data silos, manual effort, and a fragmented attendee experience.
+    <strong style="color:var(--dark)">This system unifies the entire event lifecycle on a single platform</strong> using Microsoft Power Platform's no-code/low-code capabilities, reducing operational overhead and delivering real-time visibility.
+  </p>
+
+  <div class="scard-grid" style="margin-top:.8rem;">
+    <div class="scard left-success">
+      <div class="scard-tag">Seamless Experience</div>
+      <p>Attendees register, get confirmations, receive reminders, and get support — all through one integrated platform without switching tools.</p>
+    </div>
+    <div class="scard left-blue">
+      <div class="scard-tag">No-Code Automation</div>
+      <p>Power Automate workflows eliminate manual email sending for confirmations, reminders, and feedback requests.</p>
+    </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">Instant Insights</div>
+      <p>Admins see real-time registration counts, ticket sales, and attendee trends without waiting for manual reports.</p>
+    </div>
+    <div class="scard left-danger">
+      <div class="scard-tag">Always-On Support</div>
+      <p>The AI chatbot handles attendee queries 24/7 with consistent, topic-driven responses — no support staff required.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ARCHITECTURE ───────────────────────────────────────── -->
+<section id="architecture" class="content-sec alt">
+  <div class="sec-lbl">🏗️ System Architecture</div>
+  <h2 class="sec-title">High-Level <em>Architecture</em></h2>
+  <p class="sec-sub">Five Microsoft Power Platform services work together, each playing a distinct role, with Dataverse as the shared data backbone.</p>
+
+  <div class="arch">
+    <div class="arch-layer">
+      <div class="layer-title">Front End</div>
+      <div class="item">Power Pages Website</div>
+      <div class="item">Home &amp; About Us</div>
+      <div class="item">Event Listing</div>
+      <div class="item">Registration Forms</div>
+      <div class="item">Feedback &amp; Contact</div>
+      <div class="item">Admin Panel</div>
+    </div>
+    <div class="arch-layer al-purple">
+      <div class="layer-title">Automation &amp; AI</div>
+      <div class="item">Power Automate</div>
+      <div class="item">Email Confirmation</div>
+      <div class="item">Event Reminder</div>
+      <div class="item">Feedback Request</div>
+      <div class="item">Copilot Studio</div>
+      <div class="item">AI Chatbot Topics</div>
+    </div>
+    <div class="arch-layer al-teal">
+      <div class="layer-title">Data &amp; Analytics</div>
+      <div class="item">Dataverse Tables</div>
+      <div class="item">Custom Views</div>
+      <div class="item">Power BI Dashboard</div>
+      <div class="item">Registration Charts</div>
+      <div class="item">Ticket Sales Trends</div>
+      <div class="item">Attendee Analytics</div>
+    </div>
+  </div>
+
+  <h3 class="sub-head">Integration Flow</h3>
+  <div class="flow">
+    <span class="flow-box fb-blue">Power Pages</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-teal">Dataverse</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Power Automate</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Email / Notifications</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-amber">Power BI Dashboard</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-purple">Copilot Studio</span>
+  </div>
+
+  <h3 class="sub-head">Architecture Principle</h3>
+  <div class="callout">
+    <p>
+      <strong>Dataverse as the single source of truth.</strong>
+      All five platform components read from and write to Dataverse, ensuring data consistency across the public website, automation workflows, analytics dashboard, and AI chatbot. There are no separate databases or data silos.
+    </p>
+  </div>
+</section>
+
+<!-- ─── PLATFORM COMPONENTS ───────────────────────────────── -->
+<section id="components" class="content-sec">
+  <div class="sec-lbl">🔧 Platform Components</div>
+  <h2 class="sec-title">Platform <em>Components</em></h2>
+  <p class="sec-sub">Each Power Platform service handles a distinct part of the event management lifecycle.</p>
+
+  <div class="detail-card blue-left">
+    <h4>⚡ Power Pages — Public Website</h4>
+    <p>
+      Serves as the public-facing front end of the system. The website includes multiple pages — <strong style="color:var(--dark)">Home, About Us, Event Listing, Feedback,</strong> and <strong style="color:var(--dark)">Contact Us</strong> — all built within Power Pages. Custom code can be added through Visual Studio Code integration when advanced functionality is needed. Attendees can view upcoming event details, complete registration forms, and submit feedback directly from the site.
+    </p>
+    <div style="margin-top:.8rem;">
+      <span class="fp-tag">Home</span>
+      <span class="fp-tag">About Us</span>
+      <span class="fp-tag">Event Listing</span>
+      <span class="fp-tag">Registration</span>
+      <span class="fp-tag">Feedback</span>
+      <span class="fp-tag">Contact Us</span>
+      <span class="fp-tag">Admin Panel</span>
+      <span class="fp-tag gray">VS Code Custom Coding</span>
+    </div>
+  </div>
+
+  <div class="detail-card green-left">
+    <h4>🔁 Power Automate — Workflow Automation</h4>
+    <p>
+      Three automated workflows handle all event communications without any manual effort. When an attendee registers, a <strong style="color:var(--dark)">confirmation email</strong> is sent immediately. Before the event date, an <strong style="color:var(--dark)">event reminder</strong> is automatically dispatched. After the event concludes, a <strong style="color:var(--dark)">feedback request email</strong> is sent to all registered attendees. Each workflow is triggered by data changes in Dataverse.
+    </p>
+    <div style="margin-top:.8rem;">
+      <span class="fp-tag green">Registration Confirmation</span>
+      <span class="fp-tag green">Event Reminder</span>
+      <span class="fp-tag green">Feedback Request</span>
+      <span class="fp-tag gray">Dataverse-Triggered</span>
+    </div>
+  </div>
+
+  <div class="detail-card amber-left">
+    <h4>📊 Power BI — Analytics Dashboard</h4>
+    <p>
+      A real-time analytics dashboard providing live insight into event performance. Charts and visualisations cover <strong style="color:var(--dark)">registration counts, ticket sales,</strong> and <strong style="color:var(--dark)">attendee trends</strong>. The dashboard is directly embedded into the Power Pages website, so administrators have analytics access without leaving the platform. Data refreshes in real time as Dataverse records are updated.
+    </p>
+    <div style="margin-top:.8rem;">
+      <span class="fp-tag amber">Registration Analytics</span>
+      <span class="fp-tag amber">Ticket Sales</span>
+      <span class="fp-tag amber">Attendee Trends</span>
+      <span class="fp-tag gray">Embedded in Power Pages</span>
+      <span class="fp-tag gray">Real-time Refresh</span>
+    </div>
+  </div>
+
+  <div class="detail-card purple-left">
+    <h4>🤖 Copilot Studio — AI Chatbot</h4>
+    <p>
+      An AI-powered conversational assistant that answers attendee questions directly on the website. The chatbot is configured with <strong style="color:var(--dark)">multiple topics</strong> covering common queries such as event listings, registration steps, schedule details, and venue information. When asked about available events, it retrieves and presents the current event list from Dataverse in real time.
+    </p>
+    <div style="margin-top:.8rem;">
+      <span class="fp-tag purple">Event Listing Queries</span>
+      <span class="fp-tag purple">Registration Help</span>
+      <span class="fp-tag purple">Topic-Driven Responses</span>
+      <span class="fp-tag gray">Dataverse-Connected</span>
+    </div>
+  </div>
+
+  <div class="detail-card teal-left">
+    <h4>🗄️ Dataverse — Central Data Store</h4>
+    <p>
+      The backbone of the entire system. All event data, attendee registrations, feedback submissions, and contact enquiries are stored in Dataverse tables. The database provides a <strong style="color:var(--dark)">structured, secure, and scalable</strong> foundation that all other platform components connect to. Custom views can be created directly within Dataverse to filter and present data in different formats for different use cases.
+    </p>
+    <div style="margin-top:.8rem;">
+      <span class="fp-tag teal">Events Table</span>
+      <span class="fp-tag teal">Registrations Table</span>
+      <span class="fp-tag teal">Feedback Table</span>
+      <span class="fp-tag teal">Custom Views</span>
+      <span class="fp-tag gray">Secure &amp; Scalable</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ──────────────────────────────────────── -->
+<section id="how-it-works" class="content-sec alt">
+  <div class="sec-lbl">⚙️ Workflow</div>
+  <h2 class="sec-title">How It Works — <em>Step by Step</em></h2>
+  <p class="sec-sub">The complete journey from attendee discovery to post-event feedback, fully automated by the Power Platform.</p>
+
+  <div class="flow-steps">
+
+    <div class="fstep">
+      <div class="step-num sn-blue">1</div>
+      <div class="step-card sc-blue">
+        <strong>Attendee visits the Power Pages website</strong>
+        <p>The public website — built on Power Pages — presents the Home page, an About Us section, and a full Event Listing. Attendees can browse all upcoming events and view detailed information for each one.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-teal">2</div>
+      <div class="step-card sc-teal">
+        <strong>Attendee registers for an event</strong>
+        <p>From the Event Listing page, an attendee selects an event and completes the registration form. On submission, the registration record is saved directly to Dataverse.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-green">3</div>
+      <div class="step-card sc-green">
+        <strong>Power Automate sends a confirmation email</strong>
+        <p>The registration trigger in Dataverse activates a Power Automate workflow that immediately dispatches a personalised confirmation email to the attendee, confirming their spot at the event.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-amber">4</div>
+      <div class="step-card sc-amber">
+        <strong>Reminder email sent before the event</strong>
+        <p>Another Power Automate workflow fires on a scheduled basis before the event date, sending a reminder to all registered attendees with event details and any last-minute information.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-purple">5</div>
+      <div class="step-card sc-purple">
+        <strong>Attendee can ask questions via the AI chatbot</strong>
+        <p>At any point, attendees can use the Copilot Studio chatbot on the website to ask questions. The chatbot responds based on configured topics — for example, asking for the event list returns all available events from Dataverse.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-teal">6</div>
+      <div class="step-card sc-teal">
+        <strong>Feedback request sent after the event</strong>
+        <p>Once the event concludes, Power Automate automatically sends a feedback request email to attendees. Responses are collected through the Feedback page and stored in Dataverse for review.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-blue">7</div>
+      <div class="step-card sc-blue">
+        <strong>Admin manages events and monitors analytics</strong>
+        <p>Administrators use the admin panel within Power Pages to create, edit, or delete events. They can also download the full event list as an Excel file. The embedded Power BI dashboard provides a real-time view of registrations, ticket sales, and attendee trends.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="sub-head">Automation Flow</h3>
+  <div class="flow">
+    <span class="flow-box fb-blue">Attendee Registers</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-teal">Dataverse Record</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Confirmation Email</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-amber">Event Reminder</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Event Occurs</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Feedback Request</span>
+  </div>
+</section>
+
+<!-- ─── KEY FEATURES ──────────────────────────────────────── -->
+<section id="features" class="content-sec">
+  <div class="sec-lbl">✨ Key Features</div>
+  <h2 class="sec-title">Key <em>Features</em></h2>
+  <p class="sec-sub">The system delivers a complete set of capabilities for both attendees and administrators.</p>
+
+  <div class="scard-grid">
+    <div class="scard left-blue">
+      <div class="scard-tag">Attendee</div>
+      <h4>Event Listing &amp; Registration</h4>
+      <p>Attendees browse upcoming events and complete self-service registration forms directly on the Power Pages public website.</p>
+    </div>
+    <div class="scard left-success">
+      <div class="scard-tag">Automation</div>
+      <h4>Automated Email Workflows</h4>
+      <p>Three Power Automate workflows eliminate manual communications — confirmation, reminder, and feedback emails all run automatically.</p>
+    </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">Analytics</div>
+      <h4>Real-time Analytics Dashboard</h4>
+      <p>Power BI dashboard embedded in the website gives administrators instant visibility into registration counts, ticket sales, and attendee trends.</p>
+    </div>
+    <div class="scard left-purple">
+      <div class="scard-tag">AI</div>
+      <h4>AI-Powered Chatbot</h4>
+      <p>Copilot Studio chatbot handles attendee queries 24/7, responding with topic-driven answers including live event listings from Dataverse.</p>
+    </div>
+    <div class="scard left-teal">
+      <div class="scard-tag">Admin</div>
+      <h4>Event Management Panel</h4>
+      <p>Administrators can create, edit, and delete events through the admin panel built into the Power Pages website.</p>
+    </div>
+    <div class="scard left-danger">
+      <div class="scard-tag">Export</div>
+      <h4>Excel Data Export</h4>
+      <p>Administrators can download the complete list of events and registrations as an Excel file directly from the admin panel.</p>
+    </div>
+    <div class="scard">
+      <div class="scard-tag">Feedback</div>
+      <h4>Attendee Feedback Collection</h4>
+      <p>A dedicated Feedback page on the website collects post-event responses, with automated follow-up emails sent by Power Automate.</p>
+    </div>
+    <div class="scard">
+      <div class="scard-tag">Data</div>
+      <h4>Centralised Dataverse Storage</h4>
+      <p>All data — events, registrations, feedback, and contacts — is stored in a single structured Dataverse database with customisable views.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DEMO WALKTHROUGH ──────────────────────────────────── 
+Website Name : site-ktahb.powerappsportals.com 
+User Name : 
+platformpower0@gmail.com
+ 
+Password : Admin@123##
+-->
+
+
+
+<!-- <section id="demo" class="content-sec alt">
+  <div class="sec-lbl">🎬 Demo Walkthrough</div>
+  <h2 class="sec-title">Demo <em>Walkthrough</em></h2>
+  <p class="sec-sub">A guided walkthrough of the live system, covering each platform component in sequence.</p>
+
+  <h3 class="sub-head">1. Power Pages Website</h3>
+  <div class="callout">
+    <p>
+      <strong>The public website</strong> is built entirely on Power Pages. The navigation exposes the following pages: <strong>Home</strong> (landing page and site introduction), <strong>About Us</strong> (organisation details), <strong>Events</strong> (full listing of upcoming events with details), <strong>Feedback</strong> (post-event feedback form), and <strong>Contact Us</strong> (enquiry form). Custom page logic can be added using the Visual Studio Code integration within Power Pages.
+    </p>
+  </div>
+
+  <h3 class="sub-head">2. Event Registration</h3>
+  <div class="callout green">
+    <p>
+      From the <strong>Events</strong> page, attendees can view all upcoming events. Selecting an event opens the <strong>Registration page</strong>, where attendees fill in their details and submit. On submission, the record is written to Dataverse and the Power Automate confirmation workflow fires immediately.
+    </p>
+  </div>
+
+  <h3 class="sub-head">3. Dataverse — Tables &amp; Views</h3>
+  <div class="callout teal">
+    <p>
+      The <strong>Dataverse</strong> section shows all tables storing the system's data. Different tables exist for events, registrations, feedback responses, and contact submissions. Custom views can be created to present filtered or sorted data — for example, a view showing only upcoming events or only confirmed registrations.
+    </p>
+  </div>
+
+  <h3 class="sub-head">4. Power Automate Workflows</h3>
+  <div class="callout green">
+    <p>
+      Three workflows are configured in <strong>Power Automate</strong>:
+      (a) <strong>Sending email confirmation</strong> — triggers when a new registration is created in Dataverse.
+      (b) <strong>Sending event reminders</strong> — runs on a schedule before the event date.
+      (c) <strong>Sending the feedback request</strong> — fires after the event concludes, prompting attendees to complete the Feedback page form.
+    </p>
+  </div>
+
+  <h3 class="sub-head">5. Power BI Dashboard</h3>
+  <div class="callout amber">
+    <p>
+      The <strong>Power BI</strong> dashboard is embedded directly into the Power Pages website. It displays multiple charts providing real-time insight into registration numbers, ticket sales volumes, and attendee trend data. The dashboard connects to Dataverse and refreshes automatically as new data arrives.
+    </p>
+  </div>
+
+  <h3 class="sub-head">6. Copilot Studio — AI Chatbot</h3>
+  <div class="callout purple">
+    <p>
+      The <strong>Copilot Studio</strong> chatbot is accessible on the website and answers attendee questions based on pre-configured topics. For example, querying <em>"show me the event list"</em> triggers the event listing topic, which retrieves all available events from Dataverse and presents them in the chat interface.
+    </p>
+  </div>
+
+  <h3 class="sub-head">7. Admin Panel</h3>
+  <div class="callout">
+    <p>
+      The <strong>admin side</strong> of the Power Pages website gives administrators full event management capability. Admins can <strong>create new events</strong>, <strong>edit or delete existing events</strong>.
+      The embedded Power BI dashboard is also accessible from the admin area, providing a full management view without leaving the platform.
+    </p>
+  </div>
+</section> -->
+
+<!-- ─── TECH STACK ─────────────────────────────────────────── -->
+<section id="tech-stack" class="content-sec alt">
+  <div class="sec-lbl">🛠️ Technology Stack</div>
+  <h2 class="sec-title">Technology <em>Stack</em></h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Component</th><th>Technology</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Front End</strong></td>
+          <td>Microsoft Power Pages</td>
+          <td>Public-facing event website with registration forms, feedback, and admin panel. Custom coding via Visual Studio Code.</td>
+        </tr>
+        <tr>
+          <td><strong>Workflow Automation</strong></td>
+          <td>Microsoft Power Automate</td>
+          <td>No-code automated workflows for email confirmation, event reminders, and post-event feedback requests.</td>
+        </tr>
+        <tr>
+          <td><strong>Analytics</strong></td>
+          <td>Microsoft Power BI</td>
+          <td>Embedded real-time dashboard for registration, ticket sales, and attendee trend analytics.</td>
+        </tr>
+        <tr>
+          <td><strong>AI Chatbot</strong></td>
+          <td>Microsoft Copilot Studio</td>
+          <td>Topic-driven AI chatbot to answer attendee queries, including live event listings from Dataverse.</td>
+        </tr>
+        <tr>
+          <td><strong>Database</strong></td>
+          <td>Microsoft Dataverse</td>
+          <td>Central structured data store for all events, registrations, feedback, and contacts. Shared by all platform components.</td>
+        </tr>
+        <!-- <tr>
+          <td><strong>Custom Code Editor</strong></td>
+          <td>Visual Studio Code</td>
+          <td>Used within Power Pages to write custom HTML, CSS, and JavaScript for advanced page functionality.</td>
+        </tr>
+        <tr>
+          <td><strong>Data Export</strong></td>
+          <td>Excel (via Power Pages Admin)</td>
+          <td>Event and registration data exported to Excel directly from the admin panel for offline reporting.</td>
+        </tr> -->
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub-head">Platform Advantages</h3>
+  <div class="scard-grid">
+    <div class="scard left-blue">
+      <div class="scard-tag">Low Code</div>
+      <p>The majority of the system is built using Power Platform's no-code/low-code tools — reducing development time and cost significantly.</p>
+    </div>
+    <div class="scard left-success">
+      <div class="scard-tag">Native Integration</div>
+      <p>All five components connect natively without custom API work — Power Automate, Power BI, and Copilot Studio all have built-in Dataverse connectors.</p>
+    </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">Scalability</div>
+      <p>Dataverse provides enterprise-grade scalability. Larger event volumes and additional tables can be added without architectural changes.</p>
+    </div>
+    <div class="scard left-purple">
+      <div class="scard-tag">Microsoft Ecosystem</div>
+      <p>Fully within the Microsoft 365 and Azure ecosystem — leverages existing licences and integrates with Teams, Outlook, and SharePoint if needed.</p>
+    </div>
+  </div>
+</section>
+<!-- ─── ADD NEW USER ──────────────────────────────────────── -->
+<section id="add-user" class="content-sec alt">
+  <div class="sec-lbl">👤 User Management</div>
+  <h2 class="sec-title">How to <em>Add a New User</em></h2>
+  <p class="sec-sub">Three steps to invite and register a new user on the Power Pages portal via Portal Management.</p>
+
+  <!-- STEP 2 -->
+  <h3 class="sub-head">Step 1 — Create a Contact Record</h3>
+  <div class="callout">
+    <p>In <strong>Portal Management</strong>, go to <strong>Portals → Contacts</strong>, click <strong>+ New</strong>, and fill in the required fields below.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Field</th><th>Value</th><th>Required</th></tr></thead>
+      <tbody>
+        <tr><td>First Name</td><td>User's first name</td><td><span style="color:#16a34a;font-weight:700;">Yes</span></td></tr>
+        <tr><td>Last Name</td><td>User's last name</td><td><span style="color:#16a34a;font-weight:700;">Yes</span></td></tr>
+        <tr><td>Email</td><td>Valid email address</td><td><span style="color:#16a34a;font-weight:700;">Yes</span></td></tr>
+        <tr><td>Username</td><td>Login name for local sign-in</td><td><span style="color:#16a34a;font-weight:700;">Yes *</span></td></tr>
+        <tr><td>Web Roles</td><td>Click lookup → select role(s)</td><td><span style="color:#B87208;font-weight:700;">Recommended</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout amber">
+    <p>* <strong>Username</strong> is required for local authentication. For external providers (Microsoft, Google, etc.), the email address is used as the username.</p>
+  </div>
+
+  <div class="callout">
+    <p><strong>Assign Web Roles:</strong> In the Contact form, scroll to <strong>Web Roles</strong> → click <strong>+ Add Existing Web Role</strong> → select the appropriate role → <strong>Save &amp; Close</strong>.</p>
+  </div>
+
+  <div class="table-wrap" style="margin-top:.5rem;">
+    <table>
+      <thead><tr><th>Role</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Authenticated Users</td><td>Basic logged-in access</td></tr>
+        <tr><td>Administrators</td><td>Full admin access</td></tr>
+        <tr><td>Custom Roles</td><td>Your defined permissions</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- STEP 3 -->
+  <h3 class="sub-head">Step 2 — Create an Invitation Record</h3>
+  <div class="callout">
+    <p>In <strong>Portal Management</strong>, go to <strong>Portals → Invitations</strong>, click <strong>+ New</strong>, and fill in the form.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Field</th><th>Value</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Name</td><td>Descriptive name</td><td>e.g., "Invite: John Doe"</td></tr>
+        <tr><td>Contact</td><td>Lookup → select Contact from Step 1</td><td>Links invitation to the user</td></tr>
+        <tr><td>Invitation Code</td><td>Leave blank for auto-generation, or enter a custom unique code</td><td>Must be unique across all invitations</td></tr>
+        <tr><td>Expiry Date</td><td>Future date/time</td><td>Default: 7 days from creation</td></tr>
+        <tr><td>Website</td><td>Lookup → select your portal</td><td>Required for URL generation</td></tr>
+        <tr><td>Redirect URL</td><td>Optional portal page path</td><td>Where user lands after registration</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout teal">
+    <p>After saving, the <strong>Invitation Code</strong> field displays the generated value — copy it for use in the registration URL in the next step.</p>
+  </div>
+
+  <!-- STEP 4 -->
+  <h3 class="sub-head">Step 3 — Send Invitation to User</h3>
+  <div class="callout">
+    <p>Build the registration URL using the Invitation Code from Step 2, then email it to the user.</p>
+  </div>
+
+  <div class="detail-card blue-left" style="margin-top:.5rem;">
+    <h4>Registration URL Format</h4>
+    <p style="font-family:monospace;font-size:13px;color:#0099cc;word-break:break-all;">
+      https://[your-portal-domain]/SignIn/Register?invitation=<strong>[INVITATION_CODE]</strong>
+    </p>
+    <p style="margin-top:.6rem;">Example:</p>
+    <p style="font-family:monospace;font-size:13px;color:#0099cc;word-break:break-all;">
+      https://site-ktahb.powerappsportals.com/SignIn/Register?invitation=a1b2c3d4-e5f6-7890-abcd-ef1234567890
+    </p>
+  </div>
+
+  <div class="scard-grid" style="margin-top:1rem;">
+    <div class="scard left-blue">
+      <div class="scard-tag">Email to User</div>
+      <h4>What to Include</h4>
+      <p>Welcome message · Registration URL · Expiry date · Instructions to click the link and set a password.</p>
+    </div>
+    <div class="scard left-success">
+      <div class="scard-tag">User Action</div>
+      <h4>What the User Does</h4>
+      <p>User clicks the link, is taken to the registration page, sets a password, and is automatically logged in with the assigned web roles.</p>
+    </div>
+  </div>
+</section>
+
+<section id="demo" class="content-sec">
+  <div class="sec-lbl">🧪 Demo</div>
+  <h2 class="sec-title">Demo  <em>Credentials</em></h2>
+ 
+  <!-- <h3 class="sub-head">Credentials</h3> -->
+  <div class="highlight-box">
+    <p>
+    
+      <strong>Website :</strong> <code>https://site-ktahb.powerappsportals.com</code> &nbsp;&nbsp; <br/>
+    
+    </p>
+  </div>
+
+
+     <table>
+      <thead><tr><th>Role</th><th>Username</th><th>Password</th></tr></thead>
+      <tbody>
+        <tr><td><code>Microsoft User </code></td><td>platformpower0@gmail.com</td><td>Admin@123##</td></tr>
+        <tr><td><code>Web Admin </code></td><td>emp07@yopmail.com</td><td>Admin@123##</td></tr>
+      </tbody>
+    </table> 
+ 
+
+  <!-- <div class="highlight-box green" style="margin-top:.5rem;">
+    <p>
+      Run all tests: <code>dotnet test</code> from the solution root.&nbsp;&nbsp;
+      Run with coverage: <code>dotnet test --collect:"XPlat Code Coverage"</code>&nbsp;&nbsp;
+      Coverage reports collected via <strong>coverlet</strong> in Cobertura format.
+    </p>
+  </div> -->
+</section>
+</main>
+
+<!-- ═══════════════════════════ FOOTER ════════════════════════ -->
+<footer>
+  <span class="foot-logo">Power Platform <em>&amp; Automation</em></span>
+  <span class="foot-copy">Power Pages · Power Automate · Power BI · Copilot Studio · Dataverse &nbsp;·&nbsp; e2logy</span>
+  <div class="foot-links">
+    <a href="#">e2logy</a>
+    <a href="#overview">Overview</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#components">Components</a>
+    <a href="#add-user">Add User</a>
+    <a href="#demo">Demo</a>
+  </div>
+</footer>
+
+</body>
+</html>
