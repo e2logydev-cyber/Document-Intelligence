@@ -131,7 +131,114 @@ footer{padding:1.8rem 4%;border-top:1px solid rgba(0,178,237,.15);display:flex;a
 .foot-links{display:flex;gap:1.3rem;}
 .foot-links a{font-size:11.5px;color:#5a6a8a;text-decoration:none;}
 .foot-links a:hover{color:#00B2ED;}
-@media(max-width:900px){.feat-layout{grid-template-columns:1fr;}.feat-panel{position:static;}nav .nav-links{display:none;}}
+/* ── Hamburger button ── */
+.nav-hamburger{
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:6px;
+  background:none;
+  border:2px solid rgba(0,178,237,0.35);
+  cursor:pointer;
+  padding:10px 12px;
+  border-radius:8px;
+  transition:background .2s,border-color .2s;
+  z-index:300;
+  position:relative;
+}
+.nav-hamburger:hover{background:rgba(0,178,237,0.08);border-color:#00B2ED;}
+.nav-hamburger span{
+  display:block;
+  width:24px;
+  height:2.5px;
+  border-radius:2px;
+  background:#0D133E;
+  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .25s;
+}
+.nav-hamburger.open{background:rgba(0,178,237,0.10);border-color:#00B2ED;}
+.nav-hamburger.open span:nth-child(1){transform:translateY(8.5px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-8.5px) rotate(-45deg);}
+
+/* Mobile overlay backdrop */
+.nav-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(13,19,62,0.45);
+  z-index:195;
+  opacity:0;
+  transition:opacity .3s;
+}
+.nav-overlay.show{opacity:1;}
+
+@media(max-width:900px){
+  .feat-layout{grid-template-columns:1fr;}
+  .feat-panel{position:static;}
+  .nav-hamburger{display:flex;}
+  .nav-cta{display:none;}
+  .nav-overlay{display:none !important;}
+
+  /* Full-screen mobile menu */
+  .nav-links{
+    display:flex !important;
+    flex-direction:column;
+    gap:0;
+    list-style:none;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    width:100vw;
+    height:100vh;
+    background:#ffffff;
+    z-index:200;
+    padding:90px 0 3rem;
+    transform:translateY(-100%);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+    overflow-y:auto;
+  }
+  .nav-links.mobile-open{transform:translateY(0);}
+
+  .nav-links li{
+    border-bottom:1px solid rgba(0,178,237,0.10);
+  }
+  .nav-links a{
+    display:flex;
+    align-items:center;
+    padding:1.3rem 2rem;
+    font-size:18px;
+    font-weight:600;
+    color:#0D133E;
+    text-decoration:none;
+    transition:background .15s,color .15s;
+  }
+  .nav-links a:hover{
+    background:rgba(0,178,237,0.07);
+    color:#00B2ED;
+  }
+  /* CTA inside menu */
+  .nav-links .mobile-cta-item{
+    border-bottom:none;
+    padding:2rem 2rem 0;
+  }
+  .nav-links .mobile-cta-item a{
+    background:#00B2ED;
+    color:#fff !important;
+    border-radius:10px;
+    text-align:center;
+    padding:1rem;
+    font-size:16px;
+    font-weight:600;
+    justify-content:center;
+    display:flex;
+  }
+  .nav-links .mobile-cta-item a:hover{
+    background:#0099cc !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -162,9 +269,45 @@ footer{padding:1.8rem 4%;border-top:1px solid rgba(0,178,237,.15);display:flex;a
      <li><a href="Roadmap.html">Proposal Intelligence
 Platform · POC</a></li>
   </ul>
-   <a href="#contact" class="nav-cta">Free Consultation</a> 
-   <!-- <a href="Roadmap.html" class="nav-cta">View Full Roadmap</a> -->
+  <a href="#contact" class="nav-cta">Free Consultation</a>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="nav-overlay" id="navOverlay"></div>
+<script>
+(function(){
+  var btn = document.getElementById('navHamburger');
+  var menu = document.querySelector('.nav-links');
+  var overlay = document.getElementById('navOverlay');
+
+  // Add mobile CTA inside the menu (once)
+  
+
+  function openMenu(){
+    menu.classList.add('mobile-open');
+    overlay.classList.add('show');
+    btn.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
+    document.body.style.overflow='hidden';
+  }
+  function closeMenu(){
+    menu.classList.remove('mobile-open');
+    overlay.classList.remove('show');
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+    document.body.style.overflow='';
+  }
+
+  btn.addEventListener('click', function(){
+    menu.classList.contains('mobile-open') ? closeMenu() : openMenu();
+  });
+  overlay.addEventListener('click', closeMenu);
+  menu.addEventListener('click', function(e){
+    if(e.target.tagName==='A') closeMenu();
+  });
+})();
+</script>
 
 <!-- HERO -->
 <section class="hero" id="home">
@@ -472,7 +615,7 @@ Platform · POC</a></li>
       <a href="tel:+919876543210" style="background:transparent;color:#fff;padding:.8rem 1.9rem;border-radius:8px;font-size:14.5px;font-weight:500;text-decoration:none;border:1.5px solid rgba(255,255,255,0.40);">Call +91 900000 00000</a>
     </div>
     <div class="cta-cards">
-      <div class="cta-card"><div class="cta-card-lbl">Email</div><div class="cta-card-val">info@e2logy.in</div></div>
+      <div class="cta-card"><div class="cta-card-lbl">Email</div><div class="cta-card-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b8d1d6ded7f8dd8ad4d7dfc196d1d6">[email&#160;protected]</a></div></div>
       <div class="cta-card"><div class="cta-card-lbl">Phone</div><div class="cta-card-val">+91 900000 00000</div></div>
       <div class="cta-card"><div class="cta-card-lbl">Website</div><div class="cta-card-val">www.e2logy.com</div></div>
       <div class="cta-card"><div class="cta-card-lbl">Location</div><div class="cta-card-val">Ahmedabad, Gujarat</div></div>
@@ -524,7 +667,3 @@ Platform · POC</a></li>
 <defs><clipPath id="clip0_foot"><rect width="223" height="40" fill="white"/></clipPath></defs>
 </svg>
   </div>
-  <div class="foot-copy">© 2026 E2logy Software Solutions · Microsoft Gold Partner
-</div></footer>
-</body>
-</html>
