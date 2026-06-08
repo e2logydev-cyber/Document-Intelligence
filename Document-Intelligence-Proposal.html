@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document Intelligence Proposal — Application Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --blue:#00B2ED;
+      --dark:#0D133E;
+      --navy:#f5fafd;
+      --slate:#e8f5fb;
+      --accent:#00B2ED;
+      --muted:#5a6a8a;
+      --border:rgba(0,178,237,0.18);
+      --fh:'Mulish',sans-serif;
+      --fb:'Mulish',sans-serif;
+      --bg:#ffffff;
+      --bg-alt:#f5fafd;
+      --bg-card:#ffffff;
+      --text:#0D133E;
+      --text-light:#5a6a8a;
+      --nav-offset:62px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:var(--fb);
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.7;
+      font-size:15px;
+      padding-top:var(--nav-offset);
+    }
+
+    /* ── NAV ───────────────────────────────────────────── */
+    nav{
+      position:fixed;top:0;left:0;width:100%;z-index:200;
+      padding:0 4%;height:var(--nav-offset);
+      display:flex;align-items:center;justify-content:space-between;
+      background:rgba(255,255,255,0.96);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(0,178,237,0.15);
+      box-shadow:0 1px 20px rgba(13,19,62,0.07);
+    }
+    .nav-logo{font-size:16px;font-weight:800;color:var(--dark);text-decoration:none;white-space:nowrap;}
+    .nav-logo em{font-style:normal;color:var(--blue);}
+    .nav-links{display:flex;gap:0;list-style:none;overflow-x:auto;}
+    .nav-links a{
+      display:inline-block;padding:0 14px;
+      font-size:12.5px;font-weight:600;color:var(--muted);
+      text-decoration:none;white-space:nowrap;
+      transition:color .15s;
+    }
+    .nav-links a:hover{color:var(--blue);}
+    .nav-cta{
+      background:var(--blue);color:#fff;
+      padding:.4rem 1.1rem;border-radius:6px;
+      font-size:13px;font-weight:600;text-decoration:none;
+      transition:background .2s;white-space:nowrap;
+      flex-shrink:0;
+    }
+    .nav-cta:hover{background:#0099cc;}
+
+    /* ── PAGE HERO ─────────────────────────────────────── */
+    .page-hero{
+      padding:3.5rem 4% 3rem;
+      background:#ffffff;
+      border-bottom:1px solid rgba(0,178,237,0.12);
+      position:relative;overflow:hidden;
+    }
+    .ph-grid{
+      position:absolute;inset:0;
+      background-image:
+        linear-gradient(rgba(0,178,237,0.06) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,178,237,0.06) 1px,transparent 1px);
+      background-size:56px 56px;
+      pointer-events:none;
+    }
+    .ph-glow{
+      position:absolute;top:0;right:10%;
+      width:480px;height:320px;
+      background:radial-gradient(ellipse,rgba(0,178,237,0.10) 0%,transparent 68%);
+      pointer-events:none;
+    }
+    .ph-inner{position:relative;z-index:1;max-width:1120px;margin:0 auto;}
+    .ph-badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.30);
+      border-radius:30px;padding:.35rem 1rem;
+      font-size:12px;color:var(--blue);font-weight:600;
+      margin-bottom:1.2rem;letter-spacing:.03em;text-transform:uppercase;
+    }
+    .ph-badge span{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+    .ph-title{
+      font-size:clamp(2rem,4vw,3rem);font-weight:900;
+      line-height:1.1;color:var(--dark);margin-bottom:1rem;
+      letter-spacing:-.03em;
+    }
+    .ph-title em{font-style:normal;color:var(--blue);}
+    .ph-sub{
+      font-size:15px;color:var(--muted);max-width:680px;
+      line-height:1.8;margin-bottom:2rem;font-weight:400;
+    }
+    .ph-meta{display:flex;flex-wrap:wrap;gap:1.2rem 2.5rem;}
+    .ph-stat-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;margin-bottom:2px;}
+    .ph-stat-val{font-size:14px;font-weight:700;color:var(--dark);}
+
+    /* ── MAIN ───────────────────────────────────────────── */
+    main{max-width:1120px;margin:0 auto;padding:0 4% 80px;}
+
+    /* ── SECTIONS ───────────────────────────────────────── */
+    section.content-sec{
+      padding:3.5rem 0;
+      border-bottom:1px solid rgba(0,178,237,0.10);
+    }
+    section.content-sec:last-child{border-bottom:none;}
+    section.content-sec.alt{
+      margin:0 -4%;padding:3.5rem 4%;
+      background:var(--bg-alt);
+      border-top:1px solid rgba(0,178,237,0.10);
+      border-bottom:1px solid rgba(0,178,237,0.10);
+    }
+    section:target{scroll-margin-top:calc(var(--nav-offset) + 16px);}
+    .sec-lbl{
+      font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;
+      color:var(--blue);font-weight:700;margin-bottom:.6rem;
+    }
+    .sec-title{
+      font-size:clamp(1.45rem,3vw,2rem);font-weight:800;
+      color:var(--dark);line-height:1.2;letter-spacing:-.02em;
+      margin-bottom:1rem;
+    }
+    .sec-title em{font-style:normal;color:var(--blue);}
+    .sec-sub{font-size:14px;color:var(--muted);max-width:700px;line-height:1.8;margin-bottom:1.8rem;}
+    h3.sub-head{
+      font-size:1rem;font-weight:700;color:var(--dark);
+      margin:2rem 0 .8rem;
+    }
+    p{margin-bottom:.9rem;color:var(--muted);font-size:14px;}
+
+    /* ── SCARD GRID ─────────────────────────────────────── */
+    .scard-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+      gap:1rem;
+    }
+    .scard{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.4rem;
+      position:relative;overflow:hidden;
+      transition:border-color .2s,transform .2s,box-shadow .2s;
+    }
+    .scard::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+      background:linear-gradient(90deg,var(--blue),var(--dark));
+    }
+    .scard:hover{
+      border-color:rgba(0,178,237,.45);
+      transform:translateY(-2px);
+      box-shadow:0 8px 28px rgba(0,178,237,0.10);
+    }
+    .scard-tag{
+      font-size:10px;text-transform:uppercase;letter-spacing:.08em;
+      color:var(--blue);font-weight:700;margin-bottom:.4rem;
+    }
+    .scard h4{font-size:.93rem;font-weight:700;color:var(--dark);margin-bottom:.45rem;}
+    .scard p{font-size:12.5px;color:var(--muted);line-height:1.65;margin:0;}
+    /* accent left-border variant */
+    .scard.left-success::before{background:linear-gradient(90deg,#16a34a,#0ea5e9);}
+    .scard.left-blue::before{background:linear-gradient(90deg,var(--blue),#0099cc);}
+    .scard.left-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+    .scard.left-danger::before{background:linear-gradient(90deg,#dc2626,#f97316);}
+
+    /* ── DETAIL CARD ────────────────────────────────────── */
+    .detail-card{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.5rem 1.6rem;
+      box-shadow:0 4px 20px rgba(0,178,237,0.06);
+      margin-bottom:1rem;
+    }
+    .detail-card h4{font-size:.93rem;font-weight:700;color:var(--dark);margin-bottom:.5rem;}
+    .detail-card p{font-size:13.5px;color:var(--muted);margin:0;line-height:1.75;}
+    .detail-card.blue-left{border-left:3px solid var(--blue);}
+    .detail-card.green-left{border-left:3px solid #16a34a;}
+    .detail-card.amber-left{border-left:3px solid #E8960A;}
+
+    /* ── HIGHLIGHT BOXES ────────────────────────────────── */
+    .highlight-box{
+      background:rgba(0,178,237,0.06);
+      border:1px solid rgba(0,178,237,0.25);
+      border-radius:10px;padding:1.1rem 1.4rem;
+      margin-bottom:1rem;
+    }
+    .highlight-box p{font-size:13.5px;margin:0;color:var(--dark);}
+    .highlight-box.green{background:rgba(22,163,74,0.06);border-color:rgba(22,163,74,0.25);}
+    .highlight-box.amber{background:rgba(232,150,10,0.07);border-color:rgba(232,150,10,0.28);}
+
+    /* ── CALLOUT ────────────────────────────────────────── */
+    .callout{
+      border-left:3px solid var(--blue);
+      background:rgba(0,178,237,0.05);
+      padding:1rem 1.3rem;
+      border-radius:0 8px 8px 0;
+      margin:1rem 0;
+    }
+    .callout p{margin:0;font-size:13.5px;color:var(--muted);}
+    .callout strong{color:var(--dark);}
+
+    /* ── STEPS ──────────────────────────────────────────── */
+    .flow-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+    .flow-steps::before{
+      content:'';position:absolute;
+      left:25px;top:50px;bottom:30px;
+      width:2px;background:rgba(0,178,237,0.18);
+    }
+    .fstep{display:flex;gap:1.2rem;align-items:flex-start;margin-bottom:.5rem;}
+    .fstep:last-child{margin-bottom:0;}
+    .step-num{
+      width:52px;height:52px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:15px;color:#fff;
+      flex-shrink:0;z-index:1;
+    }
+    .step-num.sn-blue{background:var(--blue);box-shadow:0 4px 14px rgba(0,178,237,.35);}
+    .step-num.sn-teal{background:#0D9E8A;box-shadow:0 4px 14px rgba(13,158,138,.35);}
+    .step-num.sn-amber{background:#E8960A;box-shadow:0 4px 14px rgba(232,150,10,.35);}
+    .step-num.sn-purple{background:#6B46C1;box-shadow:0 4px 14px rgba(107,70,193,.35);}
+    .step-num.sn-green{background:#16A34A;box-shadow:0 4px 14px rgba(22,163,74,.35);}
+    .step-card{
+      flex:1;background:#fff;
+      border:1px solid var(--border);
+      border-radius:12px;padding:1.2rem 1.4rem;
+      margin-bottom:1rem;position:relative;overflow:hidden;
+    }
+    .step-card::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+    }
+    .step-card.sc-blue::before{background:linear-gradient(90deg,#00B2ED,#0099cc);}
+    .step-card.sc-teal::before{background:linear-gradient(90deg,#0D9E8A,#06766A);}
+    .step-card.sc-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+    .step-card.sc-purple::before{background:linear-gradient(90deg,#6B46C1,#553593);}
+    .step-card.sc-green::before{background:linear-gradient(90deg,#16A34A,#0E7A36);}
+    .step-card strong{display:block;font-size:.95rem;font-weight:700;color:var(--dark);margin-bottom:.35rem;}
+    .step-card p{font-size:13px;color:var(--muted);margin:0;line-height:1.65;}
+
+    /* ── TEAM CARDS ─────────────────────────────────────── */
+    .team-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:1rem;
+    }
+    .tcard{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.4rem;
+      position:relative;overflow:hidden;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .tcard::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+      background:linear-gradient(90deg,var(--blue),var(--dark));
+    }
+    .tcard:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,178,237,0.10);}
+    .tcard .tc-icon{font-size:24px;margin-bottom:.7rem;}
+    .tcard .tc-tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);font-weight:700;margin-bottom:.35rem;}
+    .tcard h4{font-size:.95rem;font-weight:700;color:var(--dark);margin-bottom:.45rem;}
+    .tcard p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.65;}
+
+    /* ── TABLES ─────────────────────────────────────────── */
+    .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid rgba(0,178,237,0.18);margin-bottom:1rem;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    thead th{
+      background:var(--bg-alt);padding:10px 14px;text-align:left;
+      font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+      color:var(--muted);border-bottom:1px solid rgba(0,178,237,0.18);
+      font-weight:700;
+    }
+    tbody td{
+      padding:10px 14px;border-bottom:1px solid rgba(0,178,237,0.08);
+      vertical-align:top;color:var(--muted);font-size:13px;
+    }
+    tbody tr:last-child td{border-bottom:none;}
+    tbody tr:hover td{background:rgba(0,178,237,0.03);}
+    code{
+      font-family:'Cascadia Code','Fira Code',monospace;
+      font-size:12px;background:rgba(0,178,237,0.08);
+      color:#0099cc;padding:2px 6px;border-radius:4px;
+    }
+
+    /* ── TAGS / PILLS ───────────────────────────────────── */
+    .fp-tag{
+      display:inline-block;font-size:11px;padding:3px 10px;
+      border-radius:20px;font-weight:600;margin:2px 3px 2px 0;
+      background:rgba(0,178,237,0.08);border:1px solid rgba(0,178,237,0.22);
+      color:var(--blue);
+    }
+    .fp-tag.teal{background:rgba(13,158,138,0.09);border-color:rgba(13,158,138,0.28);color:#0D9E8A;}
+    .fp-tag.amber{background:rgba(232,150,10,0.09);border-color:rgba(232,150,10,0.28);color:#B87208;}
+    .fp-tag.purple{background:rgba(107,70,193,0.09);border-color:rgba(107,70,193,0.22);color:#6B46C1;}
+    .fp-tag.green{background:rgba(22,163,74,0.09);border-color:rgba(22,163,74,0.22);color:#16a34a;}
+    .fp-tag.gray{background:rgba(90,106,138,0.09);border-color:rgba(90,106,138,0.22);color:var(--muted);}
+    .fp-tag.red{background:rgba(220,38,38,0.08);border-color:rgba(220,38,38,0.22);color:#dc2626;}
+
+    /* ── ARCH DIAGRAM ───────────────────────────────────── */
+    .arch{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;text-align:center;}
+    .arch-layer{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.2rem 1rem;
+      position:relative;overflow:hidden;
+    }
+    .arch-layer::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+      background:linear-gradient(90deg,var(--blue),var(--dark));
+    }
+    .arch-layer .layer-title{
+      font-size:10px;font-weight:700;text-transform:uppercase;
+      letter-spacing:.07em;color:var(--blue);margin-bottom:.8rem;
+    }
+    .arch-layer .item{
+      background:var(--bg-alt);border-radius:6px;
+      padding:7px 8px;margin-bottom:5px;
+      font-size:12px;font-weight:600;color:var(--dark);
+    }
+    .arch-layer .item:last-child{margin-bottom:0;}
+
+    /* ── FLOW DIAGRAM ───────────────────────────────────── */
+    .flow{
+      display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;
+      padding:1.2rem 1.4rem;
+      background:#fff;border:1px solid var(--border);border-radius:10px;
+    }
+    .flow-box{
+      background:var(--bg-alt);border:1px solid rgba(0,178,237,0.22);
+      border-radius:6px;padding:6px 13px;
+      font-size:12.5px;font-weight:600;color:var(--dark);white-space:nowrap;
+    }
+    .flow-box.fb-blue{background:rgba(0,178,237,0.10);border-color:rgba(0,178,237,0.35);color:#0099cc;}
+    .flow-box.fb-purple{background:rgba(107,70,193,0.10);border-color:rgba(107,70,193,0.30);color:#6B46C1;}
+    .flow-box.fb-green{background:rgba(22,163,74,0.10);border-color:rgba(22,163,74,0.28);color:#16a34a;}
+    .flow-arr{font-size:16px;color:rgba(0,178,237,0.5);}
+
+    /* ── ENDPOINT LIST ──────────────────────────────────── */
+    .endpoint{
+      display:flex;align-items:baseline;gap:.7rem;
+      padding:8px 0;border-bottom:1px solid rgba(0,178,237,0.08);
+    }
+    .endpoint:last-child{border-bottom:none;}
+    .method{
+      font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;
+      min-width:50px;text-align:center;flex-shrink:0;
+    }
+    .method-get{background:rgba(22,163,74,0.12);color:#16a34a;}
+    .method-post{background:rgba(0,178,237,0.12);color:#0099cc;}
+    .method-put{background:rgba(232,150,10,0.12);color:#B87208;}
+    .method-del{background:rgba(220,38,38,0.10);color:#dc2626;}
+    .method-hub{background:rgba(107,70,193,0.10);color:#6B46C1;}
+    .ep-path{font-family:monospace;font-size:13px;color:var(--dark);flex:1;}
+    .ep-desc{font-size:12.5px;color:var(--muted);}
+
+    /* ── MIGRATION TIMELINE ─────────────────────────────── */
+    .mig-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+    .mig-steps::before{
+      content:'';position:absolute;
+      left:19px;top:42px;bottom:24px;
+      width:2px;background:rgba(0,178,237,0.18);
+    }
+    .mig-item{display:flex;gap:1rem;align-items:flex-start;margin-bottom:.5rem;}
+    .mig-dot{
+      width:40px;height:40px;border-radius:50%;
+      background:var(--blue);
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;z-index:1;
+      box-shadow:0 3px 12px rgba(0,178,237,.3);
+    }
+    .mig-dot svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;}
+    .mig-body{
+      flex:1;background:#fff;border:1px solid var(--border);
+      border-radius:10px;padding:.9rem 1.1rem;margin-bottom:.8rem;
+    }
+    .mig-body .mig-date{font-size:10.5px;color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem;}
+    .mig-body .mig-name{font-size:.9rem;font-weight:700;color:var(--dark);margin-bottom:.25rem;}
+    .mig-body .mig-desc{font-size:12.5px;color:var(--muted);margin:0;line-height:1.6;}
+
+    /* ── PERMISSION TABLE TICK ──────────────────────────── */
+    td.tick-yes{color:#16a34a;font-weight:700;}
+    td.tick-no{color:rgba(90,106,138,0.4);font-weight:500;}
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    footer{
+      padding:1.6rem 4%;
+      border-top:1px solid rgba(0,178,237,.15);
+      display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:1rem;background:#fff;
+    }
+    .foot-logo{font-size:14px;font-weight:800;color:var(--dark);}
+    .foot-logo em{font-style:normal;color:var(--blue);}
+    .foot-copy{font-size:11.5px;color:var(--muted);}
+    .foot-links{display:flex;gap:1.3rem;}
+    .foot-links a{font-size:11.5px;color:var(--muted);text-decoration:none;}
+    .foot-links a:hover{color:var(--blue);}
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media(max-width:900px){
+      .arch{grid-template-columns:1fr;}
+      .nav-links{display:none;}
+    }
+    @media(max-width:640px){
+      main{padding:0 5% 60px;}
+      .ph-inner{padding:0;}
+      .scard-grid{grid-template-columns:1fr;}
+      .team-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+<nav>
+  <a class="nav-logo" href="#">Document Intelligence <em>Proposal</em></a>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#teams">Teams</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#tech-stack">Tech Stack</a></li>
+    <li><a href="#endpoints">API</a></li>
+    <li><a href="#database">Database</a></li>
+    <li><a href="#project-structure">Structure</a></li>
+    <li><a href="#migrations">Migrations</a></li>
+    <li><a href="#testing">Testing</a></li>
+    <li><a href="#integrations">Integrations</a></li>
+  </ul>
+  <a class="nav-cta" href="#deployment">Deployment</a>
+</nav>
+
+<!-- ═══════════════════════════ HERO ══════════════════════════ -->
+<section class="page-hero">
+  <div class="ph-grid"></div>
+  <div class="ph-glow"></div>
+  <div class="ph-inner">
+    <div class="ph-badge"><span></span> Application Documentation</div>
+    <h1 class="ph-title">Document Intelligence <em>Proposal</em></h1>
+    <p class="ph-sub">
+      An AI-powered platform that automates the end-to-end pre-sales engineering process —
+      from capturing a client lead to generating a fully signed-off Statement of Work.
+    </p>
+    <div class="ph-meta">
+      <div class="ph-stat">
+        <div class="ph-stat-lbl">Platform</div>
+        <div class="ph-stat-val">.NET 9 / Blazor Server</div>
+      </div>
+      <div class="ph-stat">
+        <div class="ph-stat-lbl">Database</div>
+        <div class="ph-stat-val">MS SQL Server + EF Core</div>
+      </div>
+      <div class="ph-stat">
+        <div class="ph-stat-lbl">AI Engine</div>
+        <div class="ph-stat-val">OpenAI GPT-4o</div>
+      </div>
+      <div class="ph-stat">
+        <div class="ph-stat-lbl">Real-time</div>
+        <div class="ph-stat-val">SignalR + Zoho Cliq</div>
+      </div>
+      <div class="ph-stat">
+        <div class="ph-stat-lbl">Generated</div>
+        <div class="ph-stat-val">2026-06-08</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ MAIN ══════════════════════════ -->
+<main>
+
+<!-- ─── OVERVIEW ─────────────────────────────────────────── -->
+<section id="overview" class="content-sec">
+  <div class="sec-lbl">🏗️ Overview</div>
+  <h2 class="sec-title">Overview</h2>
+
+  <div class="highlight-box" style="margin-bottom:1.5rem;">
+    <p>
+      <strong>What it does in one sentence:</strong>
+      A salesperson submits a client brief, AI automatically drafts a technical + commercial proposal, four internal teams review and approve it in parallel, and the system exports a branded Statement of Work document — all in minutes instead of days.
+    </p>
+  </div>
+
+  <div class="scard-grid">
+    <div class="scard">
+      <div class="scard-tag">Problem Solved</div>
+      <p>Manually writing SOWs takes days, requires multiple meetings, and is error-prone. This platform automates the entire lifecycle.</p>
+    </div>
+    <div class="scard">
+      <div class="scard-tag">Primary Users</div>
+      <p>Sales, Technical Architects, Finance analysts, and Management decision-makers at a professional-services firm.</p>
+    </div>
+    <div class="scard">
+      <div class="scard-tag">Core Output</div>
+      <p>A signed-off, downloadable Word/PDF Statement of Work with effort estimates, team allocation, and pricing.</p>
+    </div>
+    <div class="scard">
+      <div class="scard-tag">Key Innovation</div>
+      <p>GPT-4o reads past successful projects and current rate cards to produce a first-cut proposal with zero human effort.</p>
+    </div>
+  </div>
+
+  <h3 class="sub-head">Business Value</h3>
+  <p>
+    Without this platform, proposal creation requires a project manager to collect inputs, a solutions architect to design the approach, a finance analyst to build the budget, and management sign-off — each in sequence. Each hand-off adds 1–3 days.
+    <strong style="color:var(--dark)">Document Intelligence Proposal collapses that to hours</strong> by running AI generation and team reviews in parallel.
+  </p>
+
+  <div class="scard-grid" style="margin-top:.8rem;">
+    <div class="scard left-success">
+      <div class="scard-tag">Speed</div>
+      <p>First AI draft ready in &lt; 30 seconds. Full multi-team review trackable in real time.</p>
+    </div>
+    <div class="scard left-blue">
+      <div class="scard-tag">Consistency</div>
+      <p>Every proposal uses the same template, the same rate card, and the same approval checklist — no ad-hoc formatting.</p>
+    </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">Traceability</div>
+      <p>Full audit log of who approved what and when. Every revision is versioned.</p>
+    </div>
+    <div class="scard left-danger">
+      <div class="scard-tag">Knowledge Reuse</div>
+      <p>Historical project library feeds AI context so each new proposal learns from past wins.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ──────────────────────────────────────── -->
+<section id="how-it-works" class="content-sec alt">
+  <div class="sec-lbl">▶️ Process</div>
+  <h2 class="sec-title">How It Works — <em>Step by Step</em></h2>
+  <p class="sec-sub">Below is the full journey from a sales enquiry to a signed-off SOW document, written for a non-technical audience.</p>
+
+  <div class="flow-steps">
+
+    <div class="fstep">
+      <div class="step-num sn-blue">1</div>
+      <div class="step-card sc-blue">
+        <strong>Sales logs in and submits a lead</strong>
+        <p>A salesperson fills in a short form: client name, project description, budget range, timeline, and technology preferences. This takes two minutes.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-teal">2</div>
+      <div class="step-card sc-teal">
+        <strong>AI reads the brief and finds similar past projects</strong>
+        <p>The system searches the internal library of completed projects to find the best matches by industry and technology stack.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-purple">3</div>
+      <div class="step-card sc-purple">
+        <strong>GPT-4o drafts the full proposal</strong>
+        <p>OpenAI's model reads the brief, the similar projects, and the current rate card, then generates a structured proposal covering: executive summary, technical architecture, team composition, effort estimates, and commercial pricing. This takes under 30 seconds.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-amber">4</div>
+      <div class="step-card sc-amber">
+        <strong>Four teams are notified simultaneously</strong>
+        <p>Sales, Tech, Finance, and Management each receive a Zoho Cliq message and an in-app notification to review their section. Reviews happen in parallel — no waiting for the previous team to finish.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-blue">5</div>
+      <div class="step-card sc-blue">
+        <strong>Each team edits and approves their section</strong>
+        <p>Teams can edit their part of the proposal using a rich text editor. Once satisfied, they click Approve. If they need changes from another team they can request a revision with a comment.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-teal">6</div>
+      <div class="step-card sc-teal">
+        <strong>Teams discuss in real-time chat</strong>
+        <p>Each proposal has a built-in group chat where all teams can ask questions or flag issues without leaving the tool — no need for separate email chains.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-purple">7</div>
+      <div class="step-card sc-purple">
+        <strong>Management gives final approval</strong>
+        <p>Once all four teams approve, management can give the final sign-off, which locks the proposal.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-green">8</div>
+      <div class="step-card sc-green">
+        <strong>A branded Word / PDF document is generated</strong>
+        <p>The system fills in the company's SOW template with all approved content and makes it available for download. The document can also be sent via Zoho Writer for digital signature.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-amber">9</div>
+      <div class="step-card sc-amber">
+        <strong>Approval reminders run automatically</strong>
+        <p>A background job checks every 2 hours for pending approvals that are overdue and sends reminders via Zoho Cliq and email — no one needs to manually chase reviewers.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="sub-head">Visual Flow</h3>
+  <div class="flow">
+    <span class="flow-box fb-blue">Lead Submitted</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-purple">AI Scoping (GPT-4o)</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Parallel Team Review</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Revisions &amp; Chat</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">All Teams Approve</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">SOW Document Export</span>
+  </div>
+</section>
+
+<!-- ─── TEAMS & ROLES ─────────────────────────────────────── -->
+<section id="teams" class="content-sec">
+  <div class="sec-lbl">👥 Teams &amp; Roles</div>
+  <h2 class="sec-title">Teams &amp; <em>Roles</em></h2>
+  <p class="sec-sub">The platform enforces strict role-based access. Every user belongs to one or more teams and sees only what is relevant to their role.</p>
+
+  <div class="team-grid">
+    <div class="tcard">
+      <div class="tc-icon">💼</div>
+      <div class="tc-tag">Sales</div>
+      <h4>Sales Team</h4>
+      <p>Submits new leads. Views their own leads and their current proposal status. Can edit the executive summary section.</p>
+    </div>
+    <div class="tcard">
+      <div class="tc-icon">⚙️</div>
+      <div class="tc-tag">Tech</div>
+      <h4>Tech Team</h4>
+      <p>Reviews the technical architecture and effort estimation sections. Can request changes to commercial figures.</p>
+    </div>
+    <div class="tcard">
+      <div class="tc-icon">💰</div>
+      <div class="tc-tag">Finance</div>
+      <h4>Finance Team</h4>
+      <p>Reviews and adjusts pricing, payment schedule, and commercial terms. Approves the financial section.</p>
+    </div>
+    <div class="tcard">
+      <div class="tc-icon">🏛️</div>
+      <div class="tc-tag">Management</div>
+      <h4>Management</h4>
+      <p>Has visibility across all teams. Gives the final sign-off that locks the proposal and triggers document generation.</p>
+    </div>
+  </div>
+
+  <h3 class="sub-head">Permission Matrix</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th><th>Sales</th><th>Tech</th><th>Finance</th><th>Management</th><th>Super-Admin</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Submit lead</td><td class="tick-yes">✓</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
+        <tr><td>View own team's proposals</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Edit team section</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Approve / reject section</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Final management approval</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Download SOW document</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Manage users</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Manage teams</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Configure OpenAI settings</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Historical projects CRUD</td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
+        <tr><td>Rate cards CRUD</td><td class="tick-no">–</td><td class="tick-no">–</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td><td class="tick-yes">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ─── ARCHITECTURE ───────────────────────────────────────── -->
+<section id="architecture" class="content-sec alt">
+  <div class="sec-lbl">🏛️ Architecture</div>
+  <h2 class="sec-title"><em>Architecture</em></h2>
+
+  <h3 class="sub-head">High-Level Structure</h3>
+  <p>The application is split into two hosted projects that communicate via HTTP and SignalR:</p>
+
+  <div class="arch">
+    <div class="arch-layer">
+      <div class="layer-title">Frontend (Browser)</div>
+      <div class="item">Blazor Server UI</div>
+      <div class="item">SignalR Chat Client</div>
+      <div class="item">SignalR Notification Client</div>
+      <div class="item">JWT Auth Store</div>
+    </div>
+    <div class="arch-layer">
+      <div class="layer-title">Backend API</div>
+      <div class="item">ASP.NET Core Web API</div>
+      <div class="item">SignalR Hubs (Chat + Notifications)</div>
+      <div class="item">Background Scoping Worker</div>
+      <div class="item">Approval Reminder Job</div>
+    </div>
+    <div class="arch-layer">
+      <div class="layer-title">Data &amp; External Services</div>
+      <div class="item">SQL Server (EF Core 9)</div>
+      <div class="item">OpenAI GPT-4o</div>
+      <div class="item">Zoho Cliq (Notifications)</div>
+      <div class="item">Zoho Writer (Documents)</div>
+    </div>
+  </div>
+
+  <h3 class="sub-head">AI Scoping Pipeline</h3>
+  <p>The AI proposal generation runs as an asynchronous background pipeline so the UI is never blocked:</p>
+  <div class="flow">
+    <span class="flow-box fb-blue">Lead Created</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Job Queued (DB)</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Worker Polls (2 sec)</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-purple">Similar Projects Lookup</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-purple">Rate Card Estimation</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-purple">GPT-4o Prompt</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Scoping Result Cached</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Proposal Sections Created</span>
+  </div>
+
+  <h3 class="sub-head">Approval Workflow Pattern</h3>
+  <div class="callout">
+    <p>
+      <strong>Parallel, not sequential.</strong>
+      All four teams receive their review tasks simultaneously. The proposal is considered ready for final management sign-off only when every team has set their approval status to "Approved". A single rejection or revision request by any team blocks the final sign-off until resolved.
+    </p>
+  </div>
+
+  <h3 class="sub-head">Real-time Communication</h3>
+  <div class="scard-grid">
+    <div class="scard">
+      <div class="scard-tag">SignalR — Notifications Hub</div>
+      <p>Pushes live proposal status updates and approval events to logged-in users. No page refresh needed.</p>
+    </div>
+    <div class="scard">
+      <div class="scard-tag">SignalR — Chat Hub</div>
+      <p>Each proposal has a group chat room. All team members connected to a proposal receive messages instantly.</p>
+    </div>
+    <div class="scard">
+      <div class="scard-tag">Zoho Cliq</div>
+      <p>External webhook-based notifications sent to team Cliq channels when a proposal is ready for review or has been approved.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TECH STACK ─────────────────────────────────────────── -->
+<section id="tech-stack" class="content-sec">
+  <div class="sec-lbl">⚙️ Technical Stack</div>
+  <h2 class="sec-title">Technical <em>Stack</em></h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Layer</th><th>Technology</th><th>Version</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Language</td><td>C#</td><td>12</td><td>All backend and frontend logic</td></tr>
+        <tr><td>Runtime</td><td>.NET</td><td>9.0</td><td>Host platform</td></tr>
+        <tr><td>Web API</td><td>ASP.NET Core</td><td>9.0</td><td>REST endpoints + SignalR hubs</td></tr>
+        <tr><td>Frontend</td><td>Blazor Server</td><td>9.0</td><td>Interactive server-rendered UI</td></tr>
+        <tr><td>ORM</td><td>Entity Framework Core</td><td>9.0.0</td><td>Database access + migrations</td></tr>
+        <tr><td>Database</td><td>MS SQL Server</td><td>2014+</td><td>Primary data store</td></tr>
+        <tr><td>Authentication</td><td>JWT Bearer</td><td>9.0.0</td><td>Stateless API auth</td></tr>
+        <tr><td>Real-time</td><td>ASP.NET Core SignalR</td><td>9.0.0</td><td>Chat + live notifications</td></tr>
+        <tr><td>AI</td><td>Azure.AI.OpenAI</td><td>2.0.0</td><td>GPT-4o proposal generation</td></tr>
+        <tr><td>Secrets</td><td>Azure Key Vault</td><td>4.6.0</td><td>API keys &amp; credentials storage</td></tr>
+        <tr><td>API Docs</td><td>Swashbuckle / Swagger</td><td>6.6.2</td><td>Interactive API documentation</td></tr>
+        <tr><td>Testing</td><td>xUnit</td><td>2.9.2</td><td>Unit &amp; integration tests</td></tr>
+        <tr><td>Notifications</td><td>Zoho Cliq Webhooks</td><td>REST</td><td>Team channel alerts</td></tr>
+        <tr><td>Documents</td><td>Zoho Writer API</td><td>REST</td><td>PDF/Word generation</td></tr>
+        <tr><td>Email</td><td>SMTP (System.Net.Mail)</td><td>–</td><td>Approval email notifications</td></tr>
+        <tr><td>Word Generation</td><td>Open XML (OOXML)</td><td>–</td><td>Server-side .docx creation</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub-head">Key Design Decisions</h3>
+  <div class="scard-grid">
+    <div class="scard left-blue">
+      <div class="scard-tag">No Stored Procedures</div>
+      <p>All data access is through EF Core. Migrations are code-first and version-controlled. Enables easy refactoring.</p>
+    </div>
+    <div class="scard left-success">
+      <div class="scard-tag">Async Background Jobs</div>
+      <p>AI scoping runs in a background hosted service, preventing API timeouts and allowing the UI to poll for status.</p>
+    </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">JWT Multi-Team Claims</div>
+      <p>A single JWT can carry memberships for multiple teams, so one user can review across departments.</p>
+    </div>
+    <div class="scard left-danger">
+      <div class="scard-tag">Optimistic Concurrency</div>
+      <p>Proposal section edits use EF Core's concurrency tokens to prevent two users overwriting each other.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── API ENDPOINTS ─────────────────────────────────────── -->
+<section id="endpoints" class="content-sec alt">
+  <div class="sec-lbl">🔌 API</div>
+  <h2 class="sec-title">API <em>Endpoints</em></h2>
+  <p class="sec-sub">All endpoints are prefixed with <code>/api</code>. Authentication via <code>Authorization: Bearer &lt;JWT&gt;</code> is required unless noted.</p>
+
+  <h3 class="sub-head">Authentication</h3>
+  <div class="detail-card">
+    <div class="endpoint">
+      <span class="method method-post">POST</span>
+      <span class="ep-path">/api/auth/login</span>
+      <span class="ep-desc">Submit email + password, receive a signed JWT. No auth required.</span>
+    </div>
+  </div>
+
+  <h3 class="sub-head">Leads</h3>
+  <div class="detail-card">
+    <div class="endpoint"><span class="method method-post">POST</span><span class="ep-path">/api/leads</span><span class="ep-desc">Create a new client lead (Sales / Management only)</span></div>
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/leads</span><span class="ep-desc">List all leads visible to the caller's teams</span></div>
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/leads/{id}</span><span class="ep-desc">Get a single lead with current scoping status</span></div>
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/leads/{id}/scoping</span><span class="ep-desc">Get the latest AI scoping result for a lead</span></div>
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/leads/{id}/scoping/history</span><span class="ep-desc">Get all previous scoping attempt results</span></div>
+    <div class="endpoint"><span class="method method-post">POST</span><span class="ep-path">/api/leads/{id}/scoping/retry</span><span class="ep-desc">Re-queue a failed scoping job for retry</span></div>
+    <div class="endpoint"><span class="method method-post">POST</span><span class="ep-path">/api/leads/{id}/sow</span><span class="ep-desc">Promote scoped data to a full Statement of Work</span></div>
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/leads/{id}/proposal</span><span class="ep-desc">Get the full proposal workflow state for a lead</span></div>
+  </div>
+
+  <h3 class="sub-head">Proposals, Sections &amp; Approvals</h3>
+  <div class="detail-card">
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/proposals</span><span class="ep-desc">List all proposals (filtered by user's team visibility)</span></div>
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/proposal-sections</span><span class="ep-desc">Get proposal sections relevant to the caller's team</span></div>
+    <div class="endpoint"><span class="method method-put">PUT</span><span class="ep-path">/api/proposal-sections/{sectionId}</span><span class="ep-desc">Update section HTML content (optimistic concurrency)</span></div>
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/proposal-approvals</span><span class="ep-desc">Get approvals (optional filter by status)</span></div>
+    <div class="endpoint"><span class="method method-post">POST</span><span class="ep-path">/api/proposal-approvals/{approvalId}/decision</span><span class="ep-desc">Submit Approve / Reject / Request-Revision decision with optional comments</span></div>
+  </div>
+
+  <h3 class="sub-head">Documents</h3>
+  <div class="detail-card">
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/proposal-documents/{proposalId}</span><span class="ep-desc">Get current document HTML for the inline editor</span></div>
+    <div class="endpoint"><span class="method method-put">PUT</span><span class="ep-path">/api/proposal-documents/{proposalId}</span><span class="ep-desc">Save edited document HTML back to the database</span></div>
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/proposal-documents/{proposalId}/download</span><span class="ep-desc">Download the compiled .docx or PDF file</span></div>
+    <div class="endpoint"><span class="method method-post">POST</span><span class="ep-path">/api/proposal-documents/{proposalId}/regenerate</span><span class="ep-desc">Re-generate the document from the current approved content</span></div>
+  </div>
+
+  <h3 class="sub-head">Historical Projects, Rate Cards &amp; Settings</h3>
+  <div class="detail-card">
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/historical-projects</span><span class="ep-desc">List reference projects used for AI similarity matching</span></div>
+    <div class="endpoint"><span class="method method-post">POST</span><span class="ep-path">/api/historical-projects</span><span class="ep-desc">Add a new reference project</span></div>
+    <div class="endpoint"><span class="method method-put">PUT</span><span class="ep-path">/api/historical-projects/{id}</span><span class="ep-desc">Update a reference project</span></div>
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/rate-cards</span><span class="ep-desc">List all role rate entries</span></div>
+    <div class="endpoint"><span class="method method-get">GET</span><span class="ep-path">/api/openai-settings</span><span class="ep-desc">Get current OpenAI model + temperature configuration</span></div>
+    <div class="endpoint"><span class="method method-put">PUT</span><span class="ep-path">/api/openai-settings</span><span class="ep-desc">Update OpenAI API key, model, temperature (super-admin only)</span></div>
+  </div>
+
+  <h3 class="sub-head">Real-time (SignalR) &amp; Webhooks</h3>
+  <div class="detail-card">
+    <div class="endpoint"><span class="method method-hub">HUB</span><span class="ep-path">/hubs/notifications</span><span class="ep-desc">Live proposal status updates pushed to all connected clients</span></div>
+    <div class="endpoint"><span class="method method-hub">HUB</span><span class="ep-path">/hubs/proposal-chat</span><span class="ep-desc">Per-proposal group chat — join by proposalId, receive/send messages in real time</span></div>
+    <div class="endpoint"><span class="method method-post">POST</span><span class="ep-path">/api/zoho/webhook/doc-ready</span><span class="ep-desc">Callback from Zoho Writer when a document is ready for download. HMAC-signed for security.</span></div>
+  </div>
+</section>
+
+<!-- ─── DATABASE ──────────────────────────────────────────── -->
+<section id="database" class="content-sec">
+  <div class="sec-lbl">🗄️ Database</div>
+  <h2 class="sec-title">Database <em>Schema</em></h2>
+  <p class="sec-sub">All tables are managed by Entity Framework Core code-first migrations. No stored procedures are used.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Table</th><th>Primary Key</th><th>Description</th><th>Key Columns</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Leads</strong></td><td><code>LeadId</code></td><td>Client project enquiries submitted by sales</td><td>CompanyName, ProjectBrief, TechStack, Budget, Status, OwningTeamId</td></tr>
+        <tr><td><strong>GeneratedSows</strong></td><td><code>SowId</code></td><td>AI-generated Statement of Work document data</td><td>LeadId, SowJson, DocumentHtml, DocumentUrl, ApprovedByMgmt</td></tr>
+        <tr><td><strong>ProposalSections</strong></td><td><code>SectionId</code></td><td>Team-specific editable section of a proposal</td><td>SowId, TeamId, SectionName, SectionContent (HTML), Status, Version</td></tr>
+        <tr><td><strong>ProposalApprovals</strong></td><td><code>ApprovalId</code></td><td>Approval decision per team per proposal</td><td>SowId, TeamId, ReviewedBy, Status, Comments</td></tr>
+        <tr><td><strong>ProposalChatMessages</strong></td><td><code>MessageId</code></td><td>Real-time chat messages attached to a proposal</td><td>SowId, UserId, Message, CreatedAt</td></tr>
+        <tr><td><strong>Users</strong></td><td><code>UserId</code></td><td>Platform user accounts</td><td>Email, PasswordHash, DisplayName, IsSuperAdmin, IsActive</td></tr>
+        <tr><td><strong>Teams</strong></td><td><code>TeamId</code></td><td>Organisational teams</td><td>TeamName, TeamSlug, Description</td></tr>
+        <tr><td><strong>UserTeams</strong></td><td><code>UserTeamId</code></td><td>Many-to-many: users ↔ teams</td><td>UserId, TeamId (unique together)</td></tr>
+        <tr><td><strong>HistoricalProjects</strong></td><td><code>ProjectId</code></td><td>Completed projects used as AI context</td><td>ProjectName, Industry, TechStack, Description, Duration, TeamComposition</td></tr>
+        <tr><td><strong>RateCards</strong></td><td><code>RoleId</code></td><td>Hourly rate per role and seniority level</td><td>RoleName, Seniority, HourlyRate, Currency</td></tr>
+        <tr><td><strong>LeadScopingJobs</strong></td><td><code>JobId</code></td><td>Background job queue for AI scoping</td><td>LeadId, Status, Attempts, LastError</td></tr>
+        <tr><td><strong>LeadScopingResults</strong></td><td><code>ScopingResultId</code></td><td>Cached AI scoping outputs</td><td>LeadId, InputHash, ResultJson, CorrelationId, CreatedAt</td></tr>
+        <tr><td><strong>OpenAISettings</strong></td><td><code>SettingId</code></td><td>Admin-configurable OpenAI parameters</td><td>ApiKey (encrypted), ModelName, Temperature, MaxTokens</td></tr>
+        <tr><td><strong>AuditLogs</strong></td><td><code>LogId</code></td><td>Immutable audit trail</td><td>UserId, Action, EntityType, EntityId, Details, Timestamp</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ─── PROJECT STRUCTURE ─────────────────────────────────── -->
+<section id="project-structure" class="content-sec alt">
+  <div class="sec-lbl">📁 Project Structure</div>
+  <h2 class="sec-title">Project <em>Structure</em></h2>
+  <p class="sec-sub">The solution contains four projects. Below is a map of the most important directories.</p>
+
+  <div class="scard-grid">
+    <div class="scard left-blue">
+      <div class="scard-tag">Document-Intelligence-Proposal.API</div>
+      <p>ASP.NET Core Web API. Contains all controllers, services, models, EF Core DbContext, migrations, background jobs, and SignalR hubs.</p>
+    </div>
+    <div class="scard left-success">
+      <div class="scard-tag">Document-Intelligence-Proposal.Web</div>
+      <p>Blazor Server frontend. Contains Razor pages, shared components, API client wrappers, SignalR clients, and JWT helpers.</p>
+    </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">Document-Intelligence-Proposal.UnitTests</div>
+      <p>xUnit unit tests covering AI schema parsing, estimation logic, role routing, document generation, and access control.</p>
+    </div>
+    <div class="scard left-danger">
+      <div class="scard-tag">Document-Intelligence-Proposal.IntegrationTests</div>
+      <p>xUnit integration test project (framework in place, test cases to be added for end-to-end database flows).</p>
+    </div>
+  </div>
+
+  <h3 class="sub-head">API — Service Layer Breakdown</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Service</th><th>Responsibility</th></tr></thead>
+      <tbody>
+        <tr><td><code>LeadScopingService</code></td><td>Orchestrates the full AI pipeline: fetch similar projects → call OpenAI → parse result → create proposal sections</td></tr>
+        <tr><td><code>OpenAIService</code></td><td>Builds and sends the GPT-4o prompt. Parses the structured JSON response. Implements fallback on failure.</td></tr>
+        <tr><td><code>ArchitectureService</code></td><td>Queries HistoricalProjects to find industry-matching reference projects for the AI prompt context</td></tr>
+        <tr><td><code>EstimationService</code></td><td>Reads RateCards and computes hours, cost, and team composition for each AI-generated phase</td></tr>
+        <tr><td><code>ProposalWorkflowService</code></td><td>Creates the four team sections and approval records when a lead is promoted to SOW</td></tr>
+        <tr><td><code>ApprovalService</code></td><td>Persists approval decisions; checks if all four teams have approved to unlock management sign-off</td></tr>
+        <tr><td><code>ProposalDocumentGenerator</code></td><td>Fills the SOW.docx template with approved proposal content using Open XML manipulation</td></tr>
+        <tr><td><code>ZohoService</code></td><td>Calls Zoho Writer API to render the final PDF/Word; handles the webhook callback when rendering completes</td></tr>
+        <tr><td><code>ZohoCliqService</code></td><td>Sends formatted notification cards to four Zoho Cliq channels simultaneously via webhook URLs</td></tr>
+        <tr><td><code>EmailService</code></td><td>Sends SMTP emails with SOW attachments for approval notifications</td></tr>
+        <tr><td><code>AuthService</code></td><td>Validates credentials, generates signed JWTs with multi-team claims, 8-hour expiry</td></tr>
+        <tr><td><code>UserManagementService</code></td><td>CRUD for users; password hashing; super-admin flag management</td></tr>
+        <tr><td><code>RoleManagementService</code></td><td>Assigns and removes users from teams; validates team membership for access control</td></tr>
+        <tr><td><code>OpenAISettingsService</code></td><td>Reads and persists admin-configurable OpenAI parameters (model, key, temperature)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub-head">Blazor Web — Page Map</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Page</th><th>Route</th><th>Who sees it</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Login</td><td><code>/login</code></td><td>Everyone</td><td>Email + password authentication</td></tr>
+        <tr><td>Home / Dashboard</td><td><code>/</code></td><td>All authenticated</td><td>Role-aware dashboard</td></tr>
+        <tr><td>New Lead</td><td><code>/leads/new</code></td><td>Sales, Management</td><td>Lead submission form</td></tr>
+        <tr><td>Sales Dashboard</td><td><code>/sales</code></td><td>Sales</td><td>List of submitted leads with scoping status</td></tr>
+        <tr><td>Sales Lead Detail</td><td><code>/sales/lead/{id}</code></td><td>Sales</td><td>Full lead record with scoping result</td></tr>
+        <tr><td>Tech Dashboard</td><td><code>/tech</code></td><td>Tech</td><td>Proposals awaiting technical review</td></tr>
+        <tr><td>Finance Dashboard</td><td><code>/finance</code></td><td>Finance</td><td>Proposals awaiting commercial review</td></tr>
+        <tr><td>Proposal Draft Editor</td><td><code>/proposals/{id}/draft</code></td><td>Relevant team</td><td>Rich-text HTML editor for team's section</td></tr>
+        <tr><td>Proposal Document Editor</td><td><code>/proposals/{id}/document</code></td><td>All</td><td>Final merged document preview + download</td></tr>
+        <tr><td>Approvals</td><td><code>/approvals</code></td><td>All</td><td>Pending approval queue for current user's teams</td></tr>
+        <tr><td>Historical Projects</td><td><code>/historical-projects</code></td><td>Tech, Management</td><td>List, create, edit reference projects</td></tr>
+        <tr><td>Rate Cards</td><td><code>/rate-cards</code></td><td>Finance, Management</td><td>Manage role hourly rates</td></tr>
+        <tr><td>User Management</td><td><code>/admin/users</code></td><td>Super-admin</td><td>Create, update, delete users and assign teams</td></tr>
+        <tr><td>Teams</td><td><code>/admin/teams</code></td><td>Super-admin</td><td>Manage team records</td></tr>
+        <tr><td>Settings</td><td><code>/settings</code></td><td>Super-admin</td><td>Configure OpenAI API key, model, temperature</td></tr>
+        <tr><td>Notifications</td><td><code>/notifications</code></td><td>All</td><td>Notification centre — real-time alerts</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ─── MIGRATIONS ─────────────────────────────────────────── -->
+<section id="migrations" class="content-sec">
+  <div class="sec-lbl">🔄 Migrations</div>
+  <h2 class="sec-title">Database <em>Migration History</em></h2>
+  <p class="sec-sub">Entity Framework Core code-first migrations track every schema change. Migrations run automatically on startup in Development; in Production they must be applied via SQL script.</p>
+
+  <div class="mig-steps">
+
+    <div class="mig-item">
+      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
+      <div class="mig-body">
+        <div class="mig-date">2026-04-06</div>
+        <div class="mig-name">InitialCreate</div>
+        <div class="mig-desc">Created all core tables: Leads, Users, Teams, UserTeams, GeneratedSows, ProposalSections, ProposalApprovals, HistoricalProjects, RateCards, AuditLogs</div>
+      </div>
+    </div>
+
+    <div class="mig-item">
+      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
+      <div class="mig-body">
+        <div class="mig-date">2026-04-07</div>
+        <div class="mig-name">AddIsSuperAdmin</div>
+        <div class="mig-desc">Added <code>IsSuperAdmin</code> boolean column to Users table for privileged admin access</div>
+      </div>
+    </div>
+
+    <div class="mig-item">
+      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
+      <div class="mig-body">
+        <div class="mig-date">2026-04-09</div>
+        <div class="mig-name">UpdateChanges</div>
+        <div class="mig-desc">Schema refinements following initial design review — column type corrections and nullable adjustments</div>
+      </div>
+    </div>
+
+    <div class="mig-item">
+      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
+      <div class="mig-body">
+        <div class="mig-date">2026-04-09</div>
+        <div class="mig-name">FixTeamMembersTable</div>
+        <div class="mig-desc">Fixed UserTeams table unique constraint on (UserId, TeamId) to prevent duplicate memberships</div>
+      </div>
+    </div>
+
+    <div class="mig-item">
+      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
+      <div class="mig-body">
+        <div class="mig-date">2026-04-09</div>
+        <div class="mig-name">AddLeadScopingPipeline</div>
+        <div class="mig-desc">Added LeadScopingJobs and LeadScopingResults tables for the asynchronous AI scoping job queue and result cache</div>
+      </div>
+    </div>
+
+    <div class="mig-item">
+      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
+      <div class="mig-body">
+        <div class="mig-date">2026-04-16</div>
+        <div class="mig-name">AddOpenAISettingsStorage</div>
+        <div class="mig-desc">Added OpenAISettings table so admins can configure the GPT model and API key from within the app at runtime</div>
+      </div>
+    </div>
+
+    <div class="mig-item">
+      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
+      <div class="mig-body">
+        <div class="mig-date">2026-04-17</div>
+        <div class="mig-name">AddLeadOwningTeam</div>
+        <div class="mig-desc">Added <code>OwningTeamId</code> FK on Leads so proposals are associated with the submitting team</div>
+      </div>
+    </div>
+
+    <div class="mig-item">
+      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
+      <div class="mig-body">
+        <div class="mig-date">2026-04-17</div>
+        <div class="mig-name">AddLeadTechStackFix</div>
+        <div class="mig-desc">Changed Leads.TechStack from a short varchar to nvarchar(max) to accommodate lengthy technology lists</div>
+      </div>
+    </div>
+
+    <div class="mig-item">
+      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
+      <div class="mig-body">
+        <div class="mig-date">2026-04-20</div>
+        <div class="mig-name">AddGeneratedSowDocumentHtml</div>
+        <div class="mig-desc">Added <code>DocumentHtml</code> column to GeneratedSows so the merged document HTML is persisted for the inline editor</div>
+      </div>
+    </div>
+
+    <div class="mig-item">
+      <div class="mig-dot"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg></div>
+      <div class="mig-body">
+        <div class="mig-date">2026-04-22</div>
+        <div class="mig-name">AddProposalChatMessages</div>
+        <div class="mig-desc">Added ProposalChatMessages table for per-proposal real-time team discussion thread</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="callout" style="margin-top:1.5rem;">
+    <p>
+      <strong>Auto-migration toggle:</strong> Controlled by <code>Database:ApplyMigrationsAtStartup</code> in appsettings. Enabled only in Development and Staging environments. Production uses idempotent SQL scripts generated via <code>dotnet ef migrations script --idempotent</code>.
+    </p>
+  </div>
+</section>
+
+<!-- ─── TESTING ───────────────────────────────────────────── -->
+<section id="testing" class="content-sec alt">
+  <div class="sec-lbl">🧪 Testing</div>
+  <h2 class="sec-title">Testing</h2>
+  <p class="sec-sub">Unit tests use xUnit and cover critical business logic. The test suite runs without requiring a live database or OpenAI API key.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Test File</th><th>What it tests</th></tr></thead>
+      <tbody>
+        <tr><td><code>OpenAIProposalSchemaV2Tests</code></td><td>Verifies that the GPT-4o JSON response is correctly deserialized into the OpenAIProposalSchema model. Tests v2 field population and schema evolution.</td></tr>
+        <tr><td><code>EstimationServiceTests</code></td><td>Validates cost calculation and team composition logic using known rate cards. Ensures totals add up correctly across all roles.</td></tr>
+        <tr><td><code>RoleRouterTests</code></td><td>Checks that the role-based routing service redirects each team to the correct dashboard page on login.</td></tr>
+        <tr><td><code>ProposalChatAccessRulesTests</code></td><td>Asserts that only team members assigned to a proposal may send or receive chat messages for that proposal.</td></tr>
+        <tr><td><code>ProposalDocumentGenerationTests</code></td><td>End-to-end test of Word document XML generation from a mock proposal object — verifies all merge fields are populated.</td></tr>
+        <tr><td><code>HtmlSanitizerTests</code></td><td>Confirms that XSS payloads are stripped from rich-text section content before storage and render.</td></tr>
+        <tr><td><code>ProjectBriefRepairTests</code></td><td>Validates the brief repair/clean-up logic that normalises AI-generated project briefs before display.</td></tr>
+        <tr><td><code>BriefDetailsRepairTests</code></td><td>Tests field-level repair for detail sections that may contain malformed AI output.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="highlight-box green" style="margin-top:.5rem;">
+    <p>
+      Run all tests: <code>dotnet test</code> from the solution root.&nbsp;&nbsp;
+      Run with coverage: <code>dotnet test --collect:"XPlat Code Coverage"</code>&nbsp;&nbsp;
+      Coverage reports collected via <strong>coverlet</strong> in Cobertura format.
+    </p>
+  </div>
+</section>
+
+<!-- ─── INTEGRATIONS ──────────────────────────────────────── -->
+<section id="integrations" class="content-sec">
+  <div class="sec-lbl">🔗 Integrations</div>
+  <h2 class="sec-title">External <em>Integrations</em></h2>
+
+  <div class="scard-grid">
+    <div class="scard">
+      <div class="scard-tag" style="color:#7c3aed">OpenAI (GPT-4o)</div>
+      <p>The core AI engine. Sends a structured prompt containing the client brief, similar historical projects, and rate card data. Receives a JSON response with executive summary, technical architecture, effort breakdown, team composition, and pricing. Model, temperature, and API key are user-adjustable at runtime.</p>
+    </div>
+    <div class="scard">
+      <div class="scard-tag" style="color:#ea580c">Zoho Cliq</div>
+      <p>Sends instant notifications to four team channels when a proposal is ready for review. Uses incoming webhook URLs per channel. Messages include a direct deep link to the proposal review page. Credentials stored in Azure Key Vault.</p>
+    </div>
+    <div class="scard">
+      <div class="scard-tag" style="color:#0284c7">Zoho Writer</div>
+      <p>Used for advanced PDF/Word document generation from a Zoho template. A webhook callback (<code>/api/zoho/webhook/doc-ready</code>) signals when the document is ready for download. HMAC signature verified for security.</p>
+    </div>
+    <div class="scard left-success">
+      <div class="scard-tag">Azure Key Vault</div>
+      <p>Stores sensitive configuration at runtime: OpenAI API key, Zoho credentials, SMTP password, JWT secret. Application identity uses Azure Managed Identity for passwordless vault access.</p>
+    </div>
+    <div class="scard">
+      <div class="scard-tag">SMTP Email</div>
+      <p>Sends email notifications when a proposal requires approval or when an approval reminder fires. SOW documents are optionally attached.</p>
+    </div>
+    <div class="scard left-blue">
+      <div class="scard-tag">Azure Application Insights</div>
+      <p>Planned telemetry integration for monitoring API performance, tracking errors, and measuring proposal generation latency in production.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DEPLOYMENT ────────────────────────────────────────── -->
+<section id="deployment" class="content-sec alt">
+  <div class="sec-lbl">🚀 Deployment</div>
+  <h2 class="sec-title"><em>Deployment</em></h2>
+
+  <h3 class="sub-head">Current Development Setup</h3>
+  <div class="detail-card">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">API</div>
+        <span class="fp-tag">https://localhost:7056</span>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Web UI</div>
+        <span class="fp-tag green">https://localhost:5xxx (Blazor)</span>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Database</div>
+        <span class="fp-tag gray">AHMDSK33\MSSQLSERVER2014 / Document-Intelligence-Proposal</span>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Migrations</div>
+        <span class="fp-tag amber">Auto-applied on startup (Dev only)</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub-head">Planned Azure Infrastructure</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Resource</th><th>Type</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>App Service (API)</td><td>Azure App Service</td><td>Host the ASP.NET Core Web API</td></tr>
+        <tr><td>App Service (Web)</td><td>Azure App Service</td><td>Host the Blazor Server frontend</td></tr>
+        <tr><td>Azure SQL</td><td>Azure SQL Database</td><td>Production database</td></tr>
+        <tr><td>Azure Key Vault</td><td>Key Vault</td><td>Secrets management — API keys, JWT secret</td></tr>
+        <tr><td>Application Insights</td><td>Azure Monitor</td><td>Logging, performance monitoring, alerting</td></tr>
+        <tr><td>Blob Storage (optional)</td><td>Azure Storage</td><td>Generated document file storage</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub-head">CI / CD</h3>
+  <div class="highlight-box amber">
+    <p>
+      <strong>Status: In progress.</strong> A <code>.github/workflows/</code> directory exists but pipelines have not yet been configured.
+      The planned approach is GitHub Actions with steps: build → test → publish → deploy to Azure App Service.
+    </p>
+  </div>
+
+  <h3 class="sub-head">Environment Configuration Summary</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Setting</th><th>Development value</th><th>Production approach</th></tr></thead>
+      <tbody>
+        <tr><td>JWT Secret</td><td>appsettings.Development.json</td><td>Azure Key Vault</td></tr>
+        <tr><td>OpenAI API Key</td><td>Database (OpenAISettings table)</td><td>Azure Key Vault</td></tr>
+        <tr><td>Zoho Credentials</td><td>appsettings.json (KEY_VAULT placeholder)</td><td>Azure Key Vault</td></tr>
+        <tr><td>DB Connection String</td><td>appsettings.json</td><td>Azure App Service Connection Strings</td></tr>
+        <tr><td>Migrations on startup</td><td>Enabled (<code>true</code>)</td><td>Disabled — use EF idempotent script</td></tr>
+        <tr><td>SMTP</td><td>appsettings.json</td><td>Azure Key Vault / App Service env vars</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub-head">Default Credentials</h3>
+  <div class="highlight-box">
+    <p>
+      On first startup, creates the four default teams (Sales, Tech, Finance, Management) and a super-admin user:<br/>
+      <strong>Website:</strong> <code>http://demo-ahm.e2logy.org:5001/</code> &nbsp;·&nbsp;
+      <strong>Email:</strong> <code>superadmin@system.com</code> &nbsp;·&nbsp;
+      <strong>Password:</strong> <code>Admin@123</code>
+    </p>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════════════════ FOOTER ════════════════════════ -->
+<footer>
+  <span class="foot-logo">Document Intelligence <em>Proposal</em></span>
+  <span class="foot-copy">Generated: 2026-06-08 &nbsp;·&nbsp; .NET 9 / Blazor Server / GPT-4o &nbsp;·&nbsp; e2logy</span>
+  <div class="foot-links">
+    <a href="#">e2logy</a>
+    <a href="#overview">Overview</a>
+    <a href="#deployment">Deployment</a>
+  </div>
+</footer>
+
+</body>
+</html>
