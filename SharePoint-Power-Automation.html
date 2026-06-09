@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SharePoint + Power Automate — Document Routing &amp; Extraction</title>
+  <meta name="description" content="An intelligent automation system that routes uploaded SharePoint files to correct destinations and extracts structured data from inbound email attachments using Power Automate." />
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --blue:#00B2ED;
+      --dark:#0D133E;
+      --navy:#f5fafd;
+      --slate:#e8f5fb;
+      --accent:#00B2ED;
+      --muted:#5a6a8a;
+      --border:rgba(0,178,237,0.18);
+      --fh:'Mulish',sans-serif;
+      --fb:'Mulish',sans-serif;
+      --bg:#ffffff;
+      --bg-alt:#f5fafd;
+      --bg-card:#ffffff;
+      --text:#0D133E;
+      --text-light:#5a6a8a;
+      --nav-offset:62px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:var(--fb);
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.7;
+      font-size:15px;
+      padding-top:var(--nav-offset);
+    }
+
+    /* ── NAV ───────────────────────────────────────────── */
+    nav{
+      position:fixed;top:0;left:0;width:100%;z-index:200;
+      padding:0 4%;height:var(--nav-offset);
+      display:flex;align-items:center;justify-content:space-between;
+      background:rgba(255,255,255,0.96);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(0,178,237,0.15);
+      box-shadow:0 1px 20px rgba(13,19,62,0.07);
+    }
+    .nav-logo{font-size:16px;font-weight:800;color:var(--dark);text-decoration:none;white-space:nowrap;}
+    .nav-logo em{font-style:normal;color:var(--blue);}
+    .nav-links{display:flex;gap:0;list-style:none;overflow-x:auto;}
+    .nav-links a{
+      display:inline-block;padding:0 14px;
+      font-size:12.5px;font-weight:600;color:var(--muted);
+      text-decoration:none;white-space:nowrap;
+      transition:color .15s;
+    }
+    .nav-links a:hover{color:var(--blue);}
+    .nav-cta{
+      background:var(--blue);color:#fff;
+      padding:.4rem 1.1rem;border-radius:6px;
+      font-size:13px;font-weight:600;text-decoration:none;
+      transition:background .2s;white-space:nowrap;
+      flex-shrink:0;
+    }
+    .nav-cta:hover{background:#0099cc;}
+
+    /* ── PAGE HERO ─────────────────────────────────────── */
+    .page-hero{
+      padding:3.5rem 4% 3rem;
+      background:#ffffff;
+      border-bottom:1px solid rgba(0,178,237,0.12);
+      position:relative;overflow:hidden;
+    }
+    .ph-grid{
+      position:absolute;inset:0;
+      background-image:
+        linear-gradient(rgba(0,178,237,0.06) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,178,237,0.06) 1px,transparent 1px);
+      background-size:56px 56px;
+      pointer-events:none;
+    }
+    .ph-glow{
+      position:absolute;top:0;right:10%;
+      width:480px;height:320px;
+      background:radial-gradient(ellipse,rgba(0,178,237,0.10) 0%,transparent 68%);
+      pointer-events:none;
+    }
+    .ph-inner{position:relative;z-index:1;max-width:1120px;margin:0 auto;}
+    .ph-badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(0,178,237,0.10);border:1px solid rgba(0,178,237,0.30);
+      border-radius:30px;padding:.35rem 1rem;
+      font-size:12px;color:var(--blue);font-weight:600;
+      margin-bottom:1.2rem;letter-spacing:.03em;text-transform:uppercase;
+    }
+    .ph-badge span{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+    .ph-title{
+      font-size:clamp(2rem,4vw,3rem);font-weight:900;
+      line-height:1.1;color:var(--dark);margin-bottom:1rem;
+      letter-spacing:-.03em;
+    }
+    .ph-title em{font-style:normal;color:var(--blue);}
+    .ph-sub{
+      font-size:15px;color:var(--muted);max-width:680px;
+      line-height:1.8;margin-bottom:2rem;font-weight:400;
+    }
+    .ph-meta{display:flex;flex-wrap:wrap;gap:1.2rem 2.5rem;}
+    .ph-stat-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;margin-bottom:2px;}
+    .ph-stat-val{font-size:14px;font-weight:700;color:var(--dark);}
+
+    /* ── MAIN ───────────────────────────────────────────── */
+    main{max-width:1120px;margin:0 auto;padding:0 4% 80px;}
+
+    /* ── SECTIONS ───────────────────────────────────────── */
+    section.content-sec{
+      padding:3.5rem 0;
+      border-bottom:1px solid rgba(0,178,237,0.10);
+    }
+    section.content-sec:last-child{border-bottom:none;}
+    section.content-sec.alt{
+      margin:0 -4%;padding:3.5rem 4%;
+      background:var(--bg-alt);
+      border-top:1px solid rgba(0,178,237,0.10);
+      border-bottom:1px solid rgba(0,178,237,0.10);
+    }
+    section:target{scroll-margin-top:calc(var(--nav-offset) + 16px);}
+    .sec-lbl{
+      font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;
+      color:var(--blue);font-weight:700;margin-bottom:.6rem;
+    }
+    .sec-title{
+      font-size:clamp(1.45rem,3vw,2rem);font-weight:800;
+      color:var(--dark);line-height:1.2;letter-spacing:-.02em;
+      margin-bottom:1rem;
+    }
+    .sec-title em{font-style:normal;color:var(--blue);}
+    .sec-sub{font-size:14px;color:var(--muted);max-width:700px;line-height:1.8;margin-bottom:1.8rem;}
+    h3.sub-head{
+      font-size:1rem;font-weight:700;color:var(--dark);
+      margin:2rem 0 .8rem;
+    }
+    p{margin-bottom:.9rem;color:var(--muted);font-size:14px;}
+
+    /* ── SCARD GRID ─────────────────────────────────────── */
+    .scard-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+      gap:1rem;
+    }
+    .scard{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.4rem;
+      position:relative;overflow:hidden;
+      transition:border-color .2s,transform .2s,box-shadow .2s;
+    }
+    .scard::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+      background:linear-gradient(90deg,var(--blue),var(--dark));
+    }
+    .scard:hover{
+      border-color:rgba(0,178,237,.45);
+      transform:translateY(-2px);
+      box-shadow:0 8px 28px rgba(0,178,237,0.10);
+    }
+    .scard-tag{
+      font-size:10px;text-transform:uppercase;letter-spacing:.08em;
+      color:var(--blue);font-weight:700;margin-bottom:.4rem;
+    }
+    .scard h4{font-size:.93rem;font-weight:700;color:var(--dark);margin-bottom:.45rem;}
+    .scard p{font-size:12.5px;color:var(--muted);line-height:1.65;margin:0;}
+    .scard.left-success::before{background:linear-gradient(90deg,#16a34a,#0ea5e9);}
+    .scard.left-blue::before{background:linear-gradient(90deg,var(--blue),#0099cc);}
+    .scard.left-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+    .scard.left-danger::before{background:linear-gradient(90deg,#dc2626,#f97316);}
+    .scard.left-purple::before{background:linear-gradient(90deg,#6B46C1,#553593);}
+    .scard.left-teal::before{background:linear-gradient(90deg,#0D9E8A,#06766A);}
+
+    /* ── DETAIL CARD ────────────────────────────────────── */
+    .detail-card{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.5rem 1.6rem;
+      box-shadow:0 4px 20px rgba(0,178,237,0.06);
+      margin-bottom:1rem;
+    }
+    .detail-card h4{font-size:.93rem;font-weight:700;color:var(--dark);margin-bottom:.5rem;}
+    .detail-card p{font-size:13.5px;color:var(--muted);margin:0 0 .6rem;line-height:1.75;}
+    .detail-card.blue-left{border-left:3px solid var(--blue);}
+    .detail-card.green-left{border-left:3px solid #16a34a;}
+    .detail-card.amber-left{border-left:3px solid #E8960A;}
+    .detail-card.purple-left{border-left:3px solid #6B46C1;}
+    .detail-card.teal-left{border-left:3px solid #0D9E8A;}
+
+    /* ── HIGHLIGHT BOXES ────────────────────────────────── */
+    .highlight-box{
+      background:rgba(0,178,237,0.06);
+      border:1px solid rgba(0,178,237,0.25);
+      border-radius:10px;padding:1.1rem 1.4rem;
+      margin-bottom:1rem;
+    }
+    .highlight-box p{font-size:13.5px;margin:0;color:var(--dark);}
+    .highlight-box.green{background:rgba(22,163,74,0.06);border-color:rgba(22,163,74,0.25);}
+    .highlight-box.amber{background:rgba(232,150,10,0.07);border-color:rgba(232,150,10,0.28);}
+
+    /* ── CALLOUT ────────────────────────────────────────── */
+    .callout{
+      border-left:3px solid var(--blue);
+      background:rgba(0,178,237,0.05);
+      padding:1rem 1.3rem;
+      border-radius:0 8px 8px 0;
+      margin:1rem 0;
+    }
+    .callout p{margin:0;font-size:13.5px;color:var(--muted);}
+    .callout strong{color:var(--dark);}
+    .callout.green{border-left-color:#16a34a;background:rgba(22,163,74,0.05);}
+    .callout.amber{border-left-color:#E8960A;background:rgba(232,150,10,0.05);}
+    .callout.purple{border-left-color:#6B46C1;background:rgba(107,70,193,0.05);}
+    .callout.teal{border-left-color:#0D9E8A;background:rgba(13,158,138,0.05);}
+
+    /* ── STEPS ──────────────────────────────────────────── */
+    .flow-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+    .flow-steps::before{
+      content:'';position:absolute;
+      left:25px;top:50px;bottom:30px;
+      width:2px;background:rgba(0,178,237,0.18);
+    }
+    .fstep{display:flex;gap:1.2rem;align-items:flex-start;margin-bottom:.5rem;}
+    .fstep:last-child{margin-bottom:0;}
+    .step-num{
+      width:52px;height:52px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:15px;color:#fff;
+      flex-shrink:0;z-index:1;
+    }
+    .step-num.sn-blue{background:var(--blue);box-shadow:0 4px 14px rgba(0,178,237,.35);}
+    .step-num.sn-teal{background:#0D9E8A;box-shadow:0 4px 14px rgba(13,158,138,.35);}
+    .step-num.sn-amber{background:#E8960A;box-shadow:0 4px 14px rgba(232,150,10,.35);}
+    .step-num.sn-purple{background:#6B46C1;box-shadow:0 4px 14px rgba(107,70,193,.35);}
+    .step-num.sn-green{background:#16A34A;box-shadow:0 4px 14px rgba(22,163,74,.35);}
+    .step-card{
+      flex:1;background:#fff;
+      border:1px solid var(--border);
+      border-radius:12px;padding:1.2rem 1.4rem;
+      margin-bottom:1rem;position:relative;overflow:hidden;
+    }
+    .step-card::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+    }
+    .step-card.sc-blue::before{background:linear-gradient(90deg,#00B2ED,#0099cc);}
+    .step-card.sc-teal::before{background:linear-gradient(90deg,#0D9E8A,#06766A);}
+    .step-card.sc-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+    .step-card.sc-purple::before{background:linear-gradient(90deg,#6B46C1,#553593);}
+    .step-card.sc-green::before{background:linear-gradient(90deg,#16A34A,#0E7A36);}
+    .step-card strong{display:block;font-size:.95rem;font-weight:700;color:var(--dark);margin-bottom:.35rem;}
+    .step-card p{font-size:13px;color:var(--muted);margin:0;line-height:1.65;}
+    .step-card ul{font-size:13px;color:var(--muted);margin:.5rem 0 0 1.1rem;line-height:1.9;}
+    .step-card li{margin-bottom:.1rem;}
+
+    /* ── TABLES ─────────────────────────────────────────── */
+    .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid rgba(0,178,237,0.18);margin-bottom:1rem;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    thead th{
+      background:var(--bg-alt);padding:10px 14px;text-align:left;
+      font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+      color:var(--muted);border-bottom:1px solid rgba(0,178,237,0.18);
+      font-weight:700;
+    }
+    tbody td{
+      padding:10px 14px;border-bottom:1px solid rgba(0,178,237,0.08);
+      vertical-align:top;color:var(--muted);font-size:13px;
+    }
+    tbody tr:last-child td{border-bottom:none;}
+    tbody tr:hover td{background:rgba(0,178,237,0.03);}
+    code{
+      font-family:'Cascadia Code','Fira Code',monospace;
+      font-size:12px;background:rgba(0,178,237,0.08);
+      color:#0099cc;padding:2px 6px;border-radius:4px;
+    }
+
+    /* ── TAGS / PILLS ───────────────────────────────────── */
+    .fp-tag{
+      display:inline-block;font-size:11px;padding:3px 10px;
+      border-radius:20px;font-weight:600;margin:2px 3px 2px 0;
+      background:rgba(0,178,237,0.08);border:1px solid rgba(0,178,237,0.22);
+      color:var(--blue);
+    }
+    .fp-tag.teal{background:rgba(13,158,138,0.09);border-color:rgba(13,158,138,0.28);color:#0D9E8A;}
+    .fp-tag.amber{background:rgba(232,150,10,0.09);border-color:rgba(232,150,10,0.28);color:#B87208;}
+    .fp-tag.purple{background:rgba(107,70,193,0.09);border-color:rgba(107,70,193,0.22);color:#6B46C1;}
+    .fp-tag.green{background:rgba(22,163,74,0.09);border-color:rgba(22,163,74,0.22);color:#16a34a;}
+    .fp-tag.gray{background:rgba(90,106,138,0.09);border-color:rgba(90,106,138,0.22);color:var(--muted);}
+    .fp-tag.red{background:rgba(220,38,38,0.08);border-color:rgba(220,38,38,0.22);color:#dc2626;}
+
+    /* ── ARCH DIAGRAM ───────────────────────────────────── */
+    .arch{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;text-align:center;}
+    .arch-layer{
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:1.2rem 1rem;
+      position:relative;overflow:hidden;
+    }
+    .arch-layer::before{
+      content:'';position:absolute;top:0;left:0;
+      width:100%;height:2px;
+      background:linear-gradient(90deg,var(--blue),var(--dark));
+    }
+    .arch-layer .layer-title{
+      font-size:10px;font-weight:700;text-transform:uppercase;
+      letter-spacing:.07em;color:var(--blue);margin-bottom:.8rem;
+    }
+    .arch-layer .item{
+      background:var(--bg-alt);border-radius:6px;
+      padding:7px 8px;margin-bottom:5px;
+      font-size:12px;font-weight:600;color:var(--dark);
+    }
+    .arch-layer .item:last-child{margin-bottom:0;}
+    .arch-layer.al-green::before{background:linear-gradient(90deg,#16a34a,#0ea5e9);}
+    .arch-layer.al-amber::before{background:linear-gradient(90deg,#E8960A,#B87208);}
+    .arch-layer.al-purple::before{background:linear-gradient(90deg,#6B46C1,#553593);}
+    .arch-layer.al-teal::before{background:linear-gradient(90deg,#0D9E8A,#06766A);}
+
+    /* ── FLOW DIAGRAM ───────────────────────────────────── */
+    .flow{
+      display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;
+      padding:1.2rem 1.4rem;
+      background:#fff;border:1px solid var(--border);border-radius:10px;
+    }
+    .flow-box{
+      background:var(--bg-alt);border:1px solid rgba(0,178,237,0.22);
+      border-radius:6px;padding:6px 13px;
+      font-size:12.5px;font-weight:600;color:var(--dark);white-space:nowrap;
+    }
+    .flow-box.fb-blue{background:rgba(0,178,237,0.10);border-color:rgba(0,178,237,0.35);color:#0099cc;}
+    .flow-box.fb-purple{background:rgba(107,70,193,0.10);border-color:rgba(107,70,193,0.30);color:#6B46C1;}
+    .flow-box.fb-green{background:rgba(22,163,74,0.10);border-color:rgba(22,163,74,0.28);color:#16a34a;}
+    .flow-box.fb-amber{background:rgba(232,150,10,0.10);border-color:rgba(232,150,10,0.30);color:#B87208;}
+    .flow-box.fb-teal{background:rgba(13,158,138,0.10);border-color:rgba(13,158,138,0.30);color:#0D9E8A;}
+    .flow-arr{font-size:16px;color:rgba(0,178,237,0.5);}
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    footer{
+      padding:1.6rem 4%;
+      border-top:1px solid rgba(0,178,237,.15);
+      display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:1rem;background:#fff;
+    }
+    .foot-logo{font-size:14px;font-weight:800;color:var(--dark);}
+    .foot-logo em{font-style:normal;color:var(--blue);}
+    .foot-copy{font-size:11.5px;color:var(--muted);}
+    .foot-links{display:flex;gap:1.3rem;}
+    .foot-links a{font-size:11.5px;color:var(--muted);text-decoration:none;}
+    .foot-links a:hover{color:var(--blue);}
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media(max-width:900px){
+      .arch{grid-template-columns:1fr;}
+      .nav-links{display:none;}
+    }
+    @media(max-width:640px){
+      main{padding:0 5% 60px;}
+      .ph-inner{padding:0;}
+      .scard-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+<nav>
+  <a class="nav-logo" href="#">SharePoint <em>&amp; Power Automate</em></a>
+  <ul class="nav-links">
+    <li><a href="microsoft_e2logy_v2.html">Home</a></li>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#sharepoint-setup">SharePoint Setup</a></li>
+    <li><a href="#flow1">Flow 1</a></li>
+    <li><a href="#flow2">Flow 2</a></li>
+    <li><a href="#tech-stack">Tech Stack</a></li>
+  </ul>
+  <a class="nav-cta" href="#flow1">View Flows</a>
+</nav>
+
+<!-- ═══════════════════════════ HERO ══════════════════════════ -->
+<section class="page-hero">
+  <div class="ph-grid"></div>
+  <div class="ph-glow"></div>
+  <div class="ph-inner">
+    <div class="ph-badge"><span></span> SharePoint + Power Automate</div>
+    <h1 class="ph-title">Automated Document <em>Routing &amp; Extraction</em></h1>
+    <p class="ph-sub">
+      An intelligent automation system that routes uploaded files to their correct destinations,
+      sends owner notifications, and extracts structured data from inbound email attachments —
+      all powered by SharePoint lists and Power Automate cloud flows.
+    </p>
+    <div class="ph-meta">
+      <div class="flow-box fb-blue">
+        <div class="ph-stat-lbl">SharePoint Lists</div>
+        <div class="ph-stat-val">3 Configured Lists</div>
+      </div>
+      <div class="flow-box fb-blue">
+        <div class="ph-stat-lbl">Automated Flows</div>
+        <div class="ph-stat-val">2 Cloud Flows</div>
+      </div>
+      <div class="flow-box fb-blue">
+        <div class="ph-stat-lbl">Routing Engine</div>
+        <div class="ph-stat-val">Pattern-Based Matching</div>
+      </div>
+      <div class="flow-box fb-blue">
+        <div class="ph-stat-lbl">Data Extraction</div>
+        <div class="ph-stat-val">AI Builder / Expressions</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ MAIN ══════════════════════════ -->
+<main>
+
+<!-- ─── OVERVIEW ─────────────────────────────────────────── -->
+<section id="overview" class="content-sec">
+  <div class="sec-lbl">🎯 System Overview</div>
+  <h2 class="sec-title">Overview</h2>
+
+  <div class="highlight-box" style="margin-bottom:1.5rem;">
+    <p>
+      <strong>What it does in one sentence:</strong>
+      When a file is uploaded to SharePoint, Flow 1 matches it against a mapping table and automatically routes it to the correct folder while emailing the owner — when an email with attachments arrives, Flow 2 saves the file, extracts its data using AI Builder or expressions, and stores the structured results in a SharePoint list.
+    </p>
+  </div>
+
+  <div class="scard-grid">
+    <div class="scard left-blue">
+      <div class="scard-tag">SharePoint</div>
+      <h4>SourceFiles Library</h4>
+      <p>Document library where files are uploaded. Tracks processing status, matched pattern, and routing destination per file.</p>
+    </div>
+    <div class="scard left-success">
+      <div class="scard-tag">SharePoint</div>
+      <h4>FileMappingTable List</h4>
+      <p>Rule engine — maps file name patterns (e.g. <code>INV_*</code>) to target folders, email templates, owners, and processing types.</p>
+    </div>
+    <div class="scard left-teal">
+      <div class="scard-tag">SharePoint</div>
+      <h4>ProcessedData List</h4>
+      <p>Audit and results log — stores extracted data, source file links, processing status, timestamps, and originating flow name.</p>
+    </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">Power Automate</div>
+      <h4>Flow 1 — File Routing</h4>
+      <p>Triggers on file upload. Matches filename against mapping rules, moves the file to the correct folder, and sends an owner notification email.</p>
+    </div>
+    <div class="scard left-purple">
+      <div class="scard-tag">Power Automate</div>
+      <h4>Flow 2 — Email Extraction</h4>
+      <p>Triggers on inbound email with attachments. Saves files to SharePoint, extracts structured data using AI Builder, and logs results to ProcessedData.</p>
+    </div>
+  </div>
+
+  <h3 class="sub-head">Design Principle</h3>
+  <div class="callout">
+    <p>
+      <strong>SharePoint as the single source of truth.</strong>
+      Both flows read routing rules from <code>FileMappingTable</code> and write all results to <code>ProcessedData</code>. Updating a rule in the mapping table immediately changes how both flows behave — no flow editing required.
+    </p>
+  </div>
+
+  <div class="scard-grid" style="margin-top:.8rem;">
+    <div class="scard left-success">
+      <div class="scard-tag">Flexibility</div>
+      <p>Add or change routing rules by editing the FileMappingTable list — no code or flow changes needed. IsActive flag enables/disables rules instantly.</p>
+    </div>
+    <div class="scard left-blue">
+      <div class="scard-tag">Priority Control</div>
+      <p>The Priority number column in FileMappingTable controls which rule wins when multiple patterns match the same filename.</p>
+    </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">Full Audit Trail</div>
+      <p>Every processed file — routed or extracted — is logged to ProcessedData with status, timestamp, and the flow that handled it.</p>
+    </div>
+    <div class="scard left-purple">
+      <div class="scard-tag">AI-Powered Extraction</div>
+      <p>AI Builder models can extract structured fields from PDFs and invoices without manual parsing logic or regular expressions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ARCHITECTURE ───────────────────────────────────────── -->
+<section id="architecture" class="content-sec alt">
+  <div class="sec-lbl">🏗️ Architecture</div>
+  <h2 class="sec-title">System <em>Architecture</em></h2>
+  <p class="sec-sub">Three SharePoint structures and two Power Automate flows, all connected through a shared data layer.</p>
+
+  <div class="arch">
+    <div class="arch-layer">
+      <div class="layer-title">SharePoint Layer</div>
+      <div class="item">SourceFiles (Library)</div>
+      <div class="item">Status · MatchedPattern</div>
+      <div class="item">RoutedTo column</div>
+      <div class="item">FileMappingTable (List)</div>
+      <div class="item">FilePattern · Priority</div>
+      <div class="item">ProcessedData (List)</div>
+    </div>
+    <div class="arch-layer al-amber">
+      <div class="layer-title">Flow 1 — File Routing</div>
+      <div class="item">Trigger: File Created</div>
+      <div class="item">Get File Properties</div>
+      <div class="item">Query FileMappingTable</div>
+      <div class="item">Pattern Match Loop</div>
+      <div class="item">Move File + Send Email</div>
+      <div class="item">Update Status + Log</div>
+    </div>
+    <div class="arch-layer al-purple">
+      <div class="layer-title">Flow 2 — Email Extraction</div>
+      <div class="item">Trigger: Email Received</div>
+      <div class="item">Filter Attachments</div>
+      <div class="item">Save to SharePoint</div>
+      <div class="item">AI Builder Extract</div>
+      <div class="item">Write to ProcessedData</div>
+      <div class="item">Notify Sender</div>
+    </div>
+  </div>
+
+  <h3 class="sub-head">Flow 1 — Routing Pipeline</h3>
+  <div class="flow">
+    <span class="flow-box fb-blue">File Uploaded</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Get Properties</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-teal">Query Mapping Table</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-amber">Pattern Match</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Move + Email Owner</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-teal">Log to ProcessedData</span>
+  </div>
+
+  <h3 class="sub-head">Flow 2 — Extraction Pipeline</h3>
+  <div class="flow">
+    <span class="flow-box fb-purple">Email Arrives</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Filter Attachments</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-blue">Save to SharePoint</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-purple">AI Builder Extract</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-teal">Write ProcessedData</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Notify Sender</span>
+  </div>
+</section>
+
+<!-- ─── SHAREPOINT SETUP ───────────────────────────────────── -->
+<section id="sharepoint-setup" class="content-sec">
+  <div class="sec-lbl">🗂️ Phase 1 — SharePoint Setup</div>
+  <h2 class="sec-title">SharePoint <em>Setup</em></h2>
+  <p class="sec-sub">Three SharePoint structures must be created before building either flow. These act as the data backbone for the entire system.</p>
+
+  <!-- Step 1 -->
+  <h3 class="sub-head">Step 1 — Create the Document Library: <em style="color:var(--blue)">SourceFiles</em></h3>
+  <div class="detail-card blue-left">
+    <h4>📁 SourceFiles — Document Library</h4>
+    <p>Go to your SharePoint site → click <strong>New → Document Library</strong> → name it <code>SourceFiles</code>. This is where files are uploaded and where Flow 1 is triggered. Add the following custom columns:</p>
+    <div class="table-wrap" style="margin-top:.8rem;">
+      <table>
+        <thead><tr><th>Column Name</th><th>Type</th><th>Options / Notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Status</strong></td><td>Choice</td><td>Options: <span class="fp-tag gray">Unprocessed</span> <span class="fp-tag green">Processed</span> — default: Unprocessed</td></tr>
+          <tr><td><strong>MatchedPattern</strong></td><td>Single line of text</td><td>Filled by the flow — stores the FilePattern that matched this file</td></tr>
+          <tr><td><strong>RoutedTo</strong></td><td>Single line of text</td><td>Filled by the flow — stores the TargetFolder the file was moved to</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:.5rem;">
+      <span class="fp-tag">Document Library</span>
+      <span class="fp-tag gray">Flow 1 Trigger Source</span>
+      <span class="fp-tag gray">Status Tracking</span>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <h3 class="sub-head">Step 2 — Create the Mapping Table: <em style="color:#16a34a">FileMappingTable</em></h3>
+  <div class="detail-card green-left">
+    <h4>📋 FileMappingTable — SharePoint List</h4>
+    <p>Click <strong>New → List</strong> → name it <code>FileMappingTable</code>. Rename the default <strong>Title</strong> column to <code>FilePattern</code> — this holds glob-style patterns like <code>INV_*</code> or <code>HR_*</code>. Add the following columns:</p>
+    <div class="table-wrap" style="margin-top:.8rem;">
+      <table>
+        <thead><tr><th>Column Name</th><th>Type</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>FilePattern</strong> (Title)</td><td>Single line of text</td><td>e.g. <code>INV_*</code>, <code>HR_*</code> — pattern to match against uploaded filenames</td></tr>
+          <tr><td><strong>TargetFolder</strong></td><td>Single line of text</td><td>Destination path, e.g. <code>/Invoices</code> or <code>/HR/Documents</code></td></tr>
+          <tr><td><strong>EmailTemplate</strong></td><td>Multi-line text</td><td>Email body template — use dynamic tokens for file name, date, etc.</td></tr>
+          <tr><td><strong>Owner</strong></td><td>Person or Group</td><td>Receives the notification email when a file matches this rule</td></tr>
+          <tr><td><strong>EmailSubject</strong></td><td>Single line of text</td><td>Subject line for the notification email</td></tr>
+          <tr><td><strong>Priority</strong></td><td>Number</td><td>Lower number = higher priority. Used for conflict resolution when multiple patterns match</td></tr>
+          <tr><td><strong>ProcessingType</strong></td><td>Choice</td><td>Options: <span class="fp-tag amber">Route</span> <span class="fp-tag purple">Extract</span> <span class="fp-tag">Notify</span></td></tr>
+          <tr><td><strong>IsActive</strong></td><td>Yes/No</td><td>Default: Yes. Set to No to disable a rule without deleting it</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:.5rem;">
+      <span class="fp-tag green">Rule Engine</span>
+      <span class="fp-tag gray">No-Code Rule Updates</span>
+      <span class="fp-tag gray">Flow 1 Data Source</span>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <h3 class="sub-head">Step 3 — Create the Results List: <em style="color:#0D9E8A">ProcessedData</em></h3>
+  <div class="detail-card teal-left">
+    <h4>📊 ProcessedData — SharePoint List</h4>
+    <p>Click <strong>New → List</strong> → name it <code>ProcessedData</code>. Both flows write to this list after processing a file. Add the following columns:</p>
+    <div class="table-wrap" style="margin-top:.8rem;">
+      <table>
+        <thead><tr><th>Column Name</th><th>Type</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Title</strong></td><td>Single line of text</td><td>Use the file name or email subject as the title</td></tr>
+          <tr><td><strong>ExtractedData</strong></td><td>Multi-line text</td><td>JSON string of all extracted fields from the document</td></tr>
+          <tr><td><strong>SourceFile</strong></td><td>Hyperlink</td><td>Link to the original file in SharePoint</td></tr>
+          <tr><td><strong>Status</strong></td><td>Choice</td><td>Options: <span class="fp-tag gray">Pending</span> <span class="fp-tag green">Processed</span> <span class="fp-tag red">Failed</span></td></tr>
+          <tr><td><strong>Timestamp</strong></td><td>Date and Time</td><td>Set by the flow using <code>utcNow()</code> at time of processing</td></tr>
+          <tr><td><strong>FlowName</strong></td><td>Single line of text</td><td>e.g. <code>Flow1</code> or <code>Flow2</code> — identifies which flow created the record</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:.5rem;">
+      <span class="fp-tag teal">Audit Log</span>
+      <span class="fp-tag teal">Extraction Results</span>
+      <span class="fp-tag gray">Written by Both Flows</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FLOW 1 ─────────────────────────────────────────────── -->
+<section id="flow1" class="content-sec alt">
+  <div class="sec-lbl">🔁 Phase 2 — Flow 1</div>
+  <h2 class="sec-title">Flow 1 — File Upload <em>Routing &amp; Email</em></h2>
+  <p class="sec-sub">Triggered when a file lands in SourceFiles. Matches the filename against FileMappingTable rules, routes the file to the correct folder, emails the owner, and logs the result.</p>
+
+  <div class="callout amber" style="margin-bottom:1.5rem;">
+    <p><strong>Create flow:</strong> Power Automate → <strong>Create → Automated cloud flow</strong> → Name it <code>Flow1_FileUploadRouting</code> → Trigger: <strong>"When a file is created (properties only)"</strong> (SharePoint) → set Site Address and Library Name = <code>SourceFiles</code>.</p>
+  </div>
+
+  <div class="flow-steps">
+
+    <div class="fstep">
+      <div class="step-num sn-amber">1</div>
+      <div class="step-card sc-amber">
+        <strong>Trigger — File created in SourceFiles</strong>
+        <p>The flow fires automatically when any new file is created (uploaded) in the <code>SourceFiles</code> document library. The trigger outputs include the file ID, name with extension, and metadata.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-amber">2</div>
+      <div class="step-card sc-amber">
+        <strong>Get File Properties</strong>
+        <p>Add action: <strong>"Get file properties"</strong> (SharePoint) → Site Address = your site, Library = <code>SourceFiles</code>, ID = <code>ID</code> from trigger outputs. This retrieves the full filename with extension needed for pattern matching.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-amber">3</div>
+      <div class="step-card sc-amber">
+        <strong>Query FileMappingTable</strong>
+        <p>Add action: <strong>"Get items"</strong> (SharePoint) → List = <code>FileMappingTable</code>.</p>
+        <ul>
+          <li>Filter Query: <code>IsActive eq 1</code></li>
+          <li>Order By: <code>Priority asc</code> — ensures highest priority rule wins</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-amber">4</div>
+      <div class="step-card sc-amber">
+        <strong>Match File Pattern — Apply to Each</strong>
+        <p>Add action: <strong>"Apply to each"</strong> → loop through the Get items results. Inside the loop, add a <strong>Condition</strong>:</p>
+        <ul>
+          <li>Expression (left): <code>startsWith(triggerOutputs()?['body/{FilenameWithExtension}'], items('Apply_to_each')?['FilePattern'])</code></li>
+          <li>For wildcard matching: <code>contains(filename, replace(FilePattern, '*', ''))</code></li>
+          <li>Condition operator: <strong>is equal to true</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-green">5</div>
+      <div class="step-card sc-green">
+        <strong>YES Branch — Route, Notify &amp; Log</strong>
+        <p>When a pattern matches, execute all four actions:</p>
+        <ul>
+          <li><strong>Move file:</strong> "Move file" (SharePoint) → Current Site = source, File to Move = file identifier, Destination = <code>TargetFolder</code> from matching mapping row</li>
+          <li><strong>Send email:</strong> "Send an email (V2)" (Outlook) → To = Owner email, Subject = <code>EmailSubject</code>, Body = <code>EmailTemplate</code> with dynamic file name and date inserted</li>
+          <li><strong>Update file properties:</strong> Set <code>Status</code> = Processed, <code>MatchedPattern</code> = FilePattern from matched row, <code>RoutedTo</code> = TargetFolder</li>
+          <li><strong>Log to ProcessedData:</strong> "Create item" → Title = file name, Status = Processed, Timestamp = <code>utcNow()</code>, FlowName = <code>Flow1</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-blue">6</div>
+      <div class="step-card sc-blue">
+        <strong>NO Branch — Mark Unprocessed</strong>
+        <p>If no pattern matches the filename:</p>
+        <ul>
+          <li>"Update file properties" → set <code>Status</code> = Unprocessed</li>
+          <li>Optional: "Send an email" alert to an admin notifying them of an unmatched file</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="sub-head">Routing Flow Summary</h3>
+  <div class="flow">
+    <span class="flow-box fb-amber">File Uploaded</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Get Properties</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-teal">Query Rules</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-amber">Pattern Match</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Move + Email</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-teal">Log Result</span>
+  </div>
+</section>
+
+<!-- ─── FLOW 2 ─────────────────────────────────────────────── -->
+<section id="flow2" class="content-sec">
+  <div class="sec-lbl">📧 Phase 3 — Flow 2</div>
+  <h2 class="sec-title">Flow 2 — Email Inbound <em>Data Extraction</em></h2>
+  <p class="sec-sub">Triggered when an email with attachments arrives. Saves the attachment to SharePoint, extracts structured data using AI Builder or expressions, then stores results in ProcessedData.</p>
+
+  <div class="callout purple" style="margin-bottom:1.5rem;">
+    <p><strong>Create flow:</strong> Power Automate → <strong>Create → Automated cloud flow</strong> → Name it <code>Flow2_EmailExtraction</code> → Trigger: <strong>"When a new email arrives (V3)"</strong> (Outlook) → set <strong>Has Attachment = Yes</strong>. Optional: set Subject Filter to a keyword like <code>[DATA]</code> to avoid processing all emails.</p>
+  </div>
+
+  <div class="flow-steps">
+
+    <div class="fstep">
+      <div class="step-num sn-purple">1</div>
+      <div class="step-card sc-purple">
+        <strong>Trigger — New email with attachment</strong>
+        <p>The flow fires when a new email arrives in the configured Outlook mailbox with <strong>Has Attachment = Yes</strong>. Trigger outputs include subject, sender, body, and the Attachments array. Add a Subject Filter (e.g. <code>[DATA]</code>) to target only relevant emails.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-purple">2</div>
+      <div class="step-card sc-purple">
+        <strong>Check and Loop Attachments</strong>
+        <p>Add <strong>Condition</strong>: Attachments is not empty → in Yes branch, add <strong>"Apply to each"</strong> → value = <code>Attachments</code> from trigger.</p>
+        <ul>
+          <li>Inside the loop, add another Condition to filter file types:</li>
+          <li><code>items('Apply_to_each')?['Name']</code> contains <code>.pdf</code> or <code>.xlsx</code></li>
+          <li>This avoids processing image attachments or unrelated files</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-purple">3</div>
+      <div class="step-card sc-purple">
+        <strong>Save Attachment to SharePoint</strong>
+        <p>Add action: <strong>"Create file"</strong> (SharePoint):</p>
+        <ul>
+          <li>Site Address = your SharePoint site</li>
+          <li>Folder Path = <code>/Inbox/Attachments</code> (a staging folder)</li>
+          <li>File Name = <code>Name</code> from attachment</li>
+          <li>File Content = <code>ContentBytes</code> from attachment</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-purple">4</div>
+      <div class="step-card sc-purple">
+        <strong>Extract Data from File</strong>
+        <p>Choose the appropriate extraction method:</p>
+        <ul>
+          <li><strong>Option A — Expressions:</strong> Use <code>decodeBase64()</code> on file content; use "Parse JSON" action for JSON files; use string split/trim expressions for CSV/text files</li>
+          <li><strong>Option B — AI Builder (recommended for PDFs/invoices):</strong> Add action <strong>"Extract information from documents"</strong> → select your pre-trained model (invoice, receipt, or custom) → Document = file content from SharePoint. Returns structured fields: invoice number, date, amount, vendor, etc.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-teal">5</div>
+      <div class="step-card sc-teal">
+        <strong>Write Extracted Data to ProcessedData</strong>
+        <p>Add action: <strong>"Create item"</strong> (SharePoint) → List = <code>ProcessedData</code>. Map fields:</p>
+        <ul>
+          <li><strong>Title:</strong> email subject or file name</li>
+          <li><strong>ExtractedData:</strong> <code>string()</code> expression wrapping the extracted JSON fields</li>
+          <li><strong>SourceFile:</strong> SharePoint file URL from Step 3 output</li>
+          <li><strong>Status:</strong> Processed</li>
+          <li><strong>Timestamp:</strong> <code>utcNow()</code></li>
+          <li><strong>FlowName:</strong> <code>Flow2</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-green">6</div>
+      <div class="step-card sc-green">
+        <strong>Update Status &amp; Notify Sender</strong>
+        <ul>
+          <li><strong>Update file properties:</strong> Set <code>Status</code> = Processed on the saved SharePoint file</li>
+          <li><strong>Send reply email:</strong> "Send an email (V2)" → To = sender address from trigger, Subject = <code>Re: [subject]</code>, Body = confirmation message with file name and extraction summary</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="sub-head">Extraction Flow Summary</h3>
+  <div class="flow">
+    <span class="flow-box fb-purple">Email Arrives</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Filter Attachments</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-blue">Save to SharePoint</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-purple">Extract (AI Builder)</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-teal">Write ProcessedData</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Reply to Sender</span>
+  </div>
+
+  <h3 class="sub-head">Extraction Options Compared</h3>
+  <div class="scard-grid">
+    <div class="scard left-blue">
+      <div class="scard-tag">Option A — Expressions</div>
+      <h4>Simple / Text-Based Files</h4>
+      <p>Best for CSV, JSON, or plain text attachments. Use <code>decodeBase64()</code>, <code>Parse JSON</code>, and string split expressions. No additional licences required.</p>
+    </div>
+    <div class="scard left-purple">
+      <div class="scard-tag">Option B — AI Builder</div>
+      <h4>PDFs, Invoices, Receipts</h4>
+      <p>Use <strong>"Extract information from documents"</strong> with a pre-trained or custom model. Returns structured named fields — invoice number, total, vendor, date — without any parsing logic.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TECH STACK ─────────────────────────────────────────── -->
+<section id="tech-stack" class="content-sec alt">
+  <div class="sec-lbl">🛠️ Technology Stack</div>
+  <h2 class="sec-title">Technology <em>Stack</em></h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Component</th><th>Technology</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>File Storage</strong></td>
+          <td>SharePoint Document Library</td>
+          <td><code>SourceFiles</code> library stores uploaded files and tracks routing status per file.</td>
+        </tr>
+        <tr>
+          <td><strong>Rule Engine</strong></td>
+          <td>SharePoint List (FileMappingTable)</td>
+          <td>Configurable pattern-matching rules. Update rules without touching any flow logic.</td>
+        </tr>
+        <tr>
+          <td><strong>Audit &amp; Results</strong></td>
+          <td>SharePoint List (ProcessedData)</td>
+          <td>Central log of all processed files — extracted data, source links, status, timestamps.</td>
+        </tr>
+        <tr>
+          <td><strong>File Routing Flow</strong></td>
+          <td>Power Automate — Automated Cloud Flow</td>
+          <td>Flow 1: triggers on file upload, matches patterns, moves files, sends emails, logs results.</td>
+        </tr>
+        <tr>
+          <td><strong>Email Extraction Flow</strong></td>
+          <td>Power Automate — Automated Cloud Flow</td>
+          <td>Flow 2: triggers on email, saves attachments, extracts structured data, stores in list.</td>
+        </tr>
+        <tr>
+          <td><strong>Data Extraction</strong></td>
+          <td>AI Builder (Power Platform)</td>
+          <td>Pre-trained document models extract named fields from PDFs, invoices, and receipts without manual parsing.</td>
+        </tr>
+        <tr>
+          <td><strong>Email Connector</strong></td>
+          <td>Outlook (Office 365)</td>
+          <td>Used in both flows — trigger for incoming email and action for outbound owner notifications.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub-head">Platform Advantages</h3>
+  <div class="scard-grid">
+    <div class="scard left-blue">
+      <div class="scard-tag">No-Code Rules</div>
+      <p>Routing rules live in a SharePoint list. Any authorized user can add, edit, or deactivate rules without opening Power Automate.</p>
+    </div>
+    <div class="scard left-success">
+      <div class="scard-tag">Scalable</div>
+      <p>Add more patterns to FileMappingTable to handle new file types or departments without changing any flow logic.</p>
+    </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">Priority-Driven</div>
+      <p>Conflict resolution is built in — when multiple patterns match, the lowest Priority number wins. No ambiguous behavior.</p>
+    </div>
+    <div class="scard left-purple">
+      <div class="scard-tag">AI-Ready</div>
+      <p>AI Builder slots directly into Flow 2 — upgrade from expression-based extraction to model-based extraction by swapping one action.</p>
+    </div>
+  </div>
+</section>
+
+
+<section id="demo" class="content-sec">
+  <div class="sec-lbl">🧪 Demo</div>
+  <h2 class="sec-title">Demo  <em>Credentials</em></h2>
+ 
+  <!-- <h3 class="sub-head">Credentials</h3> -->
+  <div class="highlight-box">
+    <p><strong>Website :</strong> <code>https://e2logy641.sharepoint.com/sites/DocumentManagement</code></p>
+  </div>
+  <div class="callout" style="margin-top:.8rem;">
+    <p>🔐 <strong>Credentials:</strong> Access to this SharePoint site requires a Microsoft 365 account. Please contact your administrator to request login credentials.</p>
+  </div>
+
+
+     <!-- <table>
+      <thead><tr><th>Role</th><th>Username</th><th>Password</th></tr></thead>
+      <tbody>
+        <tr><td><code>Microsoft User </code></td><td>platformpower0@gmail.com</td><td>Admin@123##</td></tr>
+        <tr><td><code>Web Admin </code></td><td>emp07@yopmail.com</td><td>Admin@123##</td></tr>
+      </tbody>
+    </table>  -->
+ 
+
+  <!-- <div class="highlight-box green" style="margin-top:.5rem;">
+    <p>
+      Run all tests: <code>dotnet test</code> from the solution root.&nbsp;&nbsp;
+      Run with coverage: <code>dotnet test --collect:"XPlat Code Coverage"</code>&nbsp;&nbsp;
+      Coverage reports collected via <strong>coverlet</strong> in Cobertura format.
+    </p>
+  </div> -->
+</section>
+
+<!-- https://e2logy641.sharepoint.com/sites/DocumentManagement -->
+</main>
+
+<!-- ═══════════════════════════ FOOTER ════════════════════════ -->
+<footer>
+  <span class="foot-logo">SharePoint <em>&amp; Power Automate</em></span>
+  <span class="foot-copy">SharePoint · Power Automate · AI Builder · Outlook · e2logy</span>
+  <div class="foot-links">
+    <a href="#">e2logy</a>
+    <a href="#overview">Overview</a>
+    <a href="#sharepoint-setup">SharePoint Setup</a>
+    <a href="#flow1">Flow 1</a>
+    <a href="#flow2">Flow 2</a>
+  </div>
+</footer>
+
+</body>
+</html>
