@@ -425,7 +425,9 @@
   <div class="highlight-box" style="margin-bottom:1.5rem;">
     <p>
       <strong>What it does in one sentence:</strong>
-      When a file is uploaded to SharePoint, Flow 1 matches it against a mapping table and automatically routes it to the correct folder while emailing the owner — when an email with attachments arrives, Flow 2 saves the file, extracts its data using AI Builder or expressions, and stores the structured results in a SharePoint list.
+      
+      — when an email with attachments arrives, Flow 1 saves the file, extracts its data using AI Builder or expressions, and stores the structured results in a SharePoint list.
+      - When a file is uploaded to SharePoint, Flow 2 matches it against a mapping table and automatically routes it to the correct folder while emailing the owner 
     </p>
   </div>
 
@@ -445,16 +447,17 @@
       <h4>ProcessedData List</h4>
       <p>Audit and results log — stores extracted data, source file links, processing status, timestamps, and originating flow name.</p>
     </div>
-    <div class="scard left-amber">
-      <div class="scard-tag">Power Automate</div>
-      <h4>Flow 1 — File Routing</h4>
-      <p>Triggers on file upload. Matches filename against mapping rules, moves the file to the correct folder, and sends an owner notification email.</p>
-    </div>
     <div class="scard left-purple">
       <div class="scard-tag">Power Automate</div>
-      <h4>Flow 2 — Email Extraction</h4>
+      <h4>Flow 1 — Email Extraction</h4>
       <p>Triggers on inbound email with attachments. Saves files to SharePoint, extracts structured data using AI Builder, and logs results to ProcessedData.</p>
     </div>
+    <div class="scard left-amber">
+      <div class="scard-tag">Power Automate</div>
+      <h4>Flow 2 — File Routing</h4>
+      <p>Triggers on file upload. Matches filename against mapping rules, moves the file to the correct folder, and sends an owner notification email.</p>
+    </div>
+    
   </div>
 
   <h3 class="sub-head">Design Principle</h3>
@@ -501,17 +504,8 @@
       <div class="item">FilePattern · Priority</div>
       <div class="item">ProcessedData (List)</div>
     </div>
-    <div class="arch-layer al-amber">
-      <div class="layer-title">Flow 1 — File Routing</div>
-      <div class="item">Trigger: File Created</div>
-      <div class="item">Get File Properties</div>
-      <div class="item">Query FileMappingTable</div>
-      <div class="item">Pattern Match Loop</div>
-      <div class="item">Move File + Send Email</div>
-      <div class="item">Update Status + Log</div>
-    </div>
     <div class="arch-layer al-purple">
-      <div class="layer-title">Flow 2 — Email Extraction</div>
+      <div class="layer-title">Flow 1 — Email Extraction</div>
       <div class="item">Trigger: Email Received</div>
       <div class="item">Filter Attachments</div>
       <div class="item">Save to SharePoint</div>
@@ -519,9 +513,32 @@
       <div class="item">Write to ProcessedData</div>
       <div class="item">Notify Sender</div>
     </div>
+    <div class="arch-layer al-amber">
+      <div class="layer-title">Flow 2 — File Routing</div>
+      <div class="item">Trigger: File Created</div>
+      <div class="item">Get File Properties</div>
+      <div class="item">Query FileMappingTable</div>
+      <div class="item">Pattern Match Loop</div>
+      <div class="item">Move File + Send Email</div>
+      <div class="item">Update Status + Log</div>
+    </div>
+    
   </div>
-
-  <h3 class="sub-head">Flow 1 — Routing Pipeline</h3>
+ <h3 class="sub-head">Flow 1 — Extraction Pipeline</h3>
+  <div class="flow">
+    <span class="flow-box fb-purple">Email Arrives</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Filter Attachments</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-blue">Save to SharePoint</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-purple">AI Builder Extract</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-teal">Write ProcessedData</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Notify Sender</span>
+  </div>
+  <h3 class="sub-head">Flow 2 — Routing Pipeline</h3>
   <div class="flow">
     <span class="flow-box fb-blue">File Uploaded</span>
     <span class="flow-arr">→</span>
@@ -536,20 +553,7 @@
     <span class="flow-box fb-teal">Log to ProcessedData</span>
   </div>
 
-  <h3 class="sub-head">Flow 2 — Extraction Pipeline</h3>
-  <div class="flow">
-    <span class="flow-box fb-purple">Email Arrives</span>
-    <span class="flow-arr">→</span>
-    <span class="flow-box">Filter Attachments</span>
-    <span class="flow-arr">→</span>
-    <span class="flow-box fb-blue">Save to SharePoint</span>
-    <span class="flow-arr">→</span>
-    <span class="flow-box fb-purple">AI Builder Extract</span>
-    <span class="flow-arr">→</span>
-    <span class="flow-box fb-teal">Write ProcessedData</span>
-    <span class="flow-arr">→</span>
-    <span class="flow-box fb-green">Notify Sender</span>
-  </div>
+ 
 </section>
 
 <!-- ─── SHAREPOINT SETUP ───────────────────────────────────── -->
@@ -633,14 +637,135 @@
   </div>
 </section>
 
+
+
+<!-- ─── FLOW 2 ─────────────────────────────────────────────── -->
+<section id="flow1" class="content-sec">
+  <div class="sec-lbl">📧 Phase 3 — Flow 1</div>
+  <h2 class="sec-title">Flow 1 — Email Inbound <em>Data Extraction</em></h2>
+  <p class="sec-sub">Triggered when an email with attachments arrives. Saves the attachment to SharePoint, extracts structured data using AI Builder or expressions, then stores results in ProcessedData.</p>
+
+  <div class="callout purple" style="margin-bottom:1.5rem;">
+    <p><strong>Create flow:</strong> Power Automate → <strong>Create → Automated cloud flow</strong> → Name it <code>Flow1_EmailExtraction</code> → Trigger: <strong>"When a new email arrives (V3)"</strong> (Outlook) → set <strong>Has Attachment = Yes</strong>. Optional: set Subject Filter to a keyword like <code>[DATA]</code> to avoid processing all emails.</p>
+  </div>
+
+  <div class="flow-steps">
+
+    <div class="fstep">
+      <div class="step-num sn-purple">1</div>
+      <div class="step-card sc-purple">
+        <strong>Trigger — New email with attachment</strong>
+        <p>The flow fires when a new email arrives in the configured Outlook mailbox with <strong>Has Attachment = Yes</strong>. Trigger outputs include subject, sender, body, and the Attachments array. Add a Subject Filter (e.g. <code>[DATA]</code>) to target only relevant emails.</p>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-purple">2</div>
+      <div class="step-card sc-purple">
+        <strong>Check and Loop Attachments</strong>
+        <p>Add <strong>Condition</strong>: Attachments is not empty → in Yes branch, add <strong>"Apply to each"</strong> → value = <code>Attachments</code> from trigger.</p>
+        <ul>
+          <li>Inside the loop, add another Condition to filter file types:</li>
+          <li><code>items('Apply_to_each')?['Name']</code> contains <code>.pdf</code> or <code>.xlsx</code></li>
+          <li>This avoids processing image attachments or unrelated files</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-purple">3</div>
+      <div class="step-card sc-purple">
+        <strong>Save Attachment to SharePoint</strong>
+        <p>Add action: <strong>"Create file"</strong> (SharePoint):</p>
+        <ul>
+          <li>Site Address = your SharePoint site</li>
+          <li>Folder Path = <code>/Inbox/Attachments</code> (a staging folder)</li>
+          <li>File Name = <code>Name</code> from attachment</li>
+          <li>File Content = <code>ContentBytes</code> from attachment</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-purple">4</div>
+      <div class="step-card sc-purple">
+        <strong>Extract Data from File</strong>
+        <p>Choose the appropriate extraction method:</p>
+        <ul>
+          <li><strong>Option A — Expressions:</strong> Use <code>decodeBase64()</code> on file content; use "Parse JSON" action for JSON files; use string split/trim expressions for CSV/text files</li>
+          <li><strong>Option B — AI Builder (recommended for PDFs/invoices):</strong> Add action <strong>"Extract information from documents"</strong> → select your pre-trained model (invoice, receipt, or custom) → Document = file content from SharePoint. Returns structured fields: invoice number, date, amount, vendor, etc.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-teal">5</div>
+      <div class="step-card sc-teal">
+        <strong>Write Extracted Data to ProcessedData</strong>
+        <p>Add action: <strong>"Create item"</strong> (SharePoint) → List = <code>ProcessedData</code>. Map fields:</p>
+        <ul>
+          <li><strong>Title:</strong> email subject or file name</li>
+          <li><strong>ExtractedData:</strong> <code>string()</code> expression wrapping the extracted JSON fields</li>
+          <li><strong>SourceFile:</strong> SharePoint file URL from Step 3 output</li>
+          <li><strong>Status:</strong> Processed</li>
+          <li><strong>Timestamp:</strong> <code>utcNow()</code></li>
+          <li><strong>FlowName:</strong> <code>Flow1</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fstep">
+      <div class="step-num sn-green">6</div>
+      <div class="step-card sc-green">
+        <strong>Update Status &amp; Notify Sender</strong>
+        <ul>
+          <li><strong>Update file properties:</strong> Set <code>Status</code> = Processed on the saved SharePoint file</li>
+          <li><strong>Send reply email:</strong> "Send an email (V2)" → To = sender address from trigger, Subject = <code>Re: [subject]</code>, Body = confirmation message with file name and extraction summary</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="sub-head">Extraction Flow Summary</h3>
+  <div class="flow">
+    <span class="flow-box fb-purple">Email Arrives</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box">Filter Attachments</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-blue">Save to SharePoint</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-purple">Extract (AI Builder)</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-teal">Write ProcessedData</span>
+    <span class="flow-arr">→</span>
+    <span class="flow-box fb-green">Reply to Sender</span>
+  </div>
+
+  <h3 class="sub-head">Extraction Options Compared</h3>
+  <div class="scard-grid">
+    <div class="scard left-blue">
+      <div class="scard-tag">Option A — Expressions</div>
+      <h4>Simple / Text-Based Files</h4>
+      <p>Best for CSV, JSON, or plain text attachments. Use <code>decodeBase64()</code>, <code>Parse JSON</code>, and string split expressions. No additional licences required.</p>
+    </div>
+    <div class="scard left-purple">
+      <div class="scard-tag">Option B — AI Builder</div>
+      <h4>PDFs, Invoices, Receipts</h4>
+      <p>Use <strong>"Extract information from documents"</strong> with a pre-trained or custom model. Returns structured named fields — invoice number, total, vendor, date — without any parsing logic.</p>
+    </div>
+  </div>
+</section>
+
+
 <!-- ─── FLOW 1 ─────────────────────────────────────────────── -->
-<section id="flow1" class="content-sec alt">
-  <div class="sec-lbl">🔁 Phase 2 — Flow 1</div>
-  <h2 class="sec-title">Flow 1 — File Upload <em>Routing &amp; Email</em></h2>
+<section id="flow2" class="content-sec alt">
+  <div class="sec-lbl">🔁 Phase 2 — Flow 2</div>
+  <h2 class="sec-title">Flow 2 — File Upload <em>Routing &amp; Email</em></h2>
   <p class="sec-sub">Triggered when a file lands in SourceFiles. Matches the filename against FileMappingTable rules, routes the file to the correct folder, emails the owner, and logs the result.</p>
 
   <div class="callout amber" style="margin-bottom:1.5rem;">
-    <p><strong>Create flow:</strong> Power Automate → <strong>Create → Automated cloud flow</strong> → Name it <code>Flow1_FileUploadRouting</code> → Trigger: <strong>"When a file is created (properties only)"</strong> (SharePoint) → set Site Address and Library Name = <code>SourceFiles</code>.</p>
+    <p><strong>Create flow:</strong> Power Automate → <strong>Create → Automated cloud flow</strong> → Name it <code>Flow2_FileUploadRouting</code> → Trigger: <strong>"When a file is created (properties only)"</strong> (SharePoint) → set Site Address and Library Name = <code>SourceFiles</code>.</p>
   </div>
 
   <div class="flow-steps">
@@ -730,123 +855,7 @@
   </div>
 </section>
 
-<!-- ─── FLOW 2 ─────────────────────────────────────────────── -->
-<section id="flow2" class="content-sec">
-  <div class="sec-lbl">📧 Phase 3 — Flow 2</div>
-  <h2 class="sec-title">Flow 2 — Email Inbound <em>Data Extraction</em></h2>
-  <p class="sec-sub">Triggered when an email with attachments arrives. Saves the attachment to SharePoint, extracts structured data using AI Builder or expressions, then stores results in ProcessedData.</p>
 
-  <div class="callout purple" style="margin-bottom:1.5rem;">
-    <p><strong>Create flow:</strong> Power Automate → <strong>Create → Automated cloud flow</strong> → Name it <code>Flow2_EmailExtraction</code> → Trigger: <strong>"When a new email arrives (V3)"</strong> (Outlook) → set <strong>Has Attachment = Yes</strong>. Optional: set Subject Filter to a keyword like <code>[DATA]</code> to avoid processing all emails.</p>
-  </div>
-
-  <div class="flow-steps">
-
-    <div class="fstep">
-      <div class="step-num sn-purple">1</div>
-      <div class="step-card sc-purple">
-        <strong>Trigger — New email with attachment</strong>
-        <p>The flow fires when a new email arrives in the configured Outlook mailbox with <strong>Has Attachment = Yes</strong>. Trigger outputs include subject, sender, body, and the Attachments array. Add a Subject Filter (e.g. <code>[DATA]</code>) to target only relevant emails.</p>
-      </div>
-    </div>
-
-    <div class="fstep">
-      <div class="step-num sn-purple">2</div>
-      <div class="step-card sc-purple">
-        <strong>Check and Loop Attachments</strong>
-        <p>Add <strong>Condition</strong>: Attachments is not empty → in Yes branch, add <strong>"Apply to each"</strong> → value = <code>Attachments</code> from trigger.</p>
-        <ul>
-          <li>Inside the loop, add another Condition to filter file types:</li>
-          <li><code>items('Apply_to_each')?['Name']</code> contains <code>.pdf</code> or <code>.xlsx</code></li>
-          <li>This avoids processing image attachments or unrelated files</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="fstep">
-      <div class="step-num sn-purple">3</div>
-      <div class="step-card sc-purple">
-        <strong>Save Attachment to SharePoint</strong>
-        <p>Add action: <strong>"Create file"</strong> (SharePoint):</p>
-        <ul>
-          <li>Site Address = your SharePoint site</li>
-          <li>Folder Path = <code>/Inbox/Attachments</code> (a staging folder)</li>
-          <li>File Name = <code>Name</code> from attachment</li>
-          <li>File Content = <code>ContentBytes</code> from attachment</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="fstep">
-      <div class="step-num sn-purple">4</div>
-      <div class="step-card sc-purple">
-        <strong>Extract Data from File</strong>
-        <p>Choose the appropriate extraction method:</p>
-        <ul>
-          <li><strong>Option A — Expressions:</strong> Use <code>decodeBase64()</code> on file content; use "Parse JSON" action for JSON files; use string split/trim expressions for CSV/text files</li>
-          <li><strong>Option B — AI Builder (recommended for PDFs/invoices):</strong> Add action <strong>"Extract information from documents"</strong> → select your pre-trained model (invoice, receipt, or custom) → Document = file content from SharePoint. Returns structured fields: invoice number, date, amount, vendor, etc.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="fstep">
-      <div class="step-num sn-teal">5</div>
-      <div class="step-card sc-teal">
-        <strong>Write Extracted Data to ProcessedData</strong>
-        <p>Add action: <strong>"Create item"</strong> (SharePoint) → List = <code>ProcessedData</code>. Map fields:</p>
-        <ul>
-          <li><strong>Title:</strong> email subject or file name</li>
-          <li><strong>ExtractedData:</strong> <code>string()</code> expression wrapping the extracted JSON fields</li>
-          <li><strong>SourceFile:</strong> SharePoint file URL from Step 3 output</li>
-          <li><strong>Status:</strong> Processed</li>
-          <li><strong>Timestamp:</strong> <code>utcNow()</code></li>
-          <li><strong>FlowName:</strong> <code>Flow2</code></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="fstep">
-      <div class="step-num sn-green">6</div>
-      <div class="step-card sc-green">
-        <strong>Update Status &amp; Notify Sender</strong>
-        <ul>
-          <li><strong>Update file properties:</strong> Set <code>Status</code> = Processed on the saved SharePoint file</li>
-          <li><strong>Send reply email:</strong> "Send an email (V2)" → To = sender address from trigger, Subject = <code>Re: [subject]</code>, Body = confirmation message with file name and extraction summary</li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-
-  <h3 class="sub-head">Extraction Flow Summary</h3>
-  <div class="flow">
-    <span class="flow-box fb-purple">Email Arrives</span>
-    <span class="flow-arr">→</span>
-    <span class="flow-box">Filter Attachments</span>
-    <span class="flow-arr">→</span>
-    <span class="flow-box fb-blue">Save to SharePoint</span>
-    <span class="flow-arr">→</span>
-    <span class="flow-box fb-purple">Extract (AI Builder)</span>
-    <span class="flow-arr">→</span>
-    <span class="flow-box fb-teal">Write ProcessedData</span>
-    <span class="flow-arr">→</span>
-    <span class="flow-box fb-green">Reply to Sender</span>
-  </div>
-
-  <h3 class="sub-head">Extraction Options Compared</h3>
-  <div class="scard-grid">
-    <div class="scard left-blue">
-      <div class="scard-tag">Option A — Expressions</div>
-      <h4>Simple / Text-Based Files</h4>
-      <p>Best for CSV, JSON, or plain text attachments. Use <code>decodeBase64()</code>, <code>Parse JSON</code>, and string split expressions. No additional licences required.</p>
-    </div>
-    <div class="scard left-purple">
-      <div class="scard-tag">Option B — AI Builder</div>
-      <h4>PDFs, Invoices, Receipts</h4>
-      <p>Use <strong>"Extract information from documents"</strong> with a pre-trained or custom model. Returns structured named fields — invoice number, total, vendor, date — without any parsing logic.</p>
-    </div>
-  </div>
-</section>
 
 <!-- ─── TECH STACK ─────────────────────────────────────────── -->
 <section id="tech-stack" class="content-sec alt">
@@ -875,15 +884,17 @@
           <td>Central log of all processed files — extracted data, source links, status, timestamps.</td>
         </tr>
         <tr>
-          <td><strong>File Routing Flow</strong></td>
-          <td>Power Automate — Automated Cloud Flow</td>
-          <td>Flow 1: triggers on file upload, matches patterns, moves files, sends emails, logs results.</td>
-        </tr>
-        <tr>
           <td><strong>Email Extraction Flow</strong></td>
           <td>Power Automate — Automated Cloud Flow</td>
-          <td>Flow 2: triggers on email, saves attachments, extracts structured data, stores in list.</td>
+          <td>Flow 1: triggers on email, saves attachments, extracts structured data, stores in list.</td>
         </tr>
+     
+        <tr>
+          <td><strong>File Routing Flow</strong></td>
+          <td>Power Automate — Automated Cloud Flow</td>
+          <td>Flow 2: triggers on file upload, matches patterns, moves files, sends emails, logs results.</td>
+        </tr>
+     
         <tr>
           <td><strong>Data Extraction</strong></td>
           <td>AI Builder (Power Platform)</td>
@@ -914,7 +925,7 @@
     </div>
     <div class="scard left-purple">
       <div class="scard-tag">AI-Ready</div>
-      <p>AI Builder slots directly into Flow 2 — upgrade from expression-based extraction to model-based extraction by swapping one action.</p>
+      <p>AI Builder slots directly into Flow 1 — upgrade from expression-based extraction to model-based extraction by swapping one action.</p>
     </div>
   </div>
 </section>
